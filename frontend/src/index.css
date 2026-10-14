@@ -1,0 +1,135 @@
+@import "tailwindcss";
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: #faf7ee;
+  }
+
+  /* Authentic Light Cream Paper & Film Texture */
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #faf7ee;
+    color: #1a1a1a;
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+  }
+
+  /* Fixed Viewport Light Cream Dissolve Texture Overlay */
+  body::after {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    content: "";
+    pointer-events: none;
+    opacity: 0.35;
+    mix-blend-mode: multiply;
+    background-image: url("/ivory-dissolve-noise.png");
+    background-size: 256px 256px;
+    background-repeat: repeat;
+  }
+}
+
+/* Warm Light Cream Paper Card & Container Overrides */
+.bg-white {
+  background-color: #ffffff !important;
+  box-shadow: 0 1px 3px 0 rgba(37, 35, 33, 0.04), 0 8px 24px -4px rgba(37, 35, 33, 0.03) !important;
+}
+
+.bg-slate-50, .bg-\[\#fdfbf7\], .bg-\[\#eeebe5\], .bg-\[\#F2F0EB\], .bg-\[\#f2f1ec\], .bg-\[\#FAF6EE\], .bg-\[\#f8f6f0\] {
+  background-color: #faf7ee !important;
+}
+
+.bg-slate-100 {
+  background-color: #f3ede2 !important;
+}
+
+/* Warm Luxury Lines & Borders (Matching ivoryfilms --color-line) */
+.border-slate-200, .border-slate-200\/90, .border-slate-200\/80, .border-slate-150 {
+  border-color: rgba(37, 35, 33, 0.12) !important;
+}
+
+.border-slate-100 {
+  border-color: rgba(37, 35, 33, 0.07) !important;
+}
+
+/* Minimalist Warm Film Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f3ede2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #dcd4c6;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c3b9a7;
+}
+
+/* Dot grid removed */
+.bg-sliding-dots-hero {
+  background: transparent !important;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Hero Text & Component Entrance Animations */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Elegant Warm Glassmorphic Card */
+.glass-card {
+  background-color: rgba(250, 247, 238, 0.90);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(37, 35, 33, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(37, 35, 33, 0.04);
+}
