@@ -2,9 +2,10 @@
   "name": "skillswap-root",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev -- --host 0.0.0.0\"",
-    "build": "npm --prefix frontend run build",
-    "backend": "npm --prefix backend run dev",
+    "start": "node Backend/Server.js",
+    "build": "npm --prefix Backend install && npm --prefix frontend install && npm --prefix frontend run build",
+    "dev": "concurrently \"npm --prefix Backend run dev\" \"npm --prefix frontend run dev -- --host 0.0.0.0\"",
+    "backend": "npm --prefix Backend run dev",
     "frontend": "npm --prefix frontend run dev -- --host 0.0.0.0"
   },
   "devDependencies": {

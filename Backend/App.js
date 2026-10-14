@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 require("dotenv").config();
 
 const db = require("./config/db");
@@ -59,6 +60,22 @@ app.use((err, req, res, next) => {
     success: false,
     message: err.message || "Internal Server Error",
   });
+});
+
+// Serve frontend static files if dist folder exists (Production / Render deployment)
+const distPath = path.join(__dirname, "../frontend/dist");
+app.use(express.static(distPath));
+
+// For all non-API GET requests, serve frontend SPA index.html
+app.use((req, res, next) => {
+  if (req.method === "GET" && !req.path.startsWith("/api")) {
+    return res.sendFile(path.join(distPath, "index.html"), (err) => {
+      if (err) {
+        res.status(200).send("🚀 SkillSwap Backend API Server is running smoothly.");
+      }
+    });
+  }
+  next();
 });
 
 module.exports = app;
