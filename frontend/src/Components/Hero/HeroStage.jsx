@@ -129,7 +129,7 @@ export default function HeroStage({ heroConfig = {} }) {
       onMouseLeave={handleMouseLeave}
       role="img"
       aria-label="A boy teaching Machine Learning and a girl teaching UI/UX Design, swapping skills through SkillSwap."
-      className="relative w-full max-w-4xl mx-auto px-2 select-none overflow-hidden sm:overflow-visible min-h-[190px] sm:min-h-[210px] md:min-h-[220px] flex items-center justify-center"
+      className="relative w-full max-w-4xl mx-auto px-1 sm:px-2 select-none overflow-hidden sm:overflow-visible min-h-[175px] sm:min-h-[210px] md:min-h-[220px] flex items-center justify-center"
     >
       {/* Soft Ambient Depth Background Behind Stage */}
       <div
@@ -144,7 +144,7 @@ export default function HeroStage({ heroConfig = {} }) {
       </div>
 
       {/* THREE-ZONE ROW: BOY (LEFT) | BROKER & STREAMS (CENTER) | GIRL (RIGHT) */}
-      <div className="relative z-10 w-full flex flex-row items-center justify-between gap-2 sm:gap-4">
+      <div className="relative z-10 w-full flex flex-row items-center justify-between gap-1 sm:gap-4">
         
         {/* ZONE 1: BOY (TECH PERSONA - LEFT) */}
         <div className="w-[31%] sm:w-[30%] flex justify-start">

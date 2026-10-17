@@ -37,9 +37,9 @@ export default function SwapNode({ isPulsing = false, activePairIndex = 0 }) {
 
       {/* Main Glass Broker Badge */}
       <div
-        className={`relative z-10 flex flex-col items-center p-2 sm:p-2.5 rounded-xl bg-white/95 backdrop-blur-md border shadow-md transition-all duration-500 ${
+        className={`relative z-10 flex flex-col items-center p-1.5 sm:p-2.5 rounded-xl bg-white/95 backdrop-blur-md border shadow-md transition-all duration-500 scale-85 xs:scale-95 sm:scale-100 ${
           isPulsing
-            ? "border-indigo-400 ring-2 ring-indigo-200/50 shadow-indigo-500/15 scale-105"
+            ? "border-indigo-400 ring-2 ring-indigo-200/50 shadow-indigo-500/15 scale-90 xs:scale-100 sm:scale-105"
             : "border-slate-200/90 shadow-slate-900/5 hover:border-slate-300"
         }`}
       >

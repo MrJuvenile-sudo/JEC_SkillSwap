@@ -275,12 +275,12 @@ export default function SkillOrbStream({
         <div className="absolute inset-0 -m-2 bg-blue-500/25 rounded-full blur-xs pointer-events-none" />
 
         {/* Glass Orb Badge */}
-        <div className="relative flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/95 backdrop-blur-md border border-blue-400/80 shadow-md text-slate-800 text-[10px] font-extrabold tracking-tight whitespace-nowrap select-none hover:scale-105 transition-transform">
-          <span className="flex items-center justify-center w-4 h-4 rounded-full bg-blue-600 text-white shadow-2xs">
-            <TechIcon className="w-2.5 h-2.5" />
+        <div className="relative flex items-center gap-1 sm:gap-1.5 px-1.5 py-0.5 sm:px-2.5 sm:py-0.5 rounded-full bg-white/95 backdrop-blur-md border border-blue-400/80 shadow-md text-slate-800 text-[8px] sm:text-[10px] font-extrabold tracking-tight whitespace-nowrap select-none hover:scale-105 transition-transform">
+          <span className="flex items-center justify-center w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-blue-600 text-white shadow-2xs">
+            <TechIcon className="w-2 h-2 sm:w-2.5 sm:h-2.5" />
           </span>
-          <span className="font-bold text-blue-950">{currentPair.tech.name}</span>
-          <ArrowRight className="w-2.5 h-2.5 text-blue-500" />
+          <span className="font-bold text-blue-950 truncate max-w-[55px] xs:max-w-[80px] sm:max-w-none">{currentPair.tech.name}</span>
+          <ArrowRight className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-blue-500 shrink-0" />
         </div>
       </div>
 
@@ -299,11 +299,11 @@ export default function SkillOrbStream({
         <div className="absolute inset-0 -m-2 bg-purple-500/25 rounded-full blur-xs pointer-events-none" />
 
         {/* Glass Orb Badge */}
-        <div className="relative flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/95 backdrop-blur-md border border-purple-400/80 shadow-md text-slate-800 text-[10px] font-extrabold tracking-tight whitespace-nowrap select-none hover:scale-105 transition-transform">
-          <ArrowLeft className="w-2.5 h-2.5 text-purple-500" />
-          <span className="font-bold text-purple-950">{currentPair.creative.name}</span>
-          <span className="flex items-center justify-center w-4 h-4 rounded-full bg-purple-600 text-white shadow-2xs">
-            <CreativeIcon className="w-2.5 h-2.5" />
+        <div className="relative flex items-center gap-1 sm:gap-1.5 px-1.5 py-0.5 sm:px-2.5 sm:py-0.5 rounded-full bg-white/95 backdrop-blur-md border border-purple-400/80 shadow-md text-slate-800 text-[8px] sm:text-[10px] font-extrabold tracking-tight whitespace-nowrap select-none hover:scale-105 transition-transform">
+          <ArrowLeft className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-purple-500 shrink-0" />
+          <span className="font-bold text-purple-950 truncate max-w-[55px] xs:max-w-[80px] sm:max-w-none">{currentPair.creative.name}</span>
+          <span className="flex items-center justify-center w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-purple-600 text-white shadow-2xs">
+            <CreativeIcon className="w-2 h-2 sm:w-2.5 sm:h-2.5" />
           </span>
         </div>
       </div>

@@ -410,10 +410,10 @@ export default function Home() {
 
           {/* Main Headline with Dynamic Rotating Animation */}
           <div className="space-y-2 pt-1">
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-serif font-black tracking-tight text-slate-900 leading-none">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-black tracking-tight text-slate-900 leading-tight break-words">
               {heroConfig.headline_static}
             </h1>
-            <div className="text-4xl sm:text-6xl md:text-7xl font-serif italic font-normal text-blue-600 leading-tight min-h-[1.3em] flex items-center justify-center flex-wrap gap-x-3">
+            <div className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif italic font-normal text-blue-600 leading-tight min-h-[1.3em] flex items-center justify-center flex-wrap gap-x-2 sm:gap-x-3">
               <span className="text-slate-900 not-italic font-black">{heroConfig.headline_dynamic_prefix}</span>
               <span
                 className={`inline-block text-blue-600 transition-all duration-300 transform ${
@@ -426,7 +426,7 @@ export default function Home() {
           </div>
 
           {/* Subtitle */}
-          <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-normal animate-fade-in-up">
+          <p className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-normal animate-fade-in-up px-2">
             {heroConfig.subtitle}
           </p>
 
@@ -489,27 +489,27 @@ export default function Home() {
           </div>
 
           {/* Bottom Metrics Bar (Dynamic from Admin Panel) */}
-          <div className="pt-12 border-t border-slate-200/80 max-w-3xl mx-auto grid grid-cols-3 gap-4 text-center">
+          <div className="pt-8 sm:pt-12 border-t border-slate-200/80 max-w-3xl mx-auto grid grid-cols-3 gap-2 sm:gap-4 text-center">
             <div className="transition-transform hover:-translate-y-0.5">
-              <p className="text-xl sm:text-2xl font-black text-slate-900">
+              <p className="text-base sm:text-xl md:text-2xl font-black text-slate-900">
                 {heroStats.stat1_value}
               </p>
-              <p className="text-xs text-slate-500 font-semibold mt-0.5">{heroStats.stat1_label}</p>
+              <p className="text-[10px] sm:text-xs text-slate-500 font-semibold mt-0.5 leading-tight">{heroStats.stat1_label}</p>
             </div>
 
             <div className="transition-transform hover:-translate-y-0.5">
-              <p className="text-xl sm:text-2xl font-black text-slate-900">
+              <p className="text-base sm:text-xl md:text-2xl font-black text-slate-900">
                 {heroStats.stat2_value}
               </p>
-              <p className="text-xs text-slate-500 font-semibold mt-0.5">{heroStats.stat2_label}</p>
+              <p className="text-[10px] sm:text-xs text-slate-500 font-semibold mt-0.5 leading-tight">{heroStats.stat2_label}</p>
             </div>
 
             <div className="transition-transform hover:-translate-y-0.5">
-              <p className="text-xl sm:text-2xl font-black text-slate-900 flex items-center justify-center gap-1">
-                <Star className="w-4 h-4 fill-amber-400 text-amber-400 inline" />
+              <p className="text-base sm:text-xl md:text-2xl font-black text-slate-900 flex items-center justify-center gap-0.5 sm:gap-1">
+                <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-400 text-amber-400 inline shrink-0" />
                 <span>{heroStats.stat3_value}</span>
               </p>
-              <p className="text-xs text-slate-500 font-semibold mt-0.5">{heroStats.stat3_label}</p>
+              <p className="text-[10px] sm:text-xs text-slate-500 font-semibold mt-0.5 leading-tight">{heroStats.stat3_label}</p>
             </div>
           </div>
 
@@ -575,13 +575,13 @@ export default function Home() {
               </div>
 
               <div className="space-y-2 text-xs">
-                <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200/60 text-emerald-800 font-bold flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-black tracking-wider text-emerald-600">TEACHING:</span>
-                  <span className="text-xs">{currentPair.user1.teaching}</span>
+                <div className="p-2 sm:p-2.5 rounded-xl bg-emerald-50 border border-emerald-200/60 text-emerald-800 font-bold flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                  <span className="text-[9px] sm:text-[10px] uppercase font-black tracking-wider text-emerald-600 shrink-0">TEACHING:</span>
+                  <span className="text-xs truncate">{currentPair.user1.teaching}</span>
                 </div>
-                <div className="p-2.5 rounded-xl bg-blue-50 border border-blue-200/60 text-blue-800 font-bold flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-black tracking-wider text-blue-600">LEARNING:</span>
-                  <span className="text-xs">{currentPair.user1.learning}</span>
+                <div className="p-2 sm:p-2.5 rounded-xl bg-blue-50 border border-blue-200/60 text-blue-800 font-bold flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                  <span className="text-[9px] sm:text-[10px] uppercase font-black tracking-wider text-blue-600 shrink-0">LEARNING:</span>
+                  <span className="text-xs truncate">{currentPair.user1.learning}</span>
                 </div>
               </div>
             </div>
@@ -618,13 +618,13 @@ export default function Home() {
               </div>
 
               <div className="space-y-2 text-xs">
-                <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200/60 text-emerald-800 font-bold flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-black tracking-wider text-emerald-600">TEACHING:</span>
-                  <span className="text-xs">{currentPair.user2.teaching}</span>
+                <div className="p-2 sm:p-2.5 rounded-xl bg-emerald-50 border border-emerald-200/60 text-emerald-800 font-bold flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                  <span className="text-[9px] sm:text-[10px] uppercase font-black tracking-wider text-emerald-600 shrink-0">TEACHING:</span>
+                  <span className="text-xs truncate">{currentPair.user2.teaching}</span>
                 </div>
-                <div className="p-2.5 rounded-xl bg-blue-50 border border-blue-200/60 text-blue-800 font-bold flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-black tracking-wider text-blue-600">LEARNING:</span>
-                  <span className="text-xs">{currentPair.user2.learning}</span>
+                <div className="p-2 sm:p-2.5 rounded-xl bg-blue-50 border border-blue-200/60 text-blue-800 font-bold flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                  <span className="text-[9px] sm:text-[10px] uppercase font-black tracking-wider text-blue-600 shrink-0">LEARNING:</span>
+                  <span className="text-xs truncate">{currentPair.user2.learning}</span>
                 </div>
               </div>
             </div>
@@ -635,7 +635,7 @@ export default function Home() {
           <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs">
             <div className="flex flex-wrap items-center gap-2">
               <span className="px-3 py-1.5 rounded-xl bg-amber-50 text-amber-800 font-bold border border-amber-200/60 flex items-center gap-1">
-                🎓 Real-time Classroom & Audio
+                🎓 Real-time HD Video Classroom
               </span>
               <span className="px-3 py-1.5 rounded-xl bg-rose-50 text-rose-800 font-bold border border-rose-200/60 flex items-center gap-1">
                 📝 Real-time Notes & Scratchpad
@@ -832,27 +832,29 @@ export default function Home() {
           <p className="text-slate-600 text-sm font-medium">Compare traditional video platforms with bilateral 1-on-1 co-learning.</p>
         </div>
 
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-hidden">
-          <div className="grid grid-cols-12 bg-slate-900 text-white p-4 font-bold text-xs uppercase tracking-wider">
-            <div className="col-span-4">Aspect</div>
-            <div className="col-span-4 text-slate-400">Traditional Paid Courses</div>
-            <div className="col-span-4 text-blue-400 font-black">SkillSwap Peer Barter</div>
-          </div>
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-x-auto">
+          <div className="min-w-[500px]">
+            <div className="grid grid-cols-12 bg-slate-900 text-white p-4 font-bold text-xs uppercase tracking-wider">
+              <div className="col-span-4">Aspect</div>
+              <div className="col-span-4 text-slate-400">Traditional Paid Courses</div>
+              <div className="col-span-4 text-blue-400 font-black">SkillSwap Peer Barter</div>
+            </div>
 
-          <div className="divide-y divide-slate-100">
-            {comparison.map((c, idx) => (
-              <div key={idx} className="grid grid-cols-12 p-4 text-xs font-semibold items-center hover:bg-slate-50 transition-colors">
-                <div className="col-span-4 font-extrabold text-slate-900">{c.feature}</div>
-                <div className="col-span-4 text-slate-500 flex items-center gap-1.5">
-                  <X className="w-4 h-4 text-rose-500 shrink-0" />
-                  <span>{c.traditional}</span>
+            <div className="divide-y divide-slate-100">
+              {comparison.map((c, idx) => (
+                <div key={idx} className="grid grid-cols-12 p-4 text-xs font-semibold items-center hover:bg-slate-50 transition-colors">
+                  <div className="col-span-4 font-extrabold text-slate-900">{c.feature}</div>
+                  <div className="col-span-4 text-slate-500 flex items-center gap-1.5">
+                    <X className="w-4 h-4 text-rose-500 shrink-0" />
+                    <span>{c.traditional}</span>
+                  </div>
+                  <div className="col-span-4 text-blue-700 font-extrabold flex items-center gap-1.5">
+                    <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span>{c.skillswap}</span>
+                  </div>
                 </div>
-                <div className="col-span-4 text-blue-700 font-extrabold flex items-center gap-1.5">
-                  <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>{c.skillswap}</span>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 

@@ -90,7 +90,7 @@ export default function AvatarFigure({
 
       {/* 2. AVATAR CONTAINER WITH IDLE BREATHING MOTION */}
       <div
-        className="relative w-full aspect-[3/4] max-h-[135px] sm:max-h-[155px] flex items-end justify-center transition-transform duration-200 ease-out"
+        className="relative w-full aspect-[3/4] max-h-[115px] xs:max-h-[135px] sm:max-h-[155px] md:max-h-[175px] flex items-end justify-center transition-transform duration-200 ease-out"
         style={{
           transform: `translate3d(${figureX}px, ${figureY}px, 0)`
         }}
@@ -160,19 +160,19 @@ export default function AvatarFigure({
 
           {/* Contact Shadow Under Figure */}
           <div
-            className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-24 sm:w-28 h-2.5 bg-slate-900/15 rounded-full blur-xs -z-1 pointer-events-none"
+            className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-20 sm:w-28 h-2.5 bg-slate-900/15 rounded-full blur-xs -z-1 pointer-events-none"
             aria-hidden="true"
           />
         </div>
       </div>
 
       {/* 3. GLASS PROFILE CHIP & ARRIVAL NOTIFICATION */}
-      <div className="relative w-full mt-1.5 z-20">
+      <div className="relative w-full mt-1 sm:mt-1.5 z-20">
         
         {/* Floating Arrival Feedback Toast */}
         {arrivalNotice && (
           <div
-            className={`absolute -top-7 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-600 text-white text-[9px] sm:text-[10px] font-black tracking-wide shadow-md shadow-emerald-500/30 transition-all duration-300 animate-bounce pointer-events-none whitespace-nowrap`}
+            className={`absolute -top-6 sm:-top-7 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1 px-2 sm:px-2.5 py-0.5 rounded-full bg-emerald-600 text-white text-[8px] sm:text-[10px] font-black tracking-wide shadow-md shadow-emerald-500/30 transition-all duration-300 animate-bounce pointer-events-none whitespace-nowrap`}
           >
             <CheckCircle2 className="w-2.5 h-2.5 text-emerald-200 shrink-0" />
             <span>+ Received: {arrivalNotice} ✓</span>
@@ -181,21 +181,21 @@ export default function AvatarFigure({
 
         {/* Real HTML Glass Card (Compact & Sleek) */}
         <div
-          className={`backdrop-blur-md bg-white/95 rounded-xl p-2 border shadow-xs transition-all duration-500 ${
+          className={`backdrop-blur-md bg-white/95 rounded-lg sm:rounded-xl p-1.5 sm:p-2 border shadow-xs transition-all duration-500 ${
             isArrivalGlow
               ? "ring-2 ring-emerald-500 shadow-[0_0_16px_rgba(16,185,129,0.3)] border-emerald-300 scale-[1.02]"
               : "border-slate-200/90 shadow-slate-900/5 hover:border-slate-300"
           }`}
         >
           {/* Header Row: Identity & Status */}
-          <div className="flex items-center justify-between gap-1 pb-1 border-b border-slate-100">
+          <div className="flex items-center justify-between gap-1 pb-0.5 sm:pb-1 border-b border-slate-100">
             <div className="flex items-center gap-1 min-w-0">
-              <span className="text-[11px] font-black text-slate-900 leading-tight truncate">
+              <span className="text-[10px] sm:text-[11px] font-black text-slate-900 leading-tight truncate">
                 {profile.name}
               </span>
               <CheckCircle2 className="w-2.5 h-2.5 text-blue-600 fill-blue-50 shrink-0" />
             </div>
-            <div className="flex items-center gap-1 text-[8px] font-bold text-emerald-700 shrink-0">
+            <div className="flex items-center gap-0.5 sm:gap-1 text-[7px] sm:text-[8px] font-bold text-emerald-700 shrink-0">
               <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span>
               <span>Online</span>
             </div>
@@ -204,20 +204,20 @@ export default function AvatarFigure({
           {/* Barter Declarations */}
           <div className="mt-1 space-y-0.5 text-left">
             <div className="flex items-center gap-1 min-w-0">
-              <span className="uppercase text-[8px] font-black tracking-wider text-slate-400 shrink-0 w-8">
+              <span className="uppercase text-[7px] sm:text-[8px] font-black tracking-wider text-slate-400 shrink-0 w-6 sm:w-8">
                 Teach:
               </span>
-              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded bg-blue-50/90 border border-blue-200/80 text-blue-700 text-[9px] font-bold truncate">
+              <span className="inline-flex items-center gap-0.5 px-1 sm:px-1.5 py-0.2 rounded bg-blue-50/90 border border-blue-200/80 text-blue-700 text-[8px] sm:text-[9px] font-bold truncate max-w-[65px] xs:max-w-[85px] sm:max-w-none">
                 <Sparkles className="w-2 h-2 text-blue-500 shrink-0" />
                 <span className="truncate">{teachingDisplay}</span>
               </span>
             </div>
 
             <div className="flex items-center gap-1 min-w-0">
-              <span className="uppercase text-[8px] font-black tracking-wider text-slate-400 shrink-0 w-8">
+              <span className="uppercase text-[7px] sm:text-[8px] font-black tracking-wider text-slate-400 shrink-0 w-6 sm:w-8">
                 Want:
               </span>
-              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded bg-amber-50/90 border border-amber-200/80 text-amber-800 text-[9px] font-bold truncate">
+              <span className="inline-flex items-center gap-0.5 px-1 sm:px-1.5 py-0.2 rounded bg-amber-50/90 border border-amber-200/80 text-amber-800 text-[8px] sm:text-[9px] font-bold truncate max-w-[65px] xs:max-w-[85px] sm:max-w-none">
                 <ArrowUpRight className="w-2 h-2 text-amber-600 shrink-0" />
                 <span className="truncate">{wantingDisplay}</span>
               </span>
