@@ -67,24 +67,24 @@ export default function AvatarFigure({
   const glowY = isPaused ? 0 : mouseOffset.y * 12;
 
   return (
-    <div className={`relative flex flex-col items-center select-none w-full max-w-[340px] sm:max-w-[380px] lg:max-w-[420px] ${isTech ? 'items-center lg:items-start' : 'items-center lg:items-end'}`}>
+    <div className={`relative flex flex-col items-center select-none w-full max-w-[210px] sm:max-w-[240px] md:max-w-[260px] ${isTech ? 'items-center md:items-start' : 'items-center md:items-end'}`}>
       
       {/* 1. RIM LIGHT & BACKGROUND DEPTH GLOW */}
       <div
-        className="absolute -top-12 -inset-x-8 h-80 sm:h-96 -z-10 pointer-events-none transition-transform duration-300 ease-out"
+        className="absolute -top-6 -inset-x-6 h-48 sm:h-56 -z-10 pointer-events-none transition-transform duration-300 ease-out"
         style={{
           transform: `translate3d(${glowX}px, ${glowY}px, 0)`
         }}
         aria-hidden="true"
       >
         <div
-          className={`w-full h-full rounded-full blur-3xl opacity-70 bg-gradient-to-b ${profile.accentGlow}`}
+          className={`w-full h-full rounded-full blur-2xl opacity-60 bg-gradient-to-b ${profile.accentGlow}`}
         />
       </div>
 
       {/* 2. AVATAR CONTAINER WITH IDLE BREATHING MOTION */}
       <div
-        className="relative w-full aspect-[4/5] max-h-[380px] sm:max-h-[440px] lg:max-h-[480px] flex items-end justify-center transition-transform duration-200 ease-out"
+        className="relative w-full aspect-[3/4] max-h-[220px] sm:max-h-[250px] md:max-h-[270px] flex items-end justify-center transition-transform duration-200 ease-out"
         style={{
           transform: `translate3d(${figureX}px, ${figureY}px, 0)`
         }}
@@ -102,13 +102,13 @@ export default function AvatarFigure({
               src={imageSource}
               srcSet={srcSet || `${imageSource} 1x`}
               alt={imageAlt}
-              width="400"
-              height="500"
+              width="260"
+              height="348"
               fetchpriority={isTech ? "high" : "auto"}
               decoding="async"
               loading="eager"
               onError={() => setImgError(true)}
-              className="relative z-10 w-full h-full object-contain object-bottom drop-shadow-[0_12px_24px_rgba(0,0,0,0.18)] pointer-events-none"
+              className="relative z-10 w-full h-full object-contain object-bottom drop-shadow-[0_8px_16px_rgba(0,0,0,0.14)] pointer-events-none"
             />
           ) : (
             /* High-fidelity layered SVG fallback if image is missing */
@@ -154,28 +154,28 @@ export default function AvatarFigure({
 
           {/* Contact Shadow Under Figure */}
           <div
-            className="absolute bottom-1 left-1/2 -translate-x-1/2 w-48 sm:w-56 h-6 bg-slate-900/20 rounded-full blur-md -z-1 pointer-events-none"
+            className="absolute bottom-1 left-1/2 -translate-x-1/2 w-32 sm:w-36 h-4 bg-slate-900/15 rounded-full blur-md -z-1 pointer-events-none"
             aria-hidden="true"
           />
         </div>
       </div>
 
       {/* 3. GLASS PROFILE CHIP & ARRIVAL NOTIFICATION */}
-      <div className="relative w-full mt-2 sm:mt-3 z-20">
+      <div className="relative w-full mt-2 z-20">
         
         {/* Floating Arrival Feedback Toast */}
         {arrivalNotice && (
           <div
-            className={`absolute -top-11 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-600 text-white text-[11px] font-black tracking-wide shadow-xl shadow-emerald-500/35 transition-all duration-300 animate-bounce pointer-events-none whitespace-nowrap`}
+            className={`absolute -top-9 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600 text-white text-[10px] sm:text-[11px] font-black tracking-wide shadow-xl shadow-emerald-500/35 transition-all duration-300 animate-bounce pointer-events-none whitespace-nowrap`}
           >
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-200 shrink-0" />
+            <CheckCircle2 className="w-3 h-3 text-emerald-200 shrink-0" />
             <span>+ Received: {arrivalNotice} ✓</span>
           </div>
         )}
 
         {/* Real HTML Glass Card */}
         <div
-          className={`backdrop-blur-md bg-white/95 rounded-2xl p-3.5 sm:p-4 border shadow-lg transition-all duration-500 ${
+          className={`backdrop-blur-md bg-white/95 rounded-2xl p-2.5 sm:p-3 border shadow-md transition-all duration-500 ${
             isArrivalGlow
               ? "ring-2 ring-emerald-500 shadow-[0_0_24px_rgba(16,185,129,0.35)] border-emerald-300 scale-[1.02]"
               : "border-slate-200/90 shadow-slate-900/5 hover:border-slate-300"

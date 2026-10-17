@@ -321,67 +321,71 @@ export default function Home() {
     <div className="min-h-screen bg-[#faf7ee] text-slate-900 font-sans relative">
       
       {/* ------------------------------------------------------------- */}
-      {/* 1. HERO SECTION (1-ON-1 SKILL BARTER STAGE) */}
+      {/* 1. HERO SECTION (WITH 1-ON-1 EXCHANGE STAGE ABOVE TEXT) */}
       {/* ------------------------------------------------------------- */}
-      <section className="pt-12 pb-16 sm:pt-16 sm:pb-24 border-b border-slate-200/80 bg-gradient-to-b from-[#faf7ee] via-[#f7f2e5] to-[#faf7ee] relative overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-10 relative z-10">
+      <section className="pt-12 pb-20 sm:pt-16 sm:pb-28 border-b border-slate-200/80 bg-gradient-to-b from-[#faf7ee] via-[#f7f2e5] to-[#faf7ee] relative overflow-hidden">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-8 relative z-10">
           
-          {/* Centered Hero Copy Block */}
-          <div className="max-w-3xl mx-auto text-center space-y-6">
-            
-            {/* Trust Pills */}
-            <div className="flex flex-wrap items-center justify-center gap-2.5">
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50/90 border border-emerald-200/80 text-emerald-800 text-xs font-extrabold shadow-2xs">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Zero fees</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-50/90 border border-blue-200/80 text-blue-800 text-xs font-extrabold shadow-2xs">
-                <Repeat className="w-3.5 h-3.5 text-blue-600" />
-                <span>1-on-1 exchange</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-indigo-50/90 border border-indigo-200/80 text-indigo-800 text-xs font-extrabold shadow-2xs">
-                <Shield className="w-3.5 h-3.5 text-indigo-600" />
-                <span>Verified peers</span>
-              </span>
+          {/* Animated Top Pill Badges with Slide-in Right animation */}
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50/90 border border-blue-200/80 text-blue-700 text-xs font-bold shadow-2xs animate-fade-in-up">
+              <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+              <span>Verified Reciprocal Peer-to-Peer Learning Network</span>
             </div>
 
-            {/* H1 Headline */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-black tracking-tight text-slate-900 leading-tight">
-              Trade what you know for what you want to learn.
-            </h1>
-
-            {/* Subtitle */}
-            <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-normal">
-              SkillSwap matches you 1-on-1 with a real person. You teach a skill, they teach you one. No fees, no courses, just a fair exchange.
-            </p>
-
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-              <Link
-                to={isAuthenticated ? "/explore" : "/register"}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-sm font-black shadow-lg shadow-blue-500/25 transition-all hover:scale-105 active:scale-95 min-h-[44px]"
-              >
-                <span>Start Swapping</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-
-              <Link
-                to="/explore"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-white hover:bg-slate-50 text-slate-800 rounded-full text-sm font-extrabold border border-slate-200/90 shadow-sm transition-all hover:border-slate-300 hover:scale-105 active:scale-95 min-h-[44px]"
-              >
-                <span>Explore Skills</span>
-              </Link>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50/90 border border-emerald-200/80 text-emerald-700 text-xs font-bold shadow-2xs animate-slide-in-right hidden sm:inline-flex">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-600 animate-spin" style={{ animationDuration: '4s' }} />
+              <span>Live AI Synergy Matching Active</span>
             </div>
-
           </div>
 
-          {/* Realism 1-on-1 Interactive Barter Stage */}
-          <div className="pt-2 pb-4">
+          {/* 1-ON-1 SKILL BARTER STAGE: NORMAL & ACCURATE DIMENSIONS ABOVE TEXT */}
+          <div className="pt-1 pb-3">
             <HeroStage />
           </div>
 
-          {/* Quick Search Box Input */}
-          <div className="max-w-2xl mx-auto relative group pt-2">
+          {/* Main Headline with Previous Dynamic Text Animation */}
+          <div className="space-y-3">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-serif font-black tracking-tight text-slate-900 leading-none">
+              Teach what you know.
+            </h1>
+            <div className="text-4xl sm:text-6xl md:text-7xl font-serif italic font-normal text-blue-600 leading-tight min-h-[1.3em] flex items-center justify-center flex-wrap gap-x-3">
+              <span className="text-slate-900 not-italic font-black">Master</span>
+              <span
+                className={`inline-block text-blue-600 transition-all duration-300 transform ${
+                  fadeState ? "opacity-100 translate-y-0 scale-100" : "opacity-0 -translate-y-3 scale-95"
+                }`}
+              >
+                {dynamicPhrases[activeSkillIndex]}
+              </span>
+            </div>
+          </div>
+
+          {/* Subtitle */}
+          <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-normal animate-fade-in-up">
+            Trade expertise 1-on-1 with verified practitioners. SkillSwap matches schedule, levels, and mutual topics so you co-learn faster for free.
+          </p>
+
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
+            <Link
+              to={isAuthenticated ? "/explore" : "/register"}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-xs font-extrabold shadow-md shadow-blue-500/20 transition-all hover:scale-105 active:scale-95 min-h-[44px]"
+            >
+              <span>Start Swapping</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+
+            <Link
+              to="/explore"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-white hover:bg-slate-50 text-slate-800 rounded-full text-xs font-extrabold border border-slate-200/90 shadow-2xs transition-all hover:border-slate-300 hover:scale-105 active:scale-95 min-h-[44px]"
+            >
+              <span>Explore Skills</span>
+            </Link>
+          </div>
+
+          {/* Search Box Input */}
+          <div className="max-w-2xl mx-auto relative group">
             <form
               onSubmit={handleSearchSubmit}
               className="bg-white rounded-2xl sm:rounded-full p-2 shadow-xl border border-slate-200/90 flex flex-col sm:flex-row items-center gap-2 transition-all group-hover:border-blue-300"
@@ -406,8 +410,8 @@ export default function Home() {
             </form>
           </div>
 
-          {/* Popular Topics Chips */}
-          <div className="pt-1 flex flex-wrap items-center justify-center gap-2 text-xs">
+          {/* Popular Topics Chips with subtle animation */}
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-2 text-xs">
             <span className="text-slate-500 font-medium mr-1">Popular topics:</span>
             {popularTopics.map((topic, idx) => (
               <button
@@ -421,7 +425,7 @@ export default function Home() {
           </div>
 
           {/* Bottom Metrics Bar (Dynamic from Admin Panel) */}
-          <div className="pt-10 border-t border-slate-200/80 max-w-3xl mx-auto grid grid-cols-3 gap-4 text-center">
+          <div className="pt-12 border-t border-slate-200/80 max-w-3xl mx-auto grid grid-cols-3 gap-4 text-center">
             <div className="transition-transform hover:-translate-y-0.5">
               <p className="text-xl sm:text-2xl font-black text-slate-900">
                 {heroStats.stat1_value}

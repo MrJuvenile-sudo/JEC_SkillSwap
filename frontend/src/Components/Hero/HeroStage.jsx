@@ -122,11 +122,11 @@ export default function HeroStage() {
       onMouseLeave={handleMouseLeave}
       role="img"
       aria-label="A boy teaching Machine Learning and a girl teaching UI/UX Design, swapping skills through SkillSwap."
-      className="relative w-full max-w-6xl mx-auto px-2 sm:px-4 lg:px-6 select-none overflow-hidden sm:overflow-visible min-h-[480px] sm:min-h-[520px] lg:min-h-[560px] flex items-center justify-center"
+      className="relative w-full max-w-5xl mx-auto px-2 sm:px-4 select-none overflow-hidden sm:overflow-visible min-h-[300px] sm:min-h-[330px] md:min-h-[350px] flex items-center justify-center"
     >
       {/* Soft Ambient Depth Background Behind Stage */}
       <div
-        className="absolute inset-0 -m-6 sm:-m-12 rounded-3xl bg-gradient-to-b from-blue-50/40 via-indigo-50/20 to-purple-50/40 -z-20 pointer-events-none blur-2xl"
+        className="absolute inset-0 -m-4 sm:-m-8 rounded-3xl bg-gradient-to-b from-blue-50/30 via-indigo-50/15 to-purple-50/30 -z-20 pointer-events-none blur-2xl"
         aria-hidden="true"
       />
 
@@ -138,10 +138,10 @@ export default function HeroStage() {
       </div>
 
       {/* THREE-ZONE ROW: BOY (LEFT) | BROKER & STREAMS (CENTER) | GIRL (RIGHT) */}
-      <div className="relative z-10 w-full flex flex-col md:flex-row items-center justify-between gap-4 md:gap-2 lg:gap-8">
+      <div className="relative z-10 w-full flex flex-col md:flex-row items-center justify-between gap-4 md:gap-3 lg:gap-6">
         
         {/* ZONE 1: BOY (TECH PERSONA - LEFT) */}
-        <div className="w-full md:w-[38%] lg:w-[36%] flex justify-center md:justify-start">
+        <div className="w-full md:w-[35%] flex justify-center md:justify-start">
           <AvatarFigure
             variant="tech"
             src="/hero/boy-tech.webp"
@@ -156,7 +156,7 @@ export default function HeroStage() {
         </div>
 
         {/* ZONE 2: CENTER BROKER & STREAM CONNECTOR */}
-        <div className="relative w-full md:w-[24%] lg:w-[28%] flex flex-col items-center justify-center py-4 md:py-0 min-h-[160px] md:min-h-[300px]">
+        <div className="relative w-full md:w-[30%] flex flex-col items-center justify-center py-2 md:py-0 min-h-[140px] md:min-h-[220px]">
           {/* Central SkillSwap Matcher Node */}
           <div className="relative z-20">
             <SwapNode
@@ -177,7 +177,7 @@ export default function HeroStage() {
         </div>
 
         {/* ZONE 3: GIRL (CREATIVE PERSONA - RIGHT) */}
-        <div className="w-full md:w-[38%] lg:w-[36%] flex justify-center md:justify-end">
+        <div className="w-full md:w-[35%] flex justify-center md:justify-end">
           <AvatarFigure
             variant="creative"
             src="/hero/girl-creative.webp"
