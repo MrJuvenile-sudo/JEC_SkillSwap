@@ -56,6 +56,45 @@ export default function Home() {
     stat3_label: "Average Karma"
   });
 
+  const [heroConfig, setHeroConfig] = useState({
+    pill1_text: "Verified Reciprocal Peer-to-Peer Learning Network",
+    pill2_text: "Live AI Synergy Matching Active",
+    headline_static: "Teach what you know.",
+    headline_dynamic_prefix: "Master",
+    dynamic_phrases: [
+      "what you need next.",
+      "Data Structures & Algorithms.",
+      "Cloud Computing & AWS.",
+      "System Design & DevOps.",
+      "Figma & UI/UX Design.",
+      "Python & Machine Learning."
+    ],
+    subtitle: "Trade expertise 1-on-1 with verified practitioners. SkillSwap matches schedule, levels, and mutual topics so you co-learn faster for free.",
+    cta1_text: "Start Swapping",
+    cta1_link: "/register",
+    cta2_text: "Explore Skills",
+    cta2_link: "/explore",
+    popular_topics: [
+      "Python", "Figma", "React", "Spanish", "Machine Learning", "System Design", "Prompt Engineering"
+    ],
+    boy_name: "Aarav Sharma",
+    boy_role: "AI & ML Specialist",
+    boy_image: "/hero/boy-tech.webp",
+    boy_teach: "Machine Learning",
+    boy_want: "UI/UX Design",
+    girl_name: "Ananya Iyer",
+    girl_role: "Product & UI/UX Designer",
+    girl_image: "/hero/girl-creative.png",
+    girl_teach: "UI/UX Design",
+    girl_want: "Machine Learning",
+    pairs: [
+      { id: 0, tech: "Machine Learning", creative: "UI/UX Design" },
+      { id: 1, tech: "Python", creative: "Spanish" },
+      { id: 2, tech: "Data Science", creative: "Digital Art" },
+      { id: 3, tech: "System Design", creative: "Brand Strategy" }
+    ]
+  });
+
   useEffect(() => {
     API.get("/admin/public/testimonials")
       .then(res => {
@@ -79,6 +118,47 @@ export default function Home() {
             stat3_value: s.hero_stat3_value || "4.9 / 5",
             stat3_label: s.hero_stat3_label || "Average Karma"
           });
+
+          const parsedPhrases = s.hero_dynamic_phrases
+            ? s.hero_dynamic_phrases.split("\n").map(p => p.trim()).filter(Boolean)
+            : null;
+
+          const parsedTopics = s.hero_popular_topics
+            ? s.hero_popular_topics.split(",").map(t => t.trim()).filter(Boolean)
+            : null;
+
+          const dynamicPairs = [
+            { id: 0, tech: s.hero_pair1_boy || "Machine Learning", creative: s.hero_pair1_girl || "UI/UX Design" },
+            { id: 1, tech: s.hero_pair2_boy || "Python", creative: s.hero_pair2_girl || "Spanish" },
+            { id: 2, tech: s.hero_pair3_boy || "Data Science", creative: s.hero_pair3_girl || "Digital Art" },
+            { id: 3, tech: s.hero_pair4_boy || "System Design", creative: s.hero_pair4_girl || "Brand Strategy" }
+          ];
+
+          setHeroConfig(prev => ({
+            ...prev,
+            pill1_text: s.hero_badge_pill1 || prev.pill1_text,
+            pill2_text: s.hero_badge_pill2 || prev.pill2_text,
+            headline_static: s.hero_headline_static || prev.headline_static,
+            headline_dynamic_prefix: s.hero_headline_dynamic_prefix || prev.headline_dynamic_prefix,
+            dynamic_phrases: parsedPhrases && parsedPhrases.length > 0 ? parsedPhrases : prev.dynamic_phrases,
+            subtitle: s.hero_subtitle || prev.subtitle,
+            cta1_text: s.hero_cta1_text || prev.cta1_text,
+            cta1_link: s.hero_cta1_link || prev.cta1_link,
+            cta2_text: s.hero_cta2_text || prev.cta2_text,
+            cta2_link: s.hero_cta2_link || prev.cta2_link,
+            popular_topics: parsedTopics && parsedTopics.length > 0 ? parsedTopics : prev.popular_topics,
+            boy_name: s.hero_boy_name || prev.boy_name,
+            boy_role: s.hero_boy_role || prev.boy_role,
+            boy_image: s.hero_boy_image || prev.boy_image,
+            boy_teach: s.hero_boy_teach || prev.boy_teach,
+            boy_want: s.hero_boy_want || prev.boy_want,
+            girl_name: s.hero_girl_name || prev.girl_name,
+            girl_role: s.hero_girl_role || prev.girl_role,
+            girl_image: s.hero_girl_image || prev.girl_image,
+            girl_teach: s.hero_girl_teach || prev.girl_teach,
+            girl_want: s.hero_girl_want || prev.girl_want,
+            pairs: dynamicPairs
+          }));
         }
       })
       .catch(err => {
@@ -86,14 +166,8 @@ export default function Home() {
       });
   }, []);
 
-  const dynamicPhrases = [
-    "what you need next.",
-    "Data Structures & Algorithms.",
-    "Cloud Computing & AWS.",
-    "System Design & DevOps.",
-    "Figma & UI/UX Design.",
-    "Python & Machine Learning."
-  ];
+  const dynamicPhrases = heroConfig.dynamic_phrases;
+  const popularTopics = heroConfig.popular_topics;
 
   const defaultSimulationPairs = [
     {
@@ -186,16 +260,6 @@ export default function Home() {
     }, 3200);
     return () => clearInterval(interval);
   }, [dynamicPhrases.length]);
-
-  const popularTopics = [
-    "Python",
-    "Figma",
-    "React",
-    "Spanish",
-    "Machine Learning",
-    "System Design",
-    "Prompt Engineering"
-  ];
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -330,57 +394,57 @@ export default function Home() {
           <div className="flex flex-wrap items-center justify-center gap-3">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50/90 border border-blue-200/80 text-blue-700 text-xs font-bold shadow-2xs animate-fade-in-up">
               <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
-              <span>Verified Reciprocal Peer-to-Peer Learning Network</span>
+              <span>{heroConfig.pill1_text}</span>
             </div>
 
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50/90 border border-emerald-200/80 text-emerald-700 text-xs font-bold shadow-2xs animate-slide-in-right hidden sm:inline-flex">
               <Sparkles className="w-3.5 h-3.5 text-emerald-600 animate-spin" style={{ animationDuration: '4s' }} />
-              <span>Live AI Synergy Matching Active</span>
+              <span>{heroConfig.pill2_text}</span>
             </div>
           </div>
 
-          {/* 1-ON-1 SKILL BARTER STAGE: COMPACT & SLEEK DIMENSIONS ABOVE TEXT */}
+          {/* 1-ON-1 SKILL BARTER STAGE: DYNAMIC & SLEEK DIMENSIONS ABOVE TEXT */}
           <div className="py-0.5">
-            <HeroStage />
+            <HeroStage heroConfig={heroConfig} />
           </div>
 
           {/* Main Headline with Dynamic Rotating Animation */}
           <div className="space-y-2 pt-1">
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-serif font-black tracking-tight text-slate-900 leading-none">
-              Teach what you know.
+              {heroConfig.headline_static}
             </h1>
             <div className="text-4xl sm:text-6xl md:text-7xl font-serif italic font-normal text-blue-600 leading-tight min-h-[1.3em] flex items-center justify-center flex-wrap gap-x-3">
-              <span className="text-slate-900 not-italic font-black">Master</span>
+              <span className="text-slate-900 not-italic font-black">{heroConfig.headline_dynamic_prefix}</span>
               <span
                 className={`inline-block text-blue-600 transition-all duration-300 transform ${
                   fadeState ? "opacity-100 translate-y-0 scale-100" : "opacity-0 -translate-y-3 scale-95"
                 }`}
               >
-                {dynamicPhrases[activeSkillIndex]}
+                {dynamicPhrases[activeSkillIndex % dynamicPhrases.length]}
               </span>
             </div>
           </div>
 
           {/* Subtitle */}
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-normal animate-fade-in-up">
-            Trade expertise 1-on-1 with verified practitioners. SkillSwap matches schedule, levels, and mutual topics so you co-learn faster for free.
+            {heroConfig.subtitle}
           </p>
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
             <Link
-              to={isAuthenticated ? "/explore" : "/register"}
+              to={isAuthenticated ? (heroConfig.cta1_link === "/register" ? "/explore" : heroConfig.cta1_link) : heroConfig.cta1_link}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-xs font-extrabold shadow-md shadow-blue-500/20 transition-all hover:scale-105 active:scale-95 min-h-[44px]"
             >
-              <span>Start Swapping</span>
+              <span>{heroConfig.cta1_text}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
 
             <Link
-              to="/explore"
+              to={heroConfig.cta2_link}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-white hover:bg-slate-50 text-slate-800 rounded-full text-xs font-extrabold border border-slate-200/90 shadow-2xs transition-all hover:border-slate-300 hover:scale-105 active:scale-95 min-h-[44px]"
             >
-              <span>Explore Skills</span>
+              <span>{heroConfig.cta2_text}</span>
             </Link>
           </div>
 

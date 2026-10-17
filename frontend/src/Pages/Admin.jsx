@@ -84,7 +84,36 @@ export default function Admin() {
     hero_stat2_value: "99.4%",
     hero_stat2_label: "Synergy Match Accuracy",
     hero_stat3_value: "4.9 / 5",
-    hero_stat3_label: "Average Karma"
+    hero_stat3_label: "Average Karma",
+    hero_badge_pill1: "Verified Reciprocal Peer-to-Peer Learning Network",
+    hero_badge_pill2: "Live AI Synergy Matching Active",
+    hero_headline_static: "Teach what you know.",
+    hero_headline_dynamic_prefix: "Master",
+    hero_dynamic_phrases: "what you need next.\nData Structures & Algorithms.\nCloud Computing & AWS.\nSystem Design & DevOps.\nFigma & UI/UX Design.\nPython & Machine Learning.",
+    hero_subtitle: "Trade expertise 1-on-1 with verified practitioners. SkillSwap matches schedule, levels, and mutual topics so you co-learn faster for free.",
+    hero_cta1_text: "Start Swapping",
+    hero_cta1_link: "/register",
+    hero_cta2_text: "Explore Skills",
+    hero_cta2_link: "/explore",
+    hero_popular_topics: "Python, Figma, React, Spanish, Machine Learning, System Design, Prompt Engineering",
+    hero_boy_name: "Aarav Sharma",
+    hero_boy_role: "AI & ML Specialist",
+    hero_boy_image: "/hero/boy-tech.webp",
+    hero_boy_teach: "Machine Learning",
+    hero_boy_want: "UI/UX Design",
+    hero_girl_name: "Ananya Iyer",
+    hero_girl_role: "Product & UI/UX Designer",
+    hero_girl_image: "/hero/girl-creative.png",
+    hero_girl_teach: "UI/UX Design",
+    hero_girl_want: "Machine Learning",
+    hero_pair1_boy: "Machine Learning",
+    hero_pair1_girl: "UI/UX Design",
+    hero_pair2_boy: "Python",
+    hero_pair2_girl: "Spanish",
+    hero_pair3_boy: "Data Science",
+    hero_pair3_girl: "Digital Art",
+    hero_pair4_boy: "System Design",
+    hero_pair4_girl: "Brand Strategy"
   });
 
   const [loading, setLoading] = useState(true);
@@ -1479,6 +1508,418 @@ export default function Admin() {
                           <span>{settingsData.hero_stat3_value || "4.9 / 5"}</span>
                         </p>
                         <p className="text-3xs text-slate-500 font-bold">{settingsData.hero_stat3_label || "Average Karma"}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 1.6: Hero Section & Live Barter Stage Customization */}
+                <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs space-y-6">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div className="flex items-center gap-2 text-slate-900 font-extrabold text-sm">
+                      <Sparkles className="w-4 h-4 text-indigo-600" />
+                      <span>Hero Section & Live Barter Stage Customization</span>
+                    </div>
+                    <span className="text-3xs font-black uppercase tracking-wider bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-full border border-indigo-100">
+                      Live Editable
+                    </span>
+                  </div>
+
+                  {/* Sub-block A: Hero Announcement Badges & Headline */}
+                  <div className="space-y-4">
+                    <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+                      Hero Badges & Headline Copy
+                    </h4>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-bold">
+                      <div>
+                        <label className="block text-slate-700 mb-1">Badge Pill 1 (Left Pill)</label>
+                        <input
+                          type="text"
+                          value={settingsData.hero_badge_pill1 || ""}
+                          onChange={(e) => setSettingsData({ ...settingsData, hero_badge_pill1: e.target.value })}
+                          placeholder="e.g. Verified Reciprocal Peer-to-Peer Learning Network"
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-600 focus:bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-700 mb-1">Badge Pill 2 (Right Live Pulse Pill)</label>
+                        <input
+                          type="text"
+                          value={settingsData.hero_badge_pill2 || ""}
+                          onChange={(e) => setSettingsData({ ...settingsData, hero_badge_pill2: e.target.value })}
+                          placeholder="e.g. Live AI Synergy Matching Active"
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-600 focus:bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-slate-700 mb-1">Static Headline Part</label>
+                        <input
+                          type="text"
+                          value={settingsData.hero_headline_static || ""}
+                          onChange={(e) => setSettingsData({ ...settingsData, hero_headline_static: e.target.value })}
+                          placeholder="e.g. Teach what you know."
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-extrabold focus:ring-2 focus:ring-indigo-600 focus:bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-700 mb-1">Rotating Headline Prefix</label>
+                        <input
+                          type="text"
+                          value={settingsData.hero_headline_dynamic_prefix || ""}
+                          onChange={(e) => setSettingsData({ ...settingsData, hero_headline_dynamic_prefix: e.target.value })}
+                          placeholder="e.g. Master"
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-extrabold focus:ring-2 focus:ring-indigo-600 focus:bg-white"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="text-xs font-bold">
+                      <label className="block text-slate-700 mb-1">
+                        Rotating Dynamic Phrases <span className="text-slate-400 font-normal">(One phrase per line)</span>
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={settingsData.hero_dynamic_phrases || ""}
+                        onChange={(e) => setSettingsData({ ...settingsData, hero_dynamic_phrases: e.target.value })}
+                        placeholder="what you need next.&#10;Data Structures & Algorithms.&#10;System Design & DevOps."
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono text-xs focus:ring-2 focus:ring-indigo-600 focus:bg-white"
+                      />
+                    </div>
+
+                    <div className="text-xs font-bold">
+                      <label className="block text-slate-700 mb-1">Hero Subtitle / Description Paragraph</label>
+                      <textarea
+                        rows={2}
+                        value={settingsData.hero_subtitle || ""}
+                        onChange={(e) => setSettingsData({ ...settingsData, hero_subtitle: e.target.value })}
+                        placeholder="Trade expertise 1-on-1 with verified practitioners..."
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-600 focus:bg-white"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs font-bold">
+                      <div>
+                        <label className="block text-slate-700 mb-1">CTA 1 Text</label>
+                        <input
+                          type="text"
+                          value={settingsData.hero_cta1_text || ""}
+                          onChange={(e) => setSettingsData({ ...settingsData, hero_cta1_text: e.target.value })}
+                          placeholder="Start Swapping"
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-600"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-700 mb-1">CTA 1 Link</label>
+                        <input
+                          type="text"
+                          value={settingsData.hero_cta1_link || ""}
+                          onChange={(e) => setSettingsData({ ...settingsData, hero_cta1_link: e.target.value })}
+                          placeholder="/register"
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono text-2xs focus:ring-2 focus:ring-indigo-600"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-700 mb-1">CTA 2 Text</label>
+                        <input
+                          type="text"
+                          value={settingsData.hero_cta2_text || ""}
+                          onChange={(e) => setSettingsData({ ...settingsData, hero_cta2_text: e.target.value })}
+                          placeholder="Explore Skills"
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-600"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-700 mb-1">CTA 2 Link</label>
+                        <input
+                          type="text"
+                          value={settingsData.hero_cta2_link || ""}
+                          onChange={(e) => setSettingsData({ ...settingsData, hero_cta2_link: e.target.value })}
+                          placeholder="/explore"
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono text-2xs focus:ring-2 focus:ring-indigo-600"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="text-xs font-bold">
+                      <label className="block text-slate-700 mb-1">
+                        Popular Search Topics <span className="text-slate-400 font-normal">(Comma-separated badges)</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={settingsData.hero_popular_topics || ""}
+                        onChange={(e) => setSettingsData({ ...settingsData, hero_popular_topics: e.target.value })}
+                        placeholder="Python, Figma, React, Spanish, Machine Learning"
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-600 focus:bg-white"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Sub-block B: Live Barter Stage Avatars (Boy & Girl) */}
+                  <div className="pt-4 border-t border-slate-100 space-y-4">
+                    <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-violet-500"></span>
+                      Live Stage Personas (Boy & Girl Avatars)
+                    </h4>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Left: Boy (Tech) */}
+                      <div className="p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-2xs font-black text-indigo-700 uppercase tracking-wider">
+                            Left Persona (Boy / Tech)
+                          </span>
+                          {settingsData.hero_boy_image && (
+                            <img
+                              src={settingsData.hero_boy_image}
+                              alt="Boy Preview"
+                              className="w-8 h-8 rounded-full object-cover border border-indigo-200 bg-white"
+                              onError={(e) => { e.currentTarget.style.display = "none"; }}
+                            />
+                          )}
+                        </div>
+
+                        <div className="space-y-2 text-xs font-bold">
+                          <div>
+                            <label className="block text-slate-700 mb-1">Display Name</label>
+                            <input
+                              type="text"
+                              value={settingsData.hero_boy_name || ""}
+                              onChange={(e) => setSettingsData({ ...settingsData, hero_boy_name: e.target.value })}
+                              placeholder="Aarav Sharma"
+                              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-600"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-slate-700 mb-1">Role / Subtitle</label>
+                            <input
+                              type="text"
+                              value={settingsData.hero_boy_role || ""}
+                              onChange={(e) => setSettingsData({ ...settingsData, hero_boy_role: e.target.value })}
+                              placeholder="AI & ML Specialist"
+                              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-600"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-slate-700 mb-1">Image URL or Local Path</label>
+                            <input
+                              type="text"
+                              value={settingsData.hero_boy_image || ""}
+                              onChange={(e) => setSettingsData({ ...settingsData, hero_boy_image: e.target.value })}
+                              placeholder="/hero/boy-tech.webp"
+                              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 font-mono text-2xs focus:ring-2 focus:ring-indigo-600"
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="block text-slate-700 mb-1 text-3xs">Default Teaches</label>
+                              <input
+                                type="text"
+                                value={settingsData.hero_boy_teach || ""}
+                                onChange={(e) => setSettingsData({ ...settingsData, hero_boy_teach: e.target.value })}
+                                placeholder="Machine Learning"
+                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 text-2xs focus:ring-2 focus:ring-indigo-600"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-slate-700 mb-1 text-3xs">Default Wants</label>
+                              <input
+                                type="text"
+                                value={settingsData.hero_boy_want || ""}
+                                onChange={(e) => setSettingsData({ ...settingsData, hero_boy_want: e.target.value })}
+                                placeholder="UI/UX Design"
+                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 text-2xs focus:ring-2 focus:ring-indigo-600"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right: Girl (Creative) */}
+                      <div className="p-4 bg-fuchsia-50/50 rounded-2xl border border-fuchsia-100 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-2xs font-black text-fuchsia-700 uppercase tracking-wider">
+                            Right Persona (Girl / Creative)
+                          </span>
+                          {settingsData.hero_girl_image && (
+                            <img
+                              src={settingsData.hero_girl_image}
+                              alt="Girl Preview"
+                              className="w-8 h-8 rounded-full object-cover border border-fuchsia-200 bg-white"
+                              onError={(e) => { e.currentTarget.style.display = "none"; }}
+                            />
+                          )}
+                        </div>
+
+                        <div className="space-y-2 text-xs font-bold">
+                          <div>
+                            <label className="block text-slate-700 mb-1">Display Name</label>
+                            <input
+                              type="text"
+                              value={settingsData.hero_girl_name || ""}
+                              onChange={(e) => setSettingsData({ ...settingsData, hero_girl_name: e.target.value })}
+                              placeholder="Ananya Iyer"
+                              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-fuchsia-600"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-slate-700 mb-1">Role / Subtitle</label>
+                            <input
+                              type="text"
+                              value={settingsData.hero_girl_role || ""}
+                              onChange={(e) => setSettingsData({ ...settingsData, hero_girl_role: e.target.value })}
+                              placeholder="Product & UI/UX Designer"
+                              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-fuchsia-600"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-slate-700 mb-1">Image URL or Local Path</label>
+                            <input
+                              type="text"
+                              value={settingsData.hero_girl_image || ""}
+                              onChange={(e) => setSettingsData({ ...settingsData, hero_girl_image: e.target.value })}
+                              placeholder="/hero/girl-creative.png"
+                              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 font-mono text-2xs focus:ring-2 focus:ring-fuchsia-600"
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="block text-slate-700 mb-1 text-3xs">Default Teaches</label>
+                              <input
+                                type="text"
+                                value={settingsData.hero_girl_teach || ""}
+                                onChange={(e) => setSettingsData({ ...settingsData, hero_girl_teach: e.target.value })}
+                                placeholder="UI/UX Design"
+                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 text-2xs focus:ring-2 focus:ring-fuchsia-600"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-slate-700 mb-1 text-3xs">Default Wants</label>
+                              <input
+                                type="text"
+                                value={settingsData.hero_girl_want || ""}
+                                onChange={(e) => setSettingsData({ ...settingsData, hero_girl_want: e.target.value })}
+                                placeholder="Machine Learning"
+                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 text-2xs focus:ring-2 focus:ring-fuchsia-600"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Sub-block C: Rotating Skill Barter Streams */}
+                  <div className="pt-4 border-t border-slate-100 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        Live Traveling Skill Badges (4 Barter Pairs)
+                      </h4>
+                      <span className="text-3xs text-slate-400 font-medium">Orbs fly left ↔ right across the central broker</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs font-bold">
+                      {/* Pair 1 */}
+                      <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                        <span className="text-3xs font-black uppercase tracking-wider text-slate-500 block">Pair #1</span>
+                        <div>
+                          <label className="block text-3xs text-indigo-700 mb-0.5">Boy Teaches (L → R)</label>
+                          <input
+                            type="text"
+                            value={settingsData.hero_pair1_boy || ""}
+                            onChange={(e) => setSettingsData({ ...settingsData, hero_pair1_boy: e.target.value })}
+                            placeholder="Machine Learning"
+                            className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 text-2xs"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-3xs text-fuchsia-700 mb-0.5">Girl Teaches (R → L)</label>
+                          <input
+                            type="text"
+                            value={settingsData.hero_pair1_girl || ""}
+                            onChange={(e) => setSettingsData({ ...settingsData, hero_pair1_girl: e.target.value })}
+                            placeholder="UI/UX Design"
+                            className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 text-2xs"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Pair 2 */}
+                      <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                        <span className="text-3xs font-black uppercase tracking-wider text-slate-500 block">Pair #2</span>
+                        <div>
+                          <label className="block text-3xs text-indigo-700 mb-0.5">Boy Teaches (L → R)</label>
+                          <input
+                            type="text"
+                            value={settingsData.hero_pair2_boy || ""}
+                            onChange={(e) => setSettingsData({ ...settingsData, hero_pair2_boy: e.target.value })}
+                            placeholder="Python"
+                            className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 text-2xs"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-3xs text-fuchsia-700 mb-0.5">Girl Teaches (R → L)</label>
+                          <input
+                            type="text"
+                            value={settingsData.hero_pair2_girl || ""}
+                            onChange={(e) => setSettingsData({ ...settingsData, hero_pair2_girl: e.target.value })}
+                            placeholder="Spanish"
+                            className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 text-2xs"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Pair 3 */}
+                      <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                        <span className="text-3xs font-black uppercase tracking-wider text-slate-500 block">Pair #3</span>
+                        <div>
+                          <label className="block text-3xs text-indigo-700 mb-0.5">Boy Teaches (L → R)</label>
+                          <input
+                            type="text"
+                            value={settingsData.hero_pair3_boy || ""}
+                            onChange={(e) => setSettingsData({ ...settingsData, hero_pair3_boy: e.target.value })}
+                            placeholder="Data Science"
+                            className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 text-2xs"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-3xs text-fuchsia-700 mb-0.5">Girl Teaches (R → L)</label>
+                          <input
+                            type="text"
+                            value={settingsData.hero_pair3_girl || ""}
+                            onChange={(e) => setSettingsData({ ...settingsData, hero_pair3_girl: e.target.value })}
+                            placeholder="Digital Art"
+                            className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 text-2xs"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Pair 4 */}
+                      <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                        <span className="text-3xs font-black uppercase tracking-wider text-slate-500 block">Pair #4</span>
+                        <div>
+                          <label className="block text-3xs text-indigo-700 mb-0.5">Boy Teaches (L → R)</label>
+                          <input
+                            type="text"
+                            value={settingsData.hero_pair4_boy || ""}
+                            onChange={(e) => setSettingsData({ ...settingsData, hero_pair4_boy: e.target.value })}
+                            placeholder="System Design"
+                            className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 text-2xs"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-3xs text-fuchsia-700 mb-0.5">Girl Teaches (R → L)</label>
+                          <input
+                            type="text"
+                            value={settingsData.hero_pair4_girl || ""}
+                            onChange={(e) => setSettingsData({ ...settingsData, hero_pair4_girl: e.target.value })}
+                            placeholder="Brand Strategy"
+                            className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 text-2xs"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>

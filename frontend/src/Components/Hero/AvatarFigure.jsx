@@ -11,6 +11,8 @@ export default function AvatarFigure({
   src,
   srcSet,
   alt,
+  personName,
+  personRole,
   isPaused = false,
   mouseOffset = { x: 0, y: 0 },
   currentTeaching = "",
@@ -22,16 +24,20 @@ export default function AvatarFigure({
   const [imgError, setImgError] = useState(false);
 
   // Asset paths
-  const defaultSrc = isTech ? "/hero/boy-tech.webp" : "/hero/girl-creative.webp";
+  const defaultSrc = isTech ? "/hero/boy-tech.webp" : "/hero/girl-creative.png";
   const imageSource = src || defaultSrc;
   const imageAlt = alt || (isTech ? "Tech partner teaching Machine Learning and Python" : "Creative partner teaching UI/UX Design and Spanish");
+
+  React.useEffect(() => {
+    setImgError(false);
+  }, [imageSource]);
 
   // Profile data
   const profile = isTech
     ? {
-        name: "Aarav Sharma",
+        name: personName || "Aarav Sharma",
         handle: "@aarav.ml",
-        role: "AI & ML Specialist",
+        role: personRole || "AI & ML Specialist",
         experience: "Ex-Intern • 24 yrs",
         accentGlow: "from-blue-500/25 via-indigo-500/15 to-transparent",
         glowRing: "border-blue-400/30",
@@ -43,9 +49,9 @@ export default function AvatarFigure({
         skillsWanted: ["UI/UX Design", "Spanish"]
       }
     : {
-        name: "Ananya Iyer",
+        name: personName || "Ananya Iyer",
         handle: "@ananya.design",
-        role: "Product & UI/UX Designer",
+        role: personRole || "Product & UI/UX Designer",
         experience: "Lead Freelance • 24 yrs",
         accentGlow: "from-violet-500/25 via-fuchsia-500/15 to-transparent",
         glowRing: "border-violet-400/30",

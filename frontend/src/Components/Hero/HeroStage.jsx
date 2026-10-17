@@ -9,7 +9,7 @@ import SkillOrbStream, { SKILL_PAIRS } from "./SkillOrbStream";
  * Zone 2 (Center): SkillSwap Broker Node & Traveling Skill Badges
  * Zone 3 (Right): Girl (Creative Persona)
  */
-export default function HeroStage() {
+export default function HeroStage({ heroConfig = {} }) {
   const stageRef = useRef(null);
 
   // Animation pause controls
@@ -113,7 +113,14 @@ export default function HeroStage() {
     setActivePairIndex(pairIndex);
   }, []);
 
-  const currentPair = SKILL_PAIRS[activePairIndex] || SKILL_PAIRS[0];
+  const dynamicPairs = (heroConfig?.pairs && heroConfig.pairs.length > 0)
+    ? heroConfig.pairs.map(p => ({
+        tech: { name: p.tech },
+        creative: { name: p.creative }
+      }))
+    : SKILL_PAIRS;
+
+  const currentPair = dynamicPairs[activePairIndex % dynamicPairs.length] || dynamicPairs[0];
 
   return (
     <div
@@ -143,7 +150,9 @@ export default function HeroStage() {
         <div className="w-[31%] sm:w-[30%] flex justify-start">
           <AvatarFigure
             variant="tech"
-            src="/hero/boy-tech.webp"
+            src={heroConfig?.boy_image || "/hero/boy-tech.webp"}
+            personName={heroConfig?.boy_name}
+            personRole={heroConfig?.boy_role}
             alt="Young Indian man holding laptop teaching tech skills"
             isPaused={isPaused}
             mouseOffset={mouseOffset}
@@ -168,6 +177,7 @@ export default function HeroStage() {
           <SkillOrbStream
             isPaused={isPaused}
             isReducedMotion={isReducedMotion}
+            customPairs={heroConfig?.pairs}
             onArrivalGirl={handleArrivalGirl}
             onArrivalBoy={handleArrivalBoy}
             onBrokerPulse={handleBrokerPulse}
@@ -179,7 +189,9 @@ export default function HeroStage() {
         <div className="w-[31%] sm:w-[30%] flex justify-end">
           <AvatarFigure
             variant="creative"
-            src="/hero/girl-creative.webp"
+            src={heroConfig?.girl_image || "/hero/girl-creative.png"}
+            personName={heroConfig?.girl_name}
+            personRole={heroConfig?.girl_role}
             alt="Young Indian woman holding tablet teaching creative skills"
             isPaused={isPaused}
             mouseOffset={mouseOffset}

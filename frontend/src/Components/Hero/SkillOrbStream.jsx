@@ -68,11 +68,26 @@ const PATH_CREATIVE_TO_TECH = {
 export default function SkillOrbStream({
   isPaused = false,
   isReducedMotion = false,
+  customPairs = null,
   onArrivalGirl = () => {},
   onArrivalBoy = () => {},
   onBrokerPulse = () => {},
   onPairChange = () => {}
 }) {
+  const pairsList = (customPairs && customPairs.length > 0)
+    ? customPairs.map((p, idx) => ({
+        id: idx,
+        tech: {
+          name: p.tech || "Tech Skill",
+          icon: [Sparkles, Code, Layers, Cpu][idx % 4]
+        },
+        creative: {
+          name: p.creative || "Creative Skill",
+          icon: [Palette, Globe, Palette, Target][idx % 4]
+        }
+      }))
+    : SKILL_PAIRS;
+
   const [activePairIndex, setActivePairIndex] = useState(0);
   const [progress, setProgress] = useState(0); // 0 to 1 loop over 8000ms
 
@@ -110,7 +125,7 @@ export default function SkillOrbStream({
 
         // Girl receives at t=0.65
         if (prev < 0.65 && next >= 0.65 && !arrivalStateRef.current.girlFired) {
-          const currentPair = SKILL_PAIRS[activePairIndex];
+          const currentPair = pairsList[activePairIndex % pairsList.length] || pairsList[0];
           onArrivalGirl(currentPair.tech.name);
           arrivalStateRef.current.girlFired = true;
         }
@@ -118,7 +133,7 @@ export default function SkillOrbStream({
         // Girl -> Boy orb travels from t=0.20 to t=0.80
         // Boy receives at t=0.80
         if (prev < 0.80 && next >= 0.80 && !arrivalStateRef.current.boyFired) {
-          const currentPair = SKILL_PAIRS[activePairIndex];
+          const currentPair = pairsList[activePairIndex % pairsList.length] || pairsList[0];
           onArrivalBoy(currentPair.creative.name);
           arrivalStateRef.current.boyFired = true;
         }
@@ -127,7 +142,7 @@ export default function SkillOrbStream({
         if (next < prev) {
           // Reset triggers and switch pair
           arrivalStateRef.current = { girlFired: false, boyFired: false, brokerFired: false };
-          setActivePairIndex((idx) => (idx + 1) % SKILL_PAIRS.length);
+          setActivePairIndex((idx) => (idx + 1) % pairsList.length);
         }
 
         return next;
@@ -142,9 +157,9 @@ export default function SkillOrbStream({
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
       lastTimeRef.current = null;
     };
-  }, [isPaused, isReducedMotion, activePairIndex, onArrivalGirl, onArrivalBoy, onBrokerPulse]);
+  }, [isPaused, isReducedMotion, activePairIndex, pairsList, onArrivalGirl, onArrivalBoy, onBrokerPulse]);
 
-  const currentPair = SKILL_PAIRS[activePairIndex];
+  const currentPair = pairsList[activePairIndex % pairsList.length] || pairsList[0];
   const TechIcon = currentPair.tech.icon;
   const CreativeIcon = currentPair.creative.icon;
 
