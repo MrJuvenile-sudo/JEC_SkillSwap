@@ -122,26 +122,25 @@ export default function HeroStage() {
       onMouseLeave={handleMouseLeave}
       role="img"
       aria-label="A boy teaching Machine Learning and a girl teaching UI/UX Design, swapping skills through SkillSwap."
-      className="relative w-full max-w-5xl mx-auto px-2 sm:px-4 select-none overflow-hidden sm:overflow-visible min-h-[300px] sm:min-h-[330px] md:min-h-[350px] flex items-center justify-center"
+      className="relative w-full max-w-4xl mx-auto px-2 select-none overflow-hidden sm:overflow-visible min-h-[190px] sm:min-h-[210px] md:min-h-[220px] flex items-center justify-center"
     >
       {/* Soft Ambient Depth Background Behind Stage */}
       <div
-        className="absolute inset-0 -m-4 sm:-m-8 rounded-3xl bg-gradient-to-b from-blue-50/30 via-indigo-50/15 to-purple-50/30 -z-20 pointer-events-none blur-2xl"
+        className="absolute inset-0 -m-3 rounded-2xl bg-gradient-to-b from-blue-50/20 via-indigo-50/10 to-purple-50/20 -z-20 pointer-events-none blur-xl"
         aria-hidden="true"
       />
 
       {/* Decorative Floating Dots / Particles */}
       <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden" aria-hidden="true">
         <span className="absolute top-1/4 left-1/5 w-1.5 h-1.5 rounded-full bg-blue-400/40 animate-ping" />
-        <span className="absolute top-2/3 right-1/4 w-2 h-2 rounded-full bg-purple-400/35 animate-ping" style={{ animationDelay: "1.5s" }} />
-        <span className="absolute bottom-1/4 left-1/3 w-1.5 h-1.5 rounded-full bg-emerald-400/40 animate-ping" style={{ animationDelay: "2.5s" }} />
+        <span className="absolute top-2/3 right-1/4 w-1.5 h-1.5 rounded-full bg-purple-400/35 animate-ping" style={{ animationDelay: "1.5s" }} />
       </div>
 
       {/* THREE-ZONE ROW: BOY (LEFT) | BROKER & STREAMS (CENTER) | GIRL (RIGHT) */}
-      <div className="relative z-10 w-full flex flex-col md:flex-row items-center justify-between gap-4 md:gap-3 lg:gap-6">
+      <div className="relative z-10 w-full flex flex-row items-center justify-between gap-2 sm:gap-4">
         
         {/* ZONE 1: BOY (TECH PERSONA - LEFT) */}
-        <div className="w-full md:w-[35%] flex justify-center md:justify-start">
+        <div className="w-[31%] sm:w-[30%] flex justify-start">
           <AvatarFigure
             variant="tech"
             src="/hero/boy-tech.webp"
@@ -156,7 +155,7 @@ export default function HeroStage() {
         </div>
 
         {/* ZONE 2: CENTER BROKER & STREAM CONNECTOR */}
-        <div className="relative w-full md:w-[30%] flex flex-col items-center justify-center py-2 md:py-0 min-h-[140px] md:min-h-[220px]">
+        <div className="relative w-[38%] sm:w-[40%] flex flex-col items-center justify-center py-1 min-h-[110px] sm:min-h-[130px]">
           {/* Central SkillSwap Matcher Node */}
           <div className="relative z-20">
             <SwapNode
@@ -177,7 +176,7 @@ export default function HeroStage() {
         </div>
 
         {/* ZONE 3: GIRL (CREATIVE PERSONA - RIGHT) */}
-        <div className="w-full md:w-[35%] flex justify-center md:justify-end">
+        <div className="w-[31%] sm:w-[30%] flex justify-end">
           <AvatarFigure
             variant="creative"
             src="/hero/girl-creative.webp"

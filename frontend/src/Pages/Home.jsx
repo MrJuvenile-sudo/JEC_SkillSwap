@@ -323,8 +323,8 @@ export default function Home() {
       {/* ------------------------------------------------------------- */}
       {/* 1. HERO SECTION (WITH 1-ON-1 EXCHANGE STAGE ABOVE TEXT) */}
       {/* ------------------------------------------------------------- */}
-      <section className="pt-12 pb-20 sm:pt-16 sm:pb-28 border-b border-slate-200/80 bg-gradient-to-b from-[#faf7ee] via-[#f7f2e5] to-[#faf7ee] relative overflow-hidden">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-8 relative z-10">
+      <section className="pt-8 pb-16 sm:pt-10 sm:pb-24 border-b border-slate-200/80 bg-gradient-to-b from-[#faf7ee] via-[#f7f2e5] to-[#faf7ee] relative overflow-hidden">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-5 relative z-10">
           
           {/* Animated Top Pill Badges with Slide-in Right animation */}
           <div className="flex flex-wrap items-center justify-center gap-3">
@@ -339,13 +339,13 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 1-ON-1 SKILL BARTER STAGE: NORMAL & ACCURATE DIMENSIONS ABOVE TEXT */}
-          <div className="pt-1 pb-3">
+          {/* 1-ON-1 SKILL BARTER STAGE: COMPACT & SLEEK DIMENSIONS ABOVE TEXT */}
+          <div className="py-0.5">
             <HeroStage />
           </div>
 
-          {/* Main Headline with Previous Dynamic Text Animation */}
-          <div className="space-y-3">
+          {/* Main Headline with Dynamic Rotating Animation */}
+          <div className="space-y-2 pt-1">
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-serif font-black tracking-tight text-slate-900 leading-none">
               Teach what you know.
             </h1>
