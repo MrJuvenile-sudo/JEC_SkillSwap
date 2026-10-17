@@ -133,3 +133,44 @@
   border: 1px solid rgba(37, 35, 33, 0.08);
   box-shadow: 0 8px 32px 0 rgba(37, 35, 33, 0.04);
 }
+
+/* Boy & Girl Lifelike Idle Breathing Motion */
+@keyframes boyBreathe {
+  0%, 100% {
+    transform: scaleY(1) translateY(0px);
+  }
+  50% {
+    transform: scaleY(1.012) translateY(-3px);
+  }
+}
+
+@keyframes girlBreathe {
+  0%, 100% {
+    transform: scaleY(1) translateY(0px);
+  }
+  50% {
+    transform: scaleY(1.012) translateY(-3px);
+  }
+}
+
+.animate-boy-breathe {
+  animation: boyBreathe 6.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-girl-breathe {
+  animation: girlBreathe 7.2s ease-in-out infinite;
+  animation-delay: 0.8s;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-boy-breathe,
+  .animate-girl-breathe,
+  .animate-float,
+  .animate-slide-in-right,
+  .animate-fade-in-up {
+    animation: none !important;
+    transform: none !important;
+  }
+}
