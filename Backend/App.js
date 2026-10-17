@@ -14,11 +14,16 @@ const requestRoutes = require("./routes/requestRoutes");
 const exchangeRoutes = require("./routes/exchangeRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const uploadRoutes = require("./routes/uploadRoutes");
 
 const app = express();
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+
+// Serve uploaded user and platform files statically
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Initialize Database on Startup asynchronously
 initDb();
@@ -52,6 +57,7 @@ app.use("/api/requests", requestRoutes);
 app.use("/api/exchanges", exchangeRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/upload", uploadRoutes);
 
 // Global Error Handler Middleware
 app.use((err, req, res, next) => {

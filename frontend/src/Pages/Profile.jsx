@@ -25,7 +25,9 @@ import {
   ExternalLink,
   Award,
   Check,
-  Layers
+  Layers,
+  Upload,
+  Image as ImageIcon
 } from "lucide-react";
 
 import { 
@@ -34,6 +36,7 @@ import {
   NEUTRAL_3D_AVATARS, 
   get3DAvatarUrl 
 } from "../utils/avatarUtils";
+import { uploadImageFile } from "../utils/uploadUtils";
 
 export default function Profile() {
   const { user, refreshUser, updateUser } = useAuth();
@@ -65,6 +68,8 @@ export default function Profile() {
   const [editPortfolio, setEditPortfolio] = useState("");
   const [editBio, setEditBio] = useState("");
   const [editPic, setEditPic] = useState("");
+  const [uploadingPic, setUploadingPic] = useState(false);
+  const [uploadError, setUploadError] = useState("");
 
   // Add Skill modal state
   const [isAddingSkill, setIsAddingSkill] = useState(false);
@@ -117,6 +122,23 @@ export default function Profile() {
     const presets = avatarPresets[newGender] || avatarPresets.male;
     if (presets && presets.length > 0) {
       setEditPic(presets[0]);
+    }
+  };
+
+  const handleLocalImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingPic(true);
+    setUploadError("");
+    try {
+      const uploadedUrl = await uploadImageFile(file);
+      setEditPic(uploadedUrl);
+    } catch (err) {
+      setUploadError(err.message || "Failed to upload image from local drive");
+    } finally {
+      setUploadingPic(false);
+      e.target.value = "";
     }
   };
 
@@ -529,39 +551,114 @@ export default function Profile() {
                 </div>
               </div>
 
-              {/* Avatar Selector Gallery */}
-              <div>
-                <label className="block font-extrabold text-slate-800 mb-2 capitalize">Select Avatar ({editGender})</label>
-                <div className="grid grid-cols-5 gap-3 p-3 bg-slate-50 rounded-2xl border border-slate-200">
-                  {avatarPresets[editGender]?.map((url, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setEditPic(url)}
-                      className={`relative rounded-2xl overflow-hidden border-2 transition-all ${
-                        editPic === url ? "border-blue-600 ring-2 ring-blue-500/40 scale-105" : "border-transparent opacity-75 hover:opacity-100"
-                      }`}
-                    >
-                      <img src={url} alt={`Avatar ${idx}`} className="w-14 h-14 object-cover" />
-                      {editPic === url && (
-                        <div className="absolute inset-0 bg-blue-600/30 flex items-center justify-center text-white">
-                          <Check className="w-5 h-5 stroke-[3]" />
-                        </div>
-                      )}
-                    </button>
-                  ))}
+              {/* Profile Image & Avatar Picker */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="block font-extrabold text-slate-800 text-sm">
+                    Profile Picture / Avatar
+                  </label>
+                  {editPic && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-3xs text-slate-400 font-bold uppercase tracking-wider">Preview:</span>
+                      <img
+                        src={editPic}
+                        alt="Avatar Preview"
+                        className="w-7 h-7 rounded-full object-cover border border-indigo-200 shadow-xs bg-white"
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                      />
+                    </div>
+                  )}
                 </div>
-              </div>
 
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Custom Image Avatar URL (Optional)</label>
-                <input
-                  type="url"
-                  value={editPic}
-                  onChange={(e) => setEditPic(e.target.value)}
-                  placeholder="https://api.dicebear.com/7.x/lorelei/svg?seed=MyAvatar"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                />
+                {/* Option A: Upload from Local Drive */}
+                <div className="p-4 bg-gradient-to-r from-indigo-50/70 to-blue-50/70 border border-indigo-100 rounded-2xl space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="font-extrabold text-indigo-950 text-xs flex items-center gap-1.5">
+                      <Upload className="w-4 h-4 text-indigo-600" />
+                      <span>Upload from Local Drive (Computer / Mobile)</span>
+                    </span>
+                    <span className="text-3xs text-slate-500 font-medium">PNG, JPG, WEBP, GIF</span>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    <label className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs cursor-pointer transition-all shadow-xs ${
+                      uploadingPic
+                        ? "bg-slate-200 text-slate-500 cursor-not-allowed"
+                        : "bg-indigo-600 hover:bg-indigo-700 text-white active:scale-95"
+                    }`}>
+                      {uploadingPic ? (
+                        <>
+                          <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span>Uploading image...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>Choose File from Local Drive</span>
+                        </>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        disabled={uploadingPic}
+                        onChange={handleLocalImageUpload}
+                        className="hidden"
+                      />
+                    </label>
+
+                    {editPic && (
+                      <span className="text-3xs font-mono text-slate-500 truncate max-w-[240px] bg-white/80 px-2.5 py-1.5 rounded-lg border border-indigo-100">
+                        {editPic}
+                      </span>
+                    )}
+                  </div>
+
+                  {uploadError && (
+                    <p className="text-xs text-rose-600 font-bold bg-rose-50 p-2 rounded-lg border border-rose-100">
+                      {uploadError}
+                    </p>
+                  )}
+                </div>
+
+                {/* Option B: Choose from 3D Presets */}
+                <div>
+                  <label className="block font-bold text-slate-600 text-xs mb-1.5 capitalize">
+                    Or Choose a 3D Avatar Preset ({editGender})
+                  </label>
+                  <div className="grid grid-cols-5 gap-2.5 p-3 bg-slate-50 rounded-2xl border border-slate-200">
+                    {avatarPresets[editGender]?.map((url, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setEditPic(url)}
+                        className={`relative rounded-xl overflow-hidden border-2 transition-all ${
+                          editPic === url ? "border-indigo-600 ring-2 ring-indigo-500/40 scale-105" : "border-transparent opacity-75 hover:opacity-100"
+                        }`}
+                      >
+                        <img src={url} alt={`Avatar ${idx}`} className="w-12 h-12 object-cover mx-auto" />
+                        {editPic === url && (
+                          <div className="absolute inset-0 bg-indigo-600/30 flex items-center justify-center text-white">
+                            <Check className="w-4 h-4 stroke-[3]" />
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Option C: Custom Image URL */}
+                <div>
+                  <label className="block font-semibold text-slate-600 text-xs mb-1">
+                    Or Enter Image URL (Optional)
+                  </label>
+                  <input
+                    type="url"
+                    value={editPic}
+                    onChange={(e) => setEditPic(e.target.value)}
+                    placeholder="https://images.unsplash.com/... or /uploads/..."
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                  />
+                </div>
               </div>
 
               {/* Section 2: City, Location & Profession */}

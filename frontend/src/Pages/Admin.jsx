@@ -43,8 +43,11 @@ import {
   ToggleRight,
   Shield,
   Zap,
-  Sparkles
+  Sparkles,
+  Upload,
+  Image as ImageIcon
 } from "lucide-react";
+import { uploadImageFile } from "../utils/uploadUtils";
 
 export default function Admin() {
   const { user: currentUser } = useAuth();
@@ -119,6 +122,7 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
   const [notification, setNotification] = useState("");
+  const [uploadingAdminImage, setUploadingAdminImage] = useState(null);
 
   // Search & Filters
   const [globalSearch, setGlobalSearch] = useState("");
@@ -381,6 +385,27 @@ export default function Admin() {
       fetchAdminData();
     } catch (err) {
       alert("Failed to delete testimonial");
+    }
+  };
+
+  const handleAdminImageUpload = async (e, fieldKey) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingAdminImage(fieldKey);
+    try {
+      const uploadedUrl = await uploadImageFile(file);
+      if (fieldKey === "testimonial") {
+        setTestimonialForm((prev) => ({ ...prev, avatar_url: uploadedUrl }));
+      } else {
+        setSettingsData((prev) => ({ ...prev, [fieldKey]: uploadedUrl }));
+      }
+      setNotification("Image uploaded from local drive successfully!");
+    } catch (err) {
+      alert(err.message || "Failed to upload image from local drive");
+    } finally {
+      setUploadingAdminImage(null);
+      e.target.value = "";
     }
   };
 
@@ -1703,7 +1728,20 @@ export default function Admin() {
                             />
                           </div>
                           <div>
-                            <label className="block text-slate-700 mb-1">Image URL or Local Path</label>
+                            <div className="flex items-center justify-between mb-1">
+                              <label className="block text-slate-700">Image URL or Local Path</label>
+                              <label className="inline-flex items-center gap-1 text-3xs font-bold text-indigo-700 hover:text-indigo-800 cursor-pointer bg-white px-2 py-0.5 rounded border border-indigo-200 shadow-2xs hover:bg-indigo-50">
+                                <Upload className="w-2.5 h-2.5" />
+                                <span>{uploadingAdminImage === "hero_boy_image" ? "Uploading..." : "Upload from Computer"}</span>
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  disabled={uploadingAdminImage === "hero_boy_image"}
+                                  onChange={(e) => handleAdminImageUpload(e, "hero_boy_image")}
+                                  className="hidden"
+                                />
+                              </label>
+                            </div>
                             <input
                               type="text"
                               value={settingsData.hero_boy_image || ""}
@@ -1775,7 +1813,20 @@ export default function Admin() {
                             />
                           </div>
                           <div>
-                            <label className="block text-slate-700 mb-1">Image URL or Local Path</label>
+                            <div className="flex items-center justify-between mb-1">
+                              <label className="block text-slate-700">Image URL or Local Path</label>
+                              <label className="inline-flex items-center gap-1 text-3xs font-bold text-fuchsia-700 hover:text-fuchsia-800 cursor-pointer bg-white px-2 py-0.5 rounded border border-fuchsia-200 shadow-2xs hover:bg-fuchsia-50">
+                                <Upload className="w-2.5 h-2.5" />
+                                <span>{uploadingAdminImage === "hero_girl_image" ? "Uploading..." : "Upload from Computer"}</span>
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  disabled={uploadingAdminImage === "hero_girl_image"}
+                                  onChange={(e) => handleAdminImageUpload(e, "hero_girl_image")}
+                                  className="hidden"
+                                />
+                              </label>
+                            </div>
                             <input
                               type="text"
                               value={settingsData.hero_girl_image || ""}
@@ -2198,7 +2249,20 @@ export default function Admin() {
               </div>
 
               <div>
-                <label className="block text-slate-600 mb-1">Avatar Image URL (Optional)</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-slate-600">Avatar Image URL (Optional)</label>
+                  <label className="inline-flex items-center gap-1 text-3xs font-bold text-indigo-700 hover:text-indigo-800 cursor-pointer bg-slate-100 px-2 py-0.5 rounded border border-indigo-200 hover:bg-indigo-50">
+                    <Upload className="w-2.5 h-2.5" />
+                    <span>{uploadingAdminImage === "testimonial" ? "Uploading..." : "Upload from Computer"}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      disabled={uploadingAdminImage === "testimonial"}
+                      onChange={(e) => handleAdminImageUpload(e, "testimonial")}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
                 <input
                   type="text"
                   value={testimonialForm.avatar_url}

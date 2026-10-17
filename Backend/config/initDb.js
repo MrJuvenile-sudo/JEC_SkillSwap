@@ -59,17 +59,19 @@ async function initDb() {
     await ensureColumn(pool, "users", "github_url", "VARCHAR(255)");
     await ensureColumn(pool, "users", "linkedin_url", "VARCHAR(255)");
     await ensureColumn(pool, "users", "portfolio_url", "VARCHAR(255)");
-    await ensureColumn(pool, "users", "profile_picture", "VARCHAR(500) DEFAULT 'https://api.dicebear.com/7.x/lorelei/svg?seed=Swapper&backgroundColor=b6e3f4,c0aedd'");
+    await ensureColumn(pool, "users", "profile_picture", "LONGTEXT");
+    await pool.query("ALTER TABLE users MODIFY COLUMN profile_picture LONGTEXT").catch(() => {});
     await ensureColumn(pool, "users", "role", "VARCHAR(20) DEFAULT 'user'");
     await ensureColumn(pool, "users", "status", "VARCHAR(20) DEFAULT 'active'");
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS system_settings (
         setting_key VARCHAR(100) PRIMARY KEY,
-        setting_value TEXT,
+        setting_value LONGTEXT,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       );
     `);
+    await pool.query("ALTER TABLE system_settings MODIFY COLUMN setting_value LONGTEXT").catch(() => {});
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS testimonials (
