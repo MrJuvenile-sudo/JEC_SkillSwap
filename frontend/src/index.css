@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap');
 @import "tailwindcss";
 
 @layer base {
@@ -164,10 +165,55 @@
   will-change: transform;
 }
 
+.font-handwriting {
+  font-family: 'Caveat', cursive, sans-serif;
+}
+
+@keyframes dashFlow {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+.animate-dash-flow {
+  animation: dashFlow 1.4s linear infinite;
+}
+
+@keyframes sparkPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+}
+
+.animate-spark-pulse {
+  animation: sparkPulse 2s ease-in-out infinite;
+}
+
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-float-gentle {
+  animation: floatGentle 3s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-boy-breathe,
   .animate-girl-breathe,
   .animate-float,
+  .animate-float-gentle,
+  .animate-dash-flow,
+  .animate-spark-pulse,
   .animate-slide-in-right,
   .animate-fade-in-up {
     animation: none !important;

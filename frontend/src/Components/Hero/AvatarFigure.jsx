@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { CheckCircle2, Sparkles, Laptop, Tablet, Code, Palette, BookOpen, ArrowUpRight } from "lucide-react";
+import { CheckCircle2, Sparkles, Check, MapPin, Laptop, Tablet, ArrowUpRight } from "lucide-react";
 
 /**
- * AvatarFigure renders either the Boy (Tech, Left) or Girl (Creative, Right)
- * with photoreal assets, idle breathing animation, contact shadow, rim glow,
- * desktop mouse parallax, and an authentic glass profile chip with live arrival feedback.
+ * AvatarFigure renders either the Boy (Aarav Sharma) or Girl (Ananya Iyer)
+ * inside an authentic pastel arch frame, with playful energy spark bursts,
+ * laptop workspace photo, contact shadow, and a glass profile chip
+ * matching the user's reference mockup.
  */
 export default function AvatarFigure({
   variant = "tech",
@@ -13,6 +14,7 @@ export default function AvatarFigure({
   alt,
   personName,
   personRole,
+  personLocation,
   isPaused = false,
   mouseOffset = { x: 0, y: 0 },
   currentTeaching = "",
@@ -23,206 +25,203 @@ export default function AvatarFigure({
   const isTech = variant === "tech";
   const [imgError, setImgError] = useState(false);
 
-  // Asset paths
-  const defaultSrc = isTech ? "/hero/boy-tech.webp" : "/hero/girl-creative.png";
+  // Asset paths (default to the clean crops from the user's reference mockup)
+  const defaultSrc = isTech ? "/hero/boy-clean.png" : "/hero/girl-clean.png";
   const imageSource = src || defaultSrc;
-  const imageAlt = alt || (isTech ? "Tech partner teaching Machine Learning and Python" : "Creative partner teaching UI/UX Design and Spanish");
+  const imageAlt = alt || (isTech ? "Aarav Sharma teaching Tech skills" : "Ananya Iyer teaching Creative skills");
 
   React.useEffect(() => {
     setImgError(false);
   }, [imageSource]);
 
-  // Profile data
+  // Profile data matching the reference mockup
   const profile = isTech
     ? {
         name: personName || "Aarav Sharma",
-        handle: "@aarav.ml",
-        role: personRole || "AI & ML Specialist",
-        experience: "Ex-Intern • 24 yrs",
-        accentGlow: "from-blue-500/25 via-indigo-500/15 to-transparent",
-        glowRing: "border-blue-400/30",
-        badgeColor: "bg-blue-50 text-blue-700 border-blue-200/80",
-        icon: Laptop,
-        defaultTeaching: "Machine Learning",
-        defaultWanting: "UI/UX Design",
-        skillsOffered: ["Machine Learning", "Python", "System Design"],
-        skillsWanted: ["UI/UX Design", "Spanish"]
+        location: personLocation || "Jabalpur, India",
+        role: personRole || "Full-Stack & ML",
+        archGradient: "from-indigo-100/90 via-purple-50/60 to-blue-50/40 border-indigo-100/90",
+        sparkColor: "text-blue-500",
+        teachSkills: ["React", "JavaScript", "Node.js"],
+        wantSkills: ["UI/UX Design", "Figma"]
       }
     : {
         name: personName || "Ananya Iyer",
-        handle: "@ananya.design",
-        role: personRole || "Product & UI/UX Designer",
-        experience: "Lead Freelance • 24 yrs",
-        accentGlow: "from-violet-500/25 via-fuchsia-500/15 to-transparent",
-        glowRing: "border-violet-400/30",
-        badgeColor: "bg-violet-50 text-violet-700 border-violet-200/80",
-        icon: Tablet,
-        defaultTeaching: "UI/UX Design",
-        defaultWanting: "Machine Learning",
-        skillsOffered: ["UI/UX Design", "Digital Art", "Spanish"],
-        skillsWanted: ["Machine Learning", "Python"]
+        location: personLocation || "Bangalore, India",
+        role: personRole || "UI/UX & Product Design",
+        archGradient: "from-orange-100/90 via-rose-50/60 to-pink-50/40 border-orange-100/90",
+        sparkColor: "text-amber-500",
+        teachSkills: ["UI/UX Design", "Figma"],
+        wantSkills: ["React", "Machine Learning"]
       };
 
-  const teachingDisplay = currentTeaching || profile.defaultTeaching;
-  const wantingDisplay = currentWanting || profile.defaultWanting;
-
-  // Parallax calculations (Desktop only, clamp to max ±6px for figure, ±12px for glow)
-  const figureX = isPaused ? 0 : mouseOffset.x * 6;
-  const figureY = isPaused ? 0 : mouseOffset.y * 6;
-  const glowX = isPaused ? 0 : mouseOffset.x * 12;
-  const glowY = isPaused ? 0 : mouseOffset.y * 12;
+  // Parallax calculations (Desktop only, clamped)
+  const figureX = isPaused ? 0 : mouseOffset.x * 5;
+  const figureY = isPaused ? 0 : mouseOffset.y * 5;
 
   return (
-    <div className={`relative flex flex-col items-center select-none w-full max-w-[140px] sm:max-w-[160px] ${isTech ? 'items-center md:items-start' : 'items-center md:items-end'}`}>
+    <div className={`relative flex flex-col items-center select-none w-full max-w-[195px] xs:max-w-[215px] sm:max-w-[240px] md:max-w-[260px]`}>
       
-      {/* 1. RIM LIGHT & BACKGROUND DEPTH GLOW */}
+      {/* 1. ARCH FRAME & PERSON CONTAINER */}
       <div
-        className="absolute -top-4 -inset-x-4 h-32 sm:h-36 -z-10 pointer-events-none transition-transform duration-300 ease-out"
-        style={{
-          transform: `translate3d(${glowX}px, ${glowY}px, 0)`
-        }}
-        aria-hidden="true"
-      >
-        <div
-          className={`w-full h-full rounded-full blur-xl opacity-60 bg-gradient-to-b ${profile.accentGlow}`}
-        />
-      </div>
-
-      {/* 2. AVATAR CONTAINER WITH IDLE BREATHING MOTION */}
-      <div
-        className="relative w-full aspect-[3/4] max-h-[115px] xs:max-h-[135px] sm:max-h-[155px] md:max-h-[175px] flex items-end justify-center transition-transform duration-200 ease-out"
+        className="relative w-full transition-transform duration-300 ease-out"
         style={{
           transform: `translate3d(${figureX}px, ${figureY}px, 0)`
         }}
       >
-        {/* Subtle Idle Breathing Animation wrapper */}
-        <div
-          className={`relative w-full h-full flex items-end justify-center ${
-            !isPaused ? (isTech ? "animate-boy-breathe" : "animate-girl-breathe") : ""
-          }`}
-          style={{ transformOrigin: "bottom center" }}
-        >
-          {/* Photoreal WebP portrait with fallback */}
-          {!imgError ? (
-            <img
-              src={imageSource}
-              srcSet={srcSet || `${imageSource} 1x`}
-              alt={imageAlt}
-              width="180"
-              height="240"
-              fetchpriority={isTech ? "high" : "auto"}
-              decoding="async"
-              loading="eager"
-              onError={() => setImgError(true)}
-              className="relative z-10 w-full h-full object-contain object-bottom drop-shadow-[0_6px_12px_rgba(0,0,0,0.12)] pointer-events-none"
-            />
-          ) : (
-            /* High-fidelity layered SVG fallback if image is missing */
-            <div className="relative z-10 w-full h-full flex items-end justify-center">
-              <svg
-                viewBox="0 0 320 400"
-                className="w-full h-full max-h-[155px] drop-shadow-md"
-                aria-hidden="true"
-              >
-                <defs>
-                  <linearGradient id={`grad-${variant}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor={isTech ? "#2563eb" : "#7c3aed"} />
-                    <stop offset="100%" stopColor={isTech ? "#1d4ed8" : "#9333ea"} />
-                  </linearGradient>
-                  <radialGradient id={`glow-${variant}`} cx="50%" cy="40%" r="60%">
-                    <stop offset="0%" stopColor={isTech ? "rgba(99,102,241,0.4)" : "rgba(192,132,252,0.4)"} />
-                    <stop offset="100%" stopColor="transparent" />
-                  </radialGradient>
-                </defs>
-                <circle cx="160" cy="180" r="140" fill={`url(#glow-${variant})`} />
-                {/* Torso & garment */}
-                <path
-                  d={isTech ? "M80 400 C80 270, 100 240, 160 240 C220 240, 240 270, 240 400 Z" : "M90 400 C90 280, 110 245, 160 245 C210 245, 230 280, 230 400 Z"}
-                  fill={isTech ? "#1e293b" : "#4c1d95"}
-                />
-                {/* Neck & Face */}
-                <rect x="145" y="190" width="30" height="35" rx="10" fill="#fbcfe8" />
-                <ellipse cx="160" cy="160" rx="42" ry="52" fill="#fed7aa" />
-                {/* Hair */}
-                <path
-                  d={isTech ? "M118 150 C118 105, 202 105, 202 150 C190 120, 130 120, 118 150 Z" : "M110 160 C110 95, 210 95, 210 160 C210 210, 200 240, 195 240 C190 190, 130 190, 125 240 C120 240, 110 210, 110 160 Z"}
-                  fill="#18181b"
-                />
-                {/* Device */}
-                <g transform="translate(110, 290)">
-                  <rect x="0" y="0" width="100" height="60" rx="6" fill="#334155" stroke="#94a3b8" strokeWidth="2" />
-                  <rect x="10" y="8" width="80" height="44" rx="3" fill="#0f172a" />
-                  <circle cx="50" cy="30" r="12" fill={isTech ? "#3b82f6" : "#ec4899"} opacity="0.8" />
-                </g>
-              </svg>
-            </div>
-          )}
-
-          {/* Contact Shadow Under Figure */}
-          <div
-            className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-20 sm:w-28 h-2.5 bg-slate-900/15 rounded-full blur-xs -z-1 pointer-events-none"
-            aria-hidden="true"
-          />
+        
+        {/* Playful Hand-Drawn Radiant Energy Spark Lines \ | / around Head */}
+        {/* Left spark burst */}
+        <div className={`absolute -top-1 sm:top-1 -left-2 sm:-left-3 pointer-events-none z-20 ${profile.sparkColor} animate-spark-pulse`}>
+          <svg viewBox="0 0 36 36" className="w-5 h-5 sm:w-7 sm:h-7" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round">
+            <path d="M 8 8 L 20 18" />
+            <path d="M 4 22 L 18 24" />
+            <path d="M 9 32 L 20 26" />
+          </svg>
         </div>
+
+        {/* Right spark burst */}
+        <div className={`absolute top-2 sm:top-4 -right-2 sm:-right-3 pointer-events-none z-20 ${profile.sparkColor} animate-spark-pulse`} style={{ animationDelay: "0.6s" }}>
+          <svg viewBox="0 0 36 36" className="w-5 h-5 sm:w-7 sm:h-7" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round">
+            <path d="M 28 8 L 16 18" />
+            <path d="M 32 22 L 18 24" />
+            <path d="M 27 32 L 16 26" />
+          </svg>
+        </div>
+
+        {/* Arch Shaped Portrait Card */}
+        <div className={`relative w-full aspect-[4/3.1] rounded-t-[28px] xs:rounded-t-[32px] sm:rounded-t-[38px] bg-gradient-to-b ${profile.archGradient} border shadow-xs overflow-hidden flex items-end justify-center pt-2`}>
+          
+          {/* Subtle Ambient Glow inside arch */}
+          <div className="absolute top-0 inset-x-0 h-16 bg-white/40 blur-md pointer-events-none" />
+
+          {/* Photo with lifelike breathing animation */}
+          <div className={`relative w-full h-full flex items-end justify-center ${!isPaused ? (isTech ? "animate-boy-breathe" : "animate-girl-breathe") : ""}`}>
+            {!imgError ? (
+              <img
+                src={imageSource}
+                srcSet={srcSet || `${imageSource} 1x`}
+                alt={imageAlt}
+                width="220"
+                height="170"
+                fetchPriority={isTech ? "high" : "auto"}
+                decoding="async"
+                loading="eager"
+                onError={() => {
+                  // Fallback to existing public assets if clean crop path fails
+                  if (imageSource !== (isTech ? "/hero/boy-tech.webp" : "/hero/girl-creative.png")) {
+                    setImgError(false);
+                  } else {
+                    setImgError(true);
+                  }
+                }}
+                className="relative z-10 w-full h-full object-cover object-bottom pointer-events-none"
+              />
+            ) : (
+              <div className="relative z-10 w-full h-full flex items-end justify-center bg-slate-100">
+                <span className="text-xs font-bold text-slate-400 mb-4">{profile.name}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Soft contact shadow at desk level */}
+          <div className="absolute bottom-0 inset-x-0 h-2 bg-gradient-to-t from-black/15 to-transparent pointer-events-none" />
+        </div>
+
       </div>
 
-      {/* 3. GLASS PROFILE CHIP & ARRIVAL NOTIFICATION */}
-      <div className="relative w-full mt-1 sm:mt-1.5 z-20">
+      {/* 2. GLASS PROFILE CHIP WITH TEACH & WANT ROWS (EXACT TO MOCKUP) */}
+      <div className="relative w-full -mt-2 sm:-mt-3 z-30 px-0.5">
         
         {/* Floating Arrival Feedback Toast */}
         {arrivalNotice && (
           <div
-            className={`absolute -top-6 sm:-top-7 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1 px-2 sm:px-2.5 py-0.5 rounded-full bg-emerald-600 text-white text-[8px] sm:text-[10px] font-black tracking-wide shadow-md shadow-emerald-500/30 transition-all duration-300 animate-bounce pointer-events-none whitespace-nowrap`}
+            className="absolute -top-7 sm:-top-8 left-1/2 -translate-x-1/2 z-40 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-600 text-white text-[9px] sm:text-[10px] font-black tracking-wide shadow-md shadow-emerald-500/30 transition-all duration-300 animate-bounce pointer-events-none whitespace-nowrap"
           >
             <CheckCircle2 className="w-2.5 h-2.5 text-emerald-200 shrink-0" />
             <span>+ Received: {arrivalNotice} ✓</span>
           </div>
         )}
 
-        {/* Real HTML Glass Card (Compact & Sleek) */}
+        {/* Real Profile Card */}
         <div
-          className={`backdrop-blur-md bg-white/95 rounded-lg sm:rounded-xl p-1.5 sm:p-2 border shadow-xs transition-all duration-500 ${
+          className={`backdrop-blur-md bg-white rounded-xl sm:rounded-2xl p-2 sm:p-2.5 border shadow-md transition-all duration-500 text-left ${
             isArrivalGlow
-              ? "ring-2 ring-emerald-500 shadow-[0_0_16px_rgba(16,185,129,0.3)] border-emerald-300 scale-[1.02]"
+              ? "ring-2 ring-emerald-500 shadow-[0_0_18px_rgba(16,185,129,0.35)] border-emerald-300 scale-[1.02]"
               : "border-slate-200/90 shadow-slate-900/5 hover:border-slate-300"
           }`}
         >
-          {/* Header Row: Identity & Status */}
-          <div className="flex items-center justify-between gap-1 pb-0.5 sm:pb-1 border-b border-slate-100">
+          {/* Header Row: Name, Verified Badge & Online Status */}
+          <div className="flex items-center justify-between gap-1 pb-1 border-b border-slate-100">
             <div className="flex items-center gap-1 min-w-0">
-              <span className="text-[10px] sm:text-[11px] font-black text-slate-900 leading-tight truncate">
+              <span className="text-[11px] sm:text-[12px] font-black text-slate-900 leading-tight truncate">
                 {profile.name}
               </span>
-              <CheckCircle2 className="w-2.5 h-2.5 text-blue-600 fill-blue-50 shrink-0" />
+              <CheckCircle2 className="w-3 h-3 text-blue-600 fill-blue-600 text-white shrink-0" />
             </div>
-            <div className="flex items-center gap-0.5 sm:gap-1 text-[7px] sm:text-[8px] font-bold text-emerald-700 shrink-0">
-              <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span>
+            
+            {/* Online Indicator */}
+            <div className="flex items-center gap-1 text-[8px] sm:text-[9px] font-black text-emerald-600 shrink-0">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
               <span>Online</span>
             </div>
           </div>
 
-          {/* Barter Declarations */}
-          <div className="mt-1 space-y-0.5 text-left">
-            <div className="flex items-center gap-1 min-w-0">
-              <span className="uppercase text-[7px] sm:text-[8px] font-black tracking-wider text-slate-400 shrink-0 w-6 sm:w-8">
-                Teach:
-              </span>
-              <span className="inline-flex items-center gap-0.5 px-1 sm:px-1.5 py-0.2 rounded bg-blue-50/90 border border-blue-200/80 text-blue-700 text-[8px] sm:text-[9px] font-bold truncate max-w-[65px] xs:max-w-[85px] sm:max-w-none">
-                <Sparkles className="w-2 h-2 text-blue-500 shrink-0" />
-                <span className="truncate">{teachingDisplay}</span>
-              </span>
-            </div>
+          {/* Location row */}
+          <div className="flex items-center gap-1 text-[8px] sm:text-[9px] text-slate-500 font-bold pt-1 pb-1">
+            <MapPin className="w-2.5 h-2.5 text-slate-400 shrink-0" />
+            <span>{profile.location}</span>
+          </div>
 
-            <div className="flex items-center gap-1 min-w-0">
-              <span className="uppercase text-[7px] sm:text-[8px] font-black tracking-wider text-slate-400 shrink-0 w-6 sm:w-8">
-                Want:
-              </span>
-              <span className="inline-flex items-center gap-0.5 px-1 sm:px-1.5 py-0.2 rounded bg-amber-50/90 border border-amber-200/80 text-amber-800 text-[8px] sm:text-[9px] font-bold truncate max-w-[65px] xs:max-w-[85px] sm:max-w-none">
-                <ArrowUpRight className="w-2 h-2 text-amber-600 shrink-0" />
-                <span className="truncate">{wantingDisplay}</span>
-              </span>
+          {/* TEACH Row */}
+          <div className="flex flex-wrap items-center gap-1 pt-0.5">
+            <span className="uppercase text-[7px] sm:text-[8px] font-black tracking-wider text-slate-400 shrink-0 w-8">
+              TEACH:
+            </span>
+            <div className="flex flex-wrap items-center gap-0.5 sm:gap-1">
+              {profile.teachSkills.map((sk, i) => {
+                const isPrimary = i === 0 || (sk.toLowerCase() === currentTeaching.toLowerCase());
+                return (
+                  <span
+                    key={i}
+                    className={`inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-md text-[8px] sm:text-[9px] font-bold ${
+                      isPrimary
+                        ? "bg-blue-50 text-blue-700 border border-blue-200/90"
+                        : "bg-blue-50/70 text-blue-700/90"
+                    }`}
+                  >
+                    {isPrimary && <Check className="w-2 h-2 text-blue-500 shrink-0" />}
+                    <span>{sk}</span>
+                  </span>
+                );
+              })}
             </div>
           </div>
+
+          {/* WANT Row */}
+          <div className="flex flex-wrap items-center gap-1 pt-1">
+            <span className="uppercase text-[7px] sm:text-[8px] font-black tracking-wider text-slate-400 shrink-0 w-8">
+              WANT:
+            </span>
+            <div className="flex flex-wrap items-center gap-0.5 sm:gap-1">
+              {profile.wantSkills.map((sk, i) => {
+                const isMatch = sk.toLowerCase() === currentWanting.toLowerCase();
+                return (
+                  <span
+                    key={i}
+                    className={`inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-md text-[8px] sm:text-[9px] font-bold ${
+                      isMatch
+                        ? "bg-amber-100/90 text-amber-900 border border-amber-300 font-extrabold"
+                        : "bg-amber-50 text-amber-800 border border-amber-200/60"
+                    }`}
+                  >
+                    <span>{sk}</span>
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+
         </div>
 
       </div>

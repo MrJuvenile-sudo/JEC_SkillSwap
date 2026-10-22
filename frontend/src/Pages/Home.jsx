@@ -80,20 +80,22 @@ export default function Home() {
       "Python", "Figma", "React", "Spanish", "Machine Learning", "System Design", "Prompt Engineering"
     ],
     boy_name: "Aarav Sharma",
-    boy_role: "AI & ML Specialist",
-    boy_image: "/hero/boy-tech.webp",
-    boy_teach: "Machine Learning",
+    boy_role: "Full-Stack & ML Specialist",
+    boy_image: "/hero/boy-clean.png",
+    boy_location: "Jabalpur, India",
+    boy_teach: "React",
     boy_want: "UI/UX Design",
     girl_name: "Ananya Iyer",
     girl_role: "Product & UI/UX Designer",
-    girl_image: "/hero/girl-creative.png",
+    girl_image: "/hero/girl-clean.png",
+    girl_location: "Bangalore, India",
     girl_teach: "UI/UX Design",
-    girl_want: "Machine Learning",
+    girl_want: "React",
     pairs: [
-      { id: 0, tech: "Machine Learning", creative: "UI/UX Design" },
-      { id: 1, tech: "Python", creative: "Spanish" },
-      { id: 2, tech: "Data Science", creative: "Digital Art" },
-      { id: 3, tech: "System Design", creative: "Brand Strategy" }
+      { id: 0, tech: "React", creative: "UI/UX Design" },
+      { id: 1, tech: "JavaScript", creative: "Figma" },
+      { id: 2, tech: "Node.js", creative: "Product Design" },
+      { id: 3, tech: "Python", creative: "Machine Learning" }
     ]
   });
 
@@ -389,24 +391,11 @@ export default function Home() {
       {/* ------------------------------------------------------------- */}
       {/* 1. HERO SECTION (WITH 1-ON-1 EXCHANGE STAGE ABOVE TEXT) */}
       {/* ------------------------------------------------------------- */}
-      <section className="pt-8 pb-16 sm:pt-10 sm:pb-24 border-b border-slate-200/80 bg-gradient-to-b from-[#faf7ee] via-[#f7f2e5] to-[#faf7ee] relative overflow-hidden">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-5 relative z-10">
+      <section className="pt-6 pb-16 sm:pt-8 sm:pb-24 border-b border-slate-200/80 bg-gradient-to-b from-[#faf7ee] via-[#f7f2e5] to-[#faf7ee] relative overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center space-y-4 relative z-10">
           
-          {/* Animated Top Pill Badges with Slide-in Right animation */}
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50/90 border border-blue-200/80 text-blue-700 text-xs font-bold shadow-2xs animate-fade-in-up">
-              <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
-              <span>{heroConfig.pill1_text}</span>
-            </div>
-
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50/90 border border-emerald-200/80 text-emerald-700 text-xs font-bold shadow-2xs animate-slide-in-right hidden sm:inline-flex">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-600 animate-spin" style={{ animationDuration: '4s' }} />
-              <span>{heroConfig.pill2_text}</span>
-            </div>
-          </div>
-
-          {/* 1-ON-1 SKILL BARTER STAGE: DYNAMIC & SLEEK DIMENSIONS ABOVE TEXT */}
-          <div className="py-0.5">
+          {/* 1-ON-1 SKILL BARTER STAGE: EXACT MATCH TO DESIGN MOCKUP */}
+          <div className="py-1">
             <HeroStage heroConfig={heroConfig} />
           </div>
 
