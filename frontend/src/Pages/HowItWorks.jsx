@@ -55,7 +55,11 @@ export default function HowItWorks() {
     <div className="min-h-screen bg-[#fdfbf7] text-slate-900 font-sans">
       
       {/* Header */}
-      <section className="py-16 sm:py-24 bg-gradient-to-b from-indigo-950 via-indigo-900 to-slate-900 text-white border-b border-slate-800 relative overflow-hidden">
+      <section className="py-16 sm:py-20 bg-gradient-to-b from-indigo-950 via-indigo-900 to-slate-900 text-white border-b border-slate-800 relative overflow-hidden">
+        {/* Ambient Glows */}
+        <div className="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-blue-500/20 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-violet-500/20 blur-3xl pointer-events-none" />
+
         <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-4 relative z-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-xs font-extrabold">
             <Zap className="w-3.5 h-3.5 text-amber-300 fill-amber-300" />
@@ -67,6 +71,40 @@ export default function HowItWorks() {
           <p className="text-base sm:text-lg text-indigo-200 max-w-2xl mx-auto leading-relaxed">
             Everything you need to know about setting up your profile, finding 2-way matches, and co-learning 1-on-1.
           </p>
+
+          {/* Boy & Girl Visual Barter Vignette */}
+          <div className="pt-6 flex items-center justify-center gap-4 sm:gap-8">
+            <div className="flex flex-col items-center">
+              <div className="relative w-20 sm:w-24 aspect-[3/4] flex items-end justify-center">
+                <img
+                  src="/hero/boy-tech.webp"
+                  alt="Boy Tech Persona"
+                  className="w-full h-full object-contain object-bottom drop-shadow-lg"
+                  loading="lazy"
+                />
+              </div>
+              <span className="text-[10px] font-black text-blue-300 mt-1">Tech Swapper</span>
+            </div>
+
+            <div className="flex flex-col items-center justify-center space-y-1">
+              <div className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg border border-blue-400/40">
+                <Repeat className="w-5 h-5" />
+              </div>
+              <span className="text-[9px] font-black uppercase text-indigo-200 tracking-wider">Direct Barter</span>
+            </div>
+
+            <div className="flex flex-col items-center">
+              <div className="relative w-20 sm:w-24 aspect-[3/4] flex items-end justify-center">
+                <img
+                  src="/hero/girl-creative.png"
+                  alt="Girl Creative Persona"
+                  className="w-full h-full object-contain object-bottom drop-shadow-lg"
+                  loading="lazy"
+                />
+              </div>
+              <span className="text-[10px] font-black text-violet-300 mt-1">Creative Swapper</span>
+            </div>
+          </div>
         </div>
       </section>
 
