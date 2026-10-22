@@ -180,7 +180,7 @@ export default function Home() {
         name: "Aarav Sharma",
         role: "AI & ML Specialist",
         location: "Bengaluru, India (Remote)",
-        picture: "/hero/boy-tech.webp",
+        picture: get3DAvatarUrl("male", "Aarav Sharma"),
         teaching: "Python & Machine Learning",
         learning: "UI/UX & Product Design"
       },
@@ -188,7 +188,7 @@ export default function Home() {
         name: "Ananya Iyer",
         role: "Product & UI/UX Designer",
         location: "Mumbai, India (Remote)",
-        picture: "/hero/girl-creative.png",
+        picture: get3DAvatarUrl("female", "Ananya Iyer"),
         teaching: "UI/UX & Product Design",
         learning: "Python & Machine Learning"
       }
@@ -661,250 +661,40 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Step 01: Profile Setup */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 space-y-4 group hover:-translate-y-1 relative flex flex-col justify-between">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-3xl font-serif font-black text-blue-600/30 group-hover:text-blue-600 transition-colors">
-                  01
-                </span>
-                <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all shadow-2xs">
-                  <UserCheck className="w-5 h-5" />
-                </div>
-              </div>
-
-              {/* Visual Step Illustration 1: Boy Tech Persona Profile Card */}
-              <div className="h-36 rounded-2xl bg-gradient-to-br from-blue-50/90 via-indigo-50/50 to-slate-50 border border-blue-100/80 relative overflow-hidden flex items-end justify-center p-2">
-                <div className="absolute top-2 left-2 z-20 flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[9px] font-black shadow-xs">
-                  <CheckCircle2 className="w-2.5 h-2.5 text-emerald-200" />
-                  <span>Verified Profile</span>
-                </div>
-                
-                {/* Floating skill tags */}
-                <div className="absolute top-7 right-1.5 z-20 px-2 py-0.5 rounded-md bg-white/95 border border-blue-200/80 text-blue-700 text-[8px] font-extrabold shadow-2xs animate-float">
-                  Teaches: Python & ML 🐍
-                </div>
-                <div className="absolute top-14 left-1.5 z-20 px-2 py-0.5 rounded-md bg-white/95 border border-amber-200/80 text-amber-800 text-[8px] font-extrabold shadow-2xs animate-float" style={{ animationDelay: "1s" }}>
-                  Wants: UI/UX Design 🎨
-                </div>
-
-                {/* Boy Avatar */}
-                <img
-                  src={heroConfig?.boy_image || "/hero/boy-tech.webp"}
-                  alt="Aarav Setup"
-                  className="h-28 w-auto object-contain object-bottom drop-shadow-sm group-hover:scale-105 transition-transform duration-300 relative z-10 pointer-events-none"
-                  loading="lazy"
-                />
-                <div className="absolute bottom-0 w-24 h-2 bg-slate-900/10 rounded-full blur-xs" />
-              </div>
-
-              <div>
-                <h3 className="text-base font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors mb-1">
-                  Set Up Your Skill Profile
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  List the skills you have mastered and teach alongside the topics you want to learn. No fees, courses, or middleman fees.
-                </p>
-              </div>
-            </div>
-            
-            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-blue-600">
-              <span>Setup: ~60 Seconds</span>
-              <span className="text-emerald-600">100% Free</span>
-            </div>
-          </div>
-
-          {/* Step 02: Bilateral Match Discovery */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 space-y-4 group hover:-translate-y-1 relative flex flex-col justify-between">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-3xl font-serif font-black text-indigo-600/30 group-hover:text-indigo-600 transition-colors">
-                  02
-                </span>
-                <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 border border-indigo-200 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-2xs">
-                  <Sparkles className="w-5 h-5" />
-                </div>
-              </div>
-
-              {/* Visual Step Illustration 2: 2-Way Match Animation */}
-              <div className="h-36 rounded-2xl bg-gradient-to-br from-indigo-50/90 via-purple-50/50 to-slate-50 border border-indigo-100/80 relative overflow-hidden flex items-center justify-between px-2 py-2">
-                {/* Left Mini Avatar (Boy) */}
-                <div className="flex flex-col items-center z-10 w-12">
-                  <img
-                    src={heroConfig?.boy_image || "/hero/boy-tech.webp"}
-                    alt="Boy Swapper"
-                    className="h-16 w-auto object-contain object-bottom drop-shadow-xs"
-                    loading="lazy"
-                  />
-                  <span className="text-[8px] font-black text-slate-800 bg-white/90 px-1 rounded border border-slate-200">Tech</span>
-                </div>
-
-                {/* Center Broker & Synergy */}
-                <div className="flex flex-col items-center justify-center z-10 space-y-1">
-                  <div className="px-2 py-0.5 rounded-full bg-slate-900 text-white text-[8px] font-black flex items-center gap-1 shadow-md">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                    <span>99.4% Match</span>
-                  </div>
-                  
-                  {/* Bilateral Trade Arrows */}
-                  <div className="w-20 space-y-0.5 text-center">
-                    <div className="flex items-center justify-center gap-1 text-[7px] font-bold text-blue-700 bg-blue-100/80 py-0.5 rounded px-1">
-                      <span>Python</span>
-                      <span>➔</span>
-                    </div>
-                    <div className="flex items-center justify-center gap-1 text-[7px] font-bold text-violet-700 bg-violet-100/80 py-0.5 rounded px-1">
-                      <span>⬅</span>
-                      <span>UI/UX</span>
+          {workingSteps.map((item, idx) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={idx}
+                className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 space-y-4 group hover:-translate-y-1 relative flex flex-col justify-between"
+              >
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-3xl font-serif font-black text-blue-600/30 group-hover:text-blue-600 transition-colors">
+                      {item.step}
+                    </span>
+                    <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all shadow-2xs">
+                      <Icon className="w-6 h-6" />
                     </div>
                   </div>
-                </div>
 
-                {/* Right Mini Avatar (Girl) */}
-                <div className="flex flex-col items-center z-10 w-12">
-                  <img
-                    src={heroConfig?.girl_image || "/hero/girl-creative.png"}
-                    alt="Girl Swapper"
-                    className="h-16 w-auto object-contain object-bottom drop-shadow-xs"
-                    loading="lazy"
-                  />
-                  <span className="text-[8px] font-black text-slate-800 bg-white/90 px-1 rounded border border-slate-200">Design</span>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-base font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors mb-1">
-                  Bilateral Match Discovery
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Our algorithm matches you directly with peers where what you teach fulfills their goal, and what they teach fulfills yours.
-                </p>
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-indigo-600">
-              <span>Synergy: Direct 2-Way</span>
-              <span className="text-indigo-600">Smart Broker</span>
-            </div>
-          </div>
-
-          {/* Step 03: Proposal & Mutual Agreement */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 space-y-4 group hover:-translate-y-1 relative flex flex-col justify-between">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-3xl font-serif font-black text-violet-600/30 group-hover:text-violet-600 transition-colors">
-                  03
-                </span>
-                <div className="w-10 h-10 rounded-2xl bg-violet-50 text-violet-600 border border-violet-200 flex items-center justify-center group-hover:bg-violet-600 group-hover:text-white transition-all shadow-2xs">
-                  <Repeat className="w-5 h-5" />
-                </div>
-              </div>
-
-              {/* Visual Step Illustration 3: Girl Persona with Accepted Proposal */}
-              <div className="h-36 rounded-2xl bg-gradient-to-br from-violet-50/90 via-pink-50/50 to-slate-50 border border-violet-100/80 relative overflow-hidden flex items-end justify-center p-2">
-                <div className="absolute top-2 left-2 z-20 flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-600 text-white text-[9px] font-black shadow-xs">
-                  <Repeat className="w-2.5 h-2.5 text-blue-200" />
-                  <span>Proposal Accepted</span>
-                </div>
-
-                {/* Floating proposal preview */}
-                <div className="absolute top-8 right-2 z-20 p-1.5 rounded-lg bg-white/95 border border-slate-200 text-left shadow-md max-w-[130px]">
-                  <p className="text-[8px] font-black text-slate-900 leading-tight">Trade Agreement</p>
-                  <p className="text-[7px] text-slate-500 font-medium mt-0.5">Python ⇄ UI/UX Design</p>
-                  <div className="flex items-center gap-1 text-[7px] text-emerald-600 font-bold mt-1">
-                    <Check className="w-2.5 h-2.5" />
-                    <span>Room Confirmed</span>
+                  <div>
+                    <h3 className="text-base font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors mb-1">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      {item.desc}
+                    </p>
                   </div>
                 </div>
 
-                {/* Girl Avatar */}
-                <img
-                  src={heroConfig?.girl_image || "/hero/girl-creative.png"}
-                  alt="Ananya Proposal"
-                  className="h-28 w-auto object-contain object-bottom drop-shadow-sm group-hover:scale-105 transition-transform duration-300 relative z-10 pointer-events-none"
-                  loading="lazy"
-                />
-                <div className="absolute bottom-0 w-24 h-2 bg-slate-900/10 rounded-full blur-xs" />
-              </div>
-
-              <div>
-                <h3 className="text-base font-extrabold text-slate-900 group-hover:text-violet-600 transition-colors mb-1">
-                  Proposal & Agreement
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Send a 1-click swap proposal with your desired topic and timeslot. Once both peers accept, your barter room unlocks.
-                </p>
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-violet-600">
-              <span>Mutual Consent</span>
-              <span className="text-emerald-600">Instant Room</span>
-            </div>
-          </div>
-
-          {/* Step 04: Live Video Classroom & Review */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 space-y-4 group hover:-translate-y-1 relative flex flex-col justify-between">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-3xl font-serif font-black text-emerald-600/30 group-hover:text-emerald-600 transition-colors">
-                  04
-                </span>
-                <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-2xs">
-                  <Video className="w-5 h-5" />
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-blue-600">
+                  <span>Step {item.step}</span>
+                  <span className="text-emerald-600">100% Free</span>
                 </div>
               </div>
-
-              {/* Visual Step Illustration 4: Video Classroom Preview */}
-              <div className="h-36 rounded-2xl bg-slate-900 border border-slate-700/80 relative overflow-hidden flex flex-col justify-between p-2">
-                {/* Header status */}
-                <div className="flex items-center justify-between text-[8px] font-black text-slate-300 border-b border-slate-800 pb-1">
-                  <span className="flex items-center gap-1 text-emerald-400">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    HD Classroom Live
-                  </span>
-                  <span className="text-slate-400">45:00 min</span>
-                </div>
-
-                {/* Split Video Mock Tiles */}
-                <div className="grid grid-cols-2 gap-1.5 my-auto">
-                  <div className="h-16 rounded-lg bg-slate-800 border border-slate-700 overflow-hidden relative flex items-center justify-center">
-                    <img src={heroConfig?.boy_image || "/hero/boy-tech.webp"} alt="Boy video" className="h-14 w-auto object-contain" />
-                    <span className="absolute bottom-1 left-1 bg-black/70 text-[7px] text-white px-1 rounded font-bold">Aarav (Tech)</span>
-                  </div>
-                  <div className="h-16 rounded-lg bg-slate-800 border border-slate-700 overflow-hidden relative flex items-center justify-center">
-                    <img src={heroConfig?.girl_image || "/hero/girl-creative.png"} alt="Girl video" className="h-14 w-auto object-contain" />
-                    <span className="absolute bottom-1 left-1 bg-black/70 text-[7px] text-white px-1 rounded font-bold">Ananya (Design)</span>
-                  </div>
-                </div>
-
-                {/* Rating Footer */}
-                <div className="flex items-center justify-between text-[8px] font-bold text-amber-300 pt-1 border-t border-slate-800">
-                  <span className="flex items-center gap-0.5">
-                    <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
-                    <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
-                    <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
-                    <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
-                    <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
-                  </span>
-                  <span className="text-emerald-400 font-extrabold">+10 Karma Score</span>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-base font-extrabold text-slate-900 group-hover:text-emerald-600 transition-colors mb-1">
-                  Live Classroom & Karma
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Learn face-to-face via built-in video, screen share, and collaborative code sandbox. Exchange reviews to elevate reputation.
-                </p>
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-emerald-600">
-              <span>HD Video & Sandbox</span>
-              <span className="text-amber-600">Karma Ratings</span>
-            </div>
-          </div>
+            );
+          })}
         </div>
 
         <div className="text-center mt-10">
@@ -1170,153 +960,64 @@ export default function Home() {
       </section>
 
       {/* ------------------------------------------------------------- */}
-      {/* 9. BOTTOM HERO CONVERSION BANNER (FEATURING BOY & GIRL CO-LEARNERS) */}
+      {/* 9. BOTTOM CONVERSION BANNER */}
       {/* ------------------------------------------------------------- */}
-      <section className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-3xl sm:rounded-4xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 border border-slate-800/80 shadow-2xl overflow-hidden p-6 sm:p-10 lg:p-12">
+      <section className="py-16 sm:py-24 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative rounded-3xl sm:rounded-4xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 border border-slate-800/80 shadow-2xl overflow-hidden p-8 sm:p-12 text-center space-y-6">
           
           {/* Ambient Lighting Gradients */}
           <div className="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-blue-500/20 blur-3xl pointer-events-none" />
           <div className="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-violet-500/20 blur-3xl pointer-events-none" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
 
-          {/* Grid Container */}
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            
-            {/* Left Figure: Boy Tech Persona */}
-            <div className="hidden lg:flex lg:col-span-3 flex-col items-center justify-end relative">
-              <div className="relative w-full max-w-[210px] aspect-[3/4] flex items-end justify-center">
-                {/* Floating Skill Badge */}
-                <div className="absolute -top-3 left-0 z-20 px-3 py-1.5 rounded-xl bg-slate-800/95 backdrop-blur-md border border-blue-500/40 text-blue-300 text-xs font-bold shadow-lg flex items-center gap-1.5 animate-float">
-                  <Laptop className="w-3.5 h-3.5 text-blue-400" />
-                  <span>Teaches: Python & ML</span>
-                </div>
-                
-                {/* Boy Image with breathing animation */}
-                <img
-                  src={heroConfig?.boy_image || "/hero/boy-tech.webp"}
-                  alt="Aarav Sharma Tech Partner"
-                  className="w-full h-full object-contain object-bottom drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] animate-boy-breathe relative z-10 pointer-events-none"
-                  loading="lazy"
-                />
+          {/* Trust Badge */}
+          <div className="relative z-10 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/15 border border-blue-400/30 text-blue-300 text-xs font-extrabold">
+            <Sparkles className="w-3.5 h-3.5 text-amber-300 fill-amber-300" />
+            <span>Zero Tuition • 100% Peer Reciprocal Learning</span>
+          </div>
 
-                {/* Contact shadow */}
-                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-32 h-3 bg-black/40 rounded-full blur-xs" />
-              </div>
+          {/* Main Headline */}
+          <div className="relative z-10 space-y-3">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-white tracking-tight leading-tight">
+              Ready to Barter Your Knowledge?
+            </h2>
+            <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto leading-relaxed">
+              Connect 1-on-1 with verified peers. Teach what you excel at, learn what you desire, and accelerate your growth without spending a single rupee or dollar.
+            </p>
+          </div>
 
-              {/* Tag below */}
-              <div className="mt-2 text-center">
-                <span className="text-xs font-extrabold text-slate-200 block">{heroConfig?.boy_name || "Aarav Sharma"}</span>
-                <span className="text-[10px] text-blue-400 font-semibold">{heroConfig?.boy_role || "AI & ML Specialist"}</span>
-              </div>
-            </div>
+          {/* CTAs */}
+          <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <Link
+              to={isAuthenticated ? "/explore" : "/register"}
+              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-2xl font-black text-xs sm:text-sm shadow-xl shadow-blue-500/25 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+            >
+              <span>Start Swapping Today</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              to="/explore"
+              className="w-full sm:w-auto px-8 py-4 bg-slate-800/90 hover:bg-slate-700/90 text-slate-200 rounded-2xl font-black text-xs sm:text-sm border border-slate-700 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+            >
+              <Search className="w-4 h-4 text-slate-400" />
+              <span>Explore Skills Directory</span>
+            </Link>
+          </div>
 
-            {/* Center Content: Action & Messaging */}
-            <div className="lg:col-span-6 text-center space-y-6">
-              
-              {/* Trust Badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/15 border border-blue-400/30 text-blue-300 text-xs font-extrabold">
-                <Sparkles className="w-3.5 h-3.5 text-amber-300 fill-amber-300" />
-                <span>Zero Tuition • 100% Peer Reciprocal Learning</span>
-              </div>
-
-              {/* Main Headline */}
-              <div className="space-y-3">
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-white tracking-tight leading-tight">
-                  Ready to Barter Your Knowledge?
-                </h2>
-                <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto leading-relaxed">
-                  Connect 1-on-1 with verified peers. Teach what you excel at, learn what you desire, and accelerate your growth without spending a single rupee or dollar.
-                </p>
-              </div>
-
-              {/* Mobile/Tablet Avatars Row (shown when left/right columns are hidden on small screens) */}
-              <div className="flex lg:hidden items-center justify-center gap-4 py-2">
-                <div className="flex items-center gap-2 bg-slate-800/80 border border-slate-700/80 rounded-2xl p-2 pr-3">
-                  <img src={heroConfig?.boy_image || "/hero/boy-tech.webp"} alt="Boy" className="w-10 h-10 rounded-xl object-cover bg-blue-950" />
-                  <div className="text-left">
-                    <span className="text-[11px] font-black text-white block">Tech Partner</span>
-                    <span className="text-[9px] text-blue-400 font-bold">Teaches Python</span>
-                  </div>
-                </div>
-
-                <div className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0">
-                  <Repeat className="w-3.5 h-3.5" />
-                </div>
-
-                <div className="flex items-center gap-2 bg-slate-800/80 border border-slate-700/80 rounded-2xl p-2 pr-3">
-                  <img src={heroConfig?.girl_image || "/hero/girl-creative.png"} alt="Girl" className="w-10 h-10 rounded-xl object-cover bg-violet-950" />
-                  <div className="text-left">
-                    <span className="text-[11px] font-black text-white block">Creative Partner</span>
-                    <span className="text-[9px] text-violet-400 font-bold">Teaches UI/UX</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* CTAs */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-                <Link
-                  to={isAuthenticated ? "/explore" : "/register"}
-                  className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-2xl font-black text-xs sm:text-sm shadow-xl shadow-blue-500/25 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
-                >
-                  <span>Start Swapping Today</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link
-                  to="/explore"
-                  className="w-full sm:w-auto px-8 py-4 bg-slate-800/90 hover:bg-slate-700/90 text-slate-200 rounded-2xl font-black text-xs sm:text-sm border border-slate-700 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
-                >
-                  <Search className="w-4 h-4 text-slate-400" />
-                  <span>Explore Skills Directory</span>
-                </Link>
-              </div>
-
-              {/* Trust Checkmarks */}
-              <div className="pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-slate-400 font-semibold">
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>100% Free Peer Barter</span>
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-blue-400" />
-                  <span>Integrated HD Video & Sandbox</span>
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-violet-400" />
-                  <span>Verified Mentor Karma Scores</span>
-                </span>
-              </div>
-
-            </div>
-
-            {/* Right Figure: Girl Creative Persona */}
-            <div className="hidden lg:flex lg:col-span-3 flex-col items-center justify-end relative">
-              <div className="relative w-full max-w-[210px] aspect-[3/4] flex items-end justify-center">
-                {/* Floating Skill Badge */}
-                <div className="absolute -top-3 right-0 z-20 px-3 py-1.5 rounded-xl bg-slate-800/95 backdrop-blur-md border border-violet-500/40 text-violet-300 text-xs font-bold shadow-lg flex items-center gap-1.5 animate-float" style={{ animationDelay: "1s" }}>
-                  <Tablet className="w-3.5 h-3.5 text-violet-400" />
-                  <span>Teaches: UI/UX & Design</span>
-                </div>
-
-                {/* Girl Image with breathing animation */}
-                <img
-                  src={heroConfig?.girl_image || "/hero/girl-creative.png"}
-                  alt="Ananya Iyer Creative Partner"
-                  className="w-full h-full object-contain object-bottom drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] animate-girl-breathe relative z-10 pointer-events-none"
-                  loading="lazy"
-                />
-
-                {/* Contact shadow */}
-                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-32 h-3 bg-black/40 rounded-full blur-xs" />
-              </div>
-
-              {/* Tag below */}
-              <div className="mt-2 text-center">
-                <span className="text-xs font-extrabold text-slate-200 block">{heroConfig?.girl_name || "Ananya Iyer"}</span>
-                <span className="text-[10px] text-violet-400 font-semibold">{heroConfig?.girl_role || "Product & UI/UX Designer"}</span>
-              </div>
-            </div>
-
+          {/* Trust Checkmarks */}
+          <div className="relative z-10 pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-slate-400 font-semibold">
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span>100% Free Peer Barter</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-blue-400" />
+              <span>Integrated HD Video & Sandbox</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-violet-400" />
+              <span>Verified Mentor Karma Scores</span>
+            </span>
           </div>
 
         </div>

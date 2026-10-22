@@ -157,40 +157,6 @@ export default function Explore() {
             Browse verified mentors offering 1-on-1 reciprocal skill exchanges. Filter by domain, academic track, or avatar type.
           </p>
         </div>
-
-        {/* Right side: Boy & Girl 1-on-1 Swapping Vignette */}
-        <div className="z-10 hidden sm:flex items-center gap-3 bg-slate-50/90 border border-slate-200/90 rounded-2xl p-2.5 shadow-2xs self-start md:self-auto shrink-0">
-          <div className="relative flex flex-col items-center">
-            <img
-              src="/hero/boy-tech.webp"
-              alt="Tech Partner"
-              className="w-12 h-14 object-contain object-bottom drop-shadow-sm"
-              loading="lazy"
-            />
-            <span className="px-1.5 py-0.2 rounded bg-blue-100 text-blue-800 text-[8px] font-black mt-0.5">
-              Tech
-            </span>
-          </div>
-
-          <div className="flex flex-col items-center justify-center px-1">
-            <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-xs">
-              <Repeat className="w-3.5 h-3.5" />
-            </div>
-            <span className="text-[8px] font-black text-slate-500 uppercase tracking-wider mt-1">1:1 Barter</span>
-          </div>
-
-          <div className="relative flex flex-col items-center">
-            <img
-              src="/hero/girl-creative.png"
-              alt="Creative Partner"
-              className="w-12 h-14 object-contain object-bottom drop-shadow-sm"
-              loading="lazy"
-            />
-            <span className="px-1.5 py-0.2 rounded bg-violet-100 text-violet-800 text-[8px] font-black mt-0.5">
-              Design
-            </span>
-          </div>
-        </div>
       </div>
 
       {/* Directory Live Stats Ribbon */}
