@@ -249,7 +249,7 @@ export default function Profile() {
 
         <button
           onClick={handleStartEditingProfile}
-          className="absolute top-6 right-6 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl transition-all flex items-center gap-1.5 text-xs font-extrabold border border-blue-200/80 shadow-2xs hover:scale-105"
+          className="sm:absolute sm:top-6 sm:right-6 w-full sm:w-auto px-4 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl transition-all flex items-center justify-center gap-1.5 text-xs font-extrabold border border-blue-200/80 shadow-2xs hover:scale-105 mb-4 sm:mb-0"
         >
           <Edit3 className="w-4 h-4" />
           <span>Edit Profile Details</span>

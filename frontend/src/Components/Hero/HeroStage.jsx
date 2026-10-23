@@ -139,14 +139,14 @@ export default function HeroStage({ heroConfig = {} }) {
       {/* ------------------------------------------------------------- */}
       {/* TOP PILLS (DIRECTLY FROM MOCKUP) */}
       {/* ------------------------------------------------------------- */}
-      <div className="flex flex-wrap items-center justify-center gap-3 mb-6 sm:mb-8 z-30">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/95 border border-blue-200/90 text-blue-700 text-xs font-bold shadow-xs hover:scale-105 transition-transform">
-          <Users className="w-4 h-4 text-blue-600 shrink-0" />
+      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-4 sm:mb-8 z-30 px-1">
+        <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-white/95 border border-blue-200/90 text-blue-700 text-[10px] sm:text-xs font-bold shadow-xs hover:scale-105 transition-transform text-center">
+          <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 shrink-0" />
           <span>{heroConfig?.pill1_text || "Verified Peer-to-Peer Learning Network"}</span>
         </div>
 
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/95 border border-emerald-200/90 text-emerald-700 text-xs font-bold shadow-xs hover:scale-105 transition-transform">
-          <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
+        <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-white/95 border border-emerald-200/90 text-emerald-700 text-[10px] sm:text-xs font-bold shadow-xs hover:scale-105 transition-transform text-center">
+          <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0" />
           <span>{heroConfig?.pill2_text || "AI-Powered Skill Matching"}</span>
         </div>
       </div>
@@ -154,7 +154,7 @@ export default function HeroStage({ heroConfig = {} }) {
       {/* ------------------------------------------------------------- */}
       {/* MAIN HERO STAGE ROW */}
       {/* ------------------------------------------------------------- */}
-      <div className="relative w-full flex items-center justify-between gap-1 sm:gap-3 lg:gap-4">
+      <div className="relative w-full flex items-center justify-between gap-0.5 xs:gap-1.5 sm:gap-3 lg:gap-4 overflow-visible">
         
         {/* ========================================================= */}
         {/* LEFT FLANK: "SHARE YOUR SKILLS" + FLOATING CHIPS */}
@@ -210,7 +210,7 @@ export default function HeroStage({ heroConfig = {} }) {
         {/* ========================================================= */}
         {/* ZONE 1: BOY (AARAV SHARMA) */}
         {/* ========================================================= */}
-        <div className="w-[45%] md:w-[28%] lg:w-[26%] flex justify-center">
+        <div className="w-[39%] sm:w-[40%] md:w-[28%] lg:w-[26%] flex justify-center">
           <AvatarFigure
             variant="tech"
             src={heroConfig?.boy_image || "/hero/boy-clean.png"}
@@ -230,7 +230,7 @@ export default function HeroStage({ heroConfig = {} }) {
         {/* ========================================================= */}
         {/* ZONE 2: CENTER BROKER & LIVE BARTER STREAM */}
         {/* ========================================================= */}
-        <div className="relative w-[18%] md:w-[26%] lg:w-[28%] flex flex-col items-center justify-center py-1 min-h-[140px] sm:min-h-[170px]">
+        <div className="relative w-[22%] sm:w-[20%] md:w-[26%] lg:w-[28%] flex flex-col items-center justify-center py-1 min-h-[120px] xs:min-h-[140px] sm:min-h-[170px]">
           {/* Central SkillSwap Matcher Node */}
           <div className="relative z-20">
             <SwapNode
@@ -254,7 +254,7 @@ export default function HeroStage({ heroConfig = {} }) {
         {/* ========================================================= */}
         {/* ZONE 3: GIRL (ANANYA IYER) */}
         {/* ========================================================= */}
-        <div className="w-[45%] md:w-[28%] lg:w-[26%] flex justify-center">
+        <div className="w-[39%] sm:w-[40%] md:w-[28%] lg:w-[26%] flex justify-center">
           <AvatarFigure
             variant="creative"
             src={heroConfig?.girl_image || "/hero/girl-clean.png"}
@@ -325,17 +325,17 @@ export default function HeroStage({ heroConfig = {} }) {
       </div>
 
       {/* Mobile-only Floating Chips Strip (visible on mobile where side flanks are hidden) */}
-      <div className="flex md:hidden flex-wrap items-center justify-center gap-2 mt-4 z-20">
-        <span className="px-2.5 py-1 rounded-xl bg-white border border-slate-200 text-[10px] font-black text-slate-800 flex items-center gap-1">
+      <div className="flex md:hidden flex-wrap items-center justify-center gap-1.5 xs:gap-2 mt-3 sm:mt-4 z-20 px-2">
+        <span className="px-2 xs:px-2.5 py-0.5 xs:py-1 rounded-xl bg-white border border-slate-200 text-[9px] xs:text-[10px] font-black text-slate-800 flex items-center gap-1 shadow-2xs">
           <span className="text-[#00d8ff]">⚛</span> React
         </span>
-        <span className="px-2.5 py-1 rounded-xl bg-white border border-slate-200 text-[10px] font-black text-slate-800 flex items-center gap-1">
+        <span className="px-2 xs:px-2.5 py-0.5 xs:py-1 rounded-xl bg-white border border-slate-200 text-[9px] xs:text-[10px] font-black text-slate-800 flex items-center gap-1 shadow-2xs">
           <span className="text-amber-500">⚡</span> JavaScript
         </span>
-        <span className="px-2.5 py-1 rounded-xl bg-white border border-slate-200 text-[10px] font-black text-slate-800 flex items-center gap-1">
+        <span className="px-2 xs:px-2.5 py-0.5 xs:py-1 rounded-xl bg-white border border-slate-200 text-[9px] xs:text-[10px] font-black text-slate-800 flex items-center gap-1 shadow-2xs">
           <span className="text-purple-500">🎨</span> UI/UX
         </span>
-        <span className="px-2.5 py-1 rounded-xl bg-white border border-slate-200 text-[10px] font-black text-slate-800 flex items-center gap-1">
+        <span className="px-2 xs:px-2.5 py-0.5 xs:py-1 rounded-xl bg-white border border-slate-200 text-[9px] xs:text-[10px] font-black text-slate-800 flex items-center gap-1 shadow-2xs">
           <span className="text-pink-500">❖</span> Figma
         </span>
       </div>

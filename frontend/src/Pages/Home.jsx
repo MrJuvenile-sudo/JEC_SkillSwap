@@ -401,10 +401,10 @@ export default function Home() {
 
           {/* Main Headline with Dynamic Rotating Animation */}
           <div className="space-y-2 pt-1">
-            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-black tracking-tight text-slate-900 leading-tight break-words">
+            <h1 className="text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-black tracking-tight text-slate-900 leading-tight break-words">
               {heroConfig.headline_static}
             </h1>
-            <div className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif italic font-normal text-blue-600 leading-tight min-h-[1.3em] flex items-center justify-center flex-wrap gap-x-2 sm:gap-x-3">
+            <div className="text-xl xs:text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif italic font-normal text-blue-600 leading-tight min-h-[1.3em] flex items-center justify-center flex-wrap gap-x-1.5 xs:gap-x-2 sm:gap-x-3">
               <span className="text-slate-900 not-italic font-black">{heroConfig.headline_dynamic_prefix}</span>
               <span
                 className={`inline-block text-blue-600 transition-all duration-300 transform ${
@@ -480,23 +480,23 @@ export default function Home() {
           </div>
 
           {/* Bottom Metrics Bar (Dynamic from Admin Panel) */}
-          <div className="pt-8 sm:pt-12 border-t border-slate-200/80 max-w-3xl mx-auto grid grid-cols-3 gap-2 sm:gap-4 text-center">
+          <div className="pt-6 sm:pt-12 border-t border-slate-200/80 max-w-3xl mx-auto grid grid-cols-3 gap-1.5 sm:gap-4 text-center">
             <div className="transition-transform hover:-translate-y-0.5">
-              <p className="text-base sm:text-xl md:text-2xl font-black text-slate-900">
+              <p className="text-sm xs:text-base sm:text-xl md:text-2xl font-black text-slate-900">
                 {heroStats.stat1_value}
               </p>
               <p className="text-[10px] sm:text-xs text-slate-500 font-semibold mt-0.5 leading-tight">{heroStats.stat1_label}</p>
             </div>
 
             <div className="transition-transform hover:-translate-y-0.5">
-              <p className="text-base sm:text-xl md:text-2xl font-black text-slate-900">
+              <p className="text-sm xs:text-base sm:text-xl md:text-2xl font-black text-slate-900">
                 {heroStats.stat2_value}
               </p>
               <p className="text-[10px] sm:text-xs text-slate-500 font-semibold mt-0.5 leading-tight">{heroStats.stat2_label}</p>
             </div>
 
             <div className="transition-transform hover:-translate-y-0.5">
-              <p className="text-base sm:text-xl md:text-2xl font-black text-slate-900 flex items-center justify-center gap-0.5 sm:gap-1">
+              <p className="text-sm xs:text-base sm:text-xl md:text-2xl font-black text-slate-900 flex items-center justify-center gap-0.5 sm:gap-1">
                 <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-400 text-amber-400 inline shrink-0" />
                 <span>{heroStats.stat3_value}</span>
               </p>
@@ -510,7 +510,7 @@ export default function Home() {
       {/* ------------------------------------------------------------- */}
       {/* 1.5. LIVE RECIPROCAL EXCHANGE SIMULATION WIDGET (Directly Below Hero) */}
       {/* ------------------------------------------------------------- */}
-      <section className="-mt-12 mb-16 relative z-20 px-4 sm:px-6 max-w-5xl mx-auto">
+      <section className="mt-4 sm:-mt-12 mb-12 sm:mb-16 relative z-20 px-3 sm:px-6 max-w-5xl mx-auto">
         <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-2xl space-y-6">
           
           {/* Header Bar */}
@@ -830,7 +830,7 @@ export default function Home() {
           <p className="text-slate-600 text-sm font-medium">Compare traditional video platforms with bilateral 1-on-1 co-learning.</p>
         </div>
 
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-x-auto">
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-x-auto touch-pan-x">
           <div className="min-w-[500px]">
             <div className="grid grid-cols-12 bg-slate-900 text-white p-4 font-bold text-xs uppercase tracking-wider">
               <div className="col-span-4">Aspect</div>
@@ -855,6 +855,10 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        <p className="text-[11px] text-slate-500 font-medium text-center mt-2.5 block sm:hidden">
+          👈 Scroll table horizontally to compare all features 👉
+        </p>
 
         <div className="text-center mt-6">
           <Link to="/features" className="text-xs font-extrabold text-blue-600 hover:underline inline-flex items-center gap-1">
