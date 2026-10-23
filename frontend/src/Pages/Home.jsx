@@ -458,9 +458,10 @@ export default function Home() {
 
               <button
                 type="submit"
-                className="w-full sm:w-auto px-7 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl sm:rounded-full text-xs font-extrabold shadow-md shadow-blue-500/20 transition-all shrink-0 hover:scale-105 active:scale-95 min-h-[44px]"
+                className="w-full sm:w-auto px-7 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-200/90 sm:bg-blue-600 sm:hover:bg-blue-700 sm:text-white sm:border-transparent rounded-xl sm:rounded-full text-xs font-black shadow-xs sm:shadow-md sm:shadow-blue-500/20 transition-all shrink-0 hover:scale-105 active:scale-95 min-h-[44px] flex items-center justify-center gap-2"
               >
-                Find Matches
+                <Search className="w-3.5 h-3.5 text-slate-500 sm:hidden" />
+                <span>Find Matches</span>
               </button>
             </form>
           </div>
