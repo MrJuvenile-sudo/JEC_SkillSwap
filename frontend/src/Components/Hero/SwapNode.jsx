@@ -23,16 +23,29 @@ export default function SwapNode({ isPulsing = false, activePairIndex = 0 }) {
 
       {/* Main Glass Broker Badge - Fluid Scaling for All Screen Dimensions */}
       <div
-        className={`relative z-10 flex flex-col items-center p-1.5 xs:p-2 sm:p-3.5 rounded-xl xs:rounded-2xl bg-white border shadow-md transition-all duration-500 min-w-[66px] xs:min-w-[82px] sm:min-w-[110px] ${
+        className={`relative z-30 flex flex-col items-center p-2 xs:p-2.5 sm:p-3.5 rounded-xl xs:rounded-2xl bg-white border shadow-md transition-all duration-500 min-w-[76px] xs:min-w-[90px] sm:min-w-[110px] ${
           isPulsing
             ? "border-blue-400 ring-2 ring-blue-200/60 shadow-blue-500/20 scale-105"
             : "border-slate-200/90 shadow-slate-900/5 hover:border-slate-300"
         }`}
       >
         {/* Central Logo Node Icon with Lightning Bolt Badge */}
-        <div className="relative flex items-center justify-center w-7 h-7 xs:w-9 xs:h-9 sm:w-11 sm:h-11 rounded-lg xs:rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/25">
+        <div className="relative flex items-center justify-center w-8 h-8 xs:w-9 xs:h-9 sm:w-11 sm:h-11 rounded-lg xs:rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/25 p-1">
+          <img
+            src="/logo.png"
+            alt="SkillSwap Logo"
+            className={`w-full h-full object-contain drop-shadow-xs transition-transform duration-500 ${
+              isPulsing ? "rotate-180 scale-110" : ""
+            }`}
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+              if (e.currentTarget.nextSibling) {
+                e.currentTarget.nextSibling.style.display = "block";
+              }
+            }}
+          />
           <Repeat
-            className={`w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5 transition-transform duration-500 ${
+            className={`hidden w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5 transition-transform duration-500 ${
               isPulsing ? "rotate-180 scale-110" : ""
             }`}
           />
@@ -44,7 +57,7 @@ export default function SwapNode({ isPulsing = false, activePairIndex = 0 }) {
 
         {/* Brand label & verification badge */}
         <div className="mt-1 xs:mt-1.5 text-center">
-          <h4 className="text-[9px] xs:text-xs sm:text-sm font-black tracking-tight text-slate-900 leading-tight">
+          <h4 className="text-[10px] xs:text-xs sm:text-sm font-black tracking-tight text-slate-900 leading-tight">
             SkillSwap
           </h4>
           <div className="text-[7.5px] xs:text-[9px] sm:text-[11px] text-slate-600 font-bold flex items-center justify-center gap-1 xs:gap-1.5 mt-0.5">

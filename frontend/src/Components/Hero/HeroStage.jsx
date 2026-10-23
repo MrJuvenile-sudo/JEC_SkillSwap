@@ -210,7 +210,7 @@ export default function HeroStage({ heroConfig = {} }) {
         {/* ========================================================= */}
         {/* ZONE 1: BOY (AARAV SHARMA) */}
         {/* ========================================================= */}
-        <div className="w-[39%] sm:w-[40%] md:w-[28%] lg:w-[26%] flex justify-center">
+        <div className="w-[38%] sm:w-[39%] md:w-[28%] lg:w-[26%] flex justify-center">
           <AvatarFigure
             variant="tech"
             src={heroConfig?.boy_image || "/hero/boy-clean.png"}
@@ -230,9 +230,9 @@ export default function HeroStage({ heroConfig = {} }) {
         {/* ========================================================= */}
         {/* ZONE 2: CENTER BROKER & LIVE BARTER STREAM */}
         {/* ========================================================= */}
-        <div className="relative w-[22%] sm:w-[20%] md:w-[26%] lg:w-[28%] flex flex-col items-center justify-center py-1 min-h-[120px] xs:min-h-[140px] sm:min-h-[170px]">
+        <div className="relative w-[24%] sm:w-[22%] md:w-[26%] lg:w-[28%] flex flex-col items-center justify-center py-1 min-h-[130px] sm:min-h-[170px]">
           {/* Central SkillSwap Matcher Node */}
-          <div className="relative z-20">
+          <div className="relative z-30 pointer-events-auto">
             <SwapNode
               isPulsing={isBrokerPulsing}
               activePairIndex={activePairIndex}
@@ -254,7 +254,7 @@ export default function HeroStage({ heroConfig = {} }) {
         {/* ========================================================= */}
         {/* ZONE 3: GIRL (ANANYA IYER) */}
         {/* ========================================================= */}
-        <div className="w-[39%] sm:w-[40%] md:w-[28%] lg:w-[26%] flex justify-center">
+        <div className="w-[38%] sm:w-[39%] md:w-[28%] lg:w-[26%] flex justify-center">
           <AvatarFigure
             variant="creative"
             src={heroConfig?.girl_image || "/hero/girl-clean.png"}

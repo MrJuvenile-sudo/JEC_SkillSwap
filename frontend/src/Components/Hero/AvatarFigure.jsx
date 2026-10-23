@@ -35,6 +35,9 @@ export default function AvatarFigure({
   }, [imageSource]);
 
   // Profile data matching the reference mockup
+  const primaryTeach = currentTeaching ? currentTeaching.replace(/^Teach\s+/i, "") : (isTech ? "Data Science" : "UI/UX Design");
+  const primaryWant = currentWanting ? currentWanting.replace(/^Learn\s+/i, "") : (isTech ? "UI/UX Design" : "Data Science");
+
   const profile = isTech
     ? {
         name: personName || "Aarav Sharma",
@@ -42,8 +45,8 @@ export default function AvatarFigure({
         role: personRole || "Full-Stack & ML",
         archGradient: "from-indigo-100/90 via-purple-50/60 to-blue-50/40 border-indigo-100/90",
         sparkColor: "text-blue-500",
-        teachSkills: ["React", "JavaScript", "Node.js"],
-        wantSkills: ["UI/UX Design", "Figma"]
+        teachSkills: [primaryTeach],
+        wantSkills: [primaryWant]
       }
     : {
         name: personName || "Ananya Iyer",
@@ -51,8 +54,8 @@ export default function AvatarFigure({
         role: personRole || "UI/UX & Product Design",
         archGradient: "from-orange-100/90 via-rose-50/60 to-pink-50/40 border-orange-100/90",
         sparkColor: "text-amber-500",
-        teachSkills: ["UI/UX Design", "Figma"],
-        wantSkills: ["React", "Machine Learning"]
+        teachSkills: [primaryTeach],
+        wantSkills: [primaryWant]
       };
 
   // Parallax calculations (Desktop only, clamped)
@@ -184,14 +187,14 @@ export default function AvatarFigure({
                 return (
                   <span
                     key={i}
-                    className={`inline-flex items-center gap-0.5 px-1 xs:px-1.5 py-0.2 rounded text-[7px] xs:text-[8px] sm:text-[9px] font-bold ${
+                    className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[7.5px] xs:text-[8px] sm:text-[9px] font-bold ${
                       isPrimary
                         ? "bg-blue-50 text-blue-700 border border-blue-200/90"
                         : "bg-blue-50/70 text-blue-700/90"
                     }`}
                   >
                     {isPrimary && <Check className="w-2 h-2 text-blue-500 shrink-0" />}
-                    <span className="truncate max-w-[55px] xs:max-w-none">{sk}</span>
+                    <span className="truncate">{sk}</span>
                   </span>
                 );
               })}
@@ -209,13 +212,13 @@ export default function AvatarFigure({
                 return (
                   <span
                     key={i}
-                    className={`inline-flex items-center gap-0.5 px-1 xs:px-1.5 py-0.2 rounded text-[7px] xs:text-[8px] sm:text-[9px] font-bold ${
+                    className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[7.5px] xs:text-[8px] sm:text-[9px] font-bold ${
                       isMatch
                         ? "bg-amber-100/90 text-amber-900 border border-amber-300 font-extrabold"
                         : "bg-amber-50 text-amber-800 border border-amber-200/60"
                     }`}
                   >
-                    <span className="truncate max-w-[55px] xs:max-w-none">{sk}</span>
+                    <span className="truncate">{sk}</span>
                   </span>
                 );
               })}

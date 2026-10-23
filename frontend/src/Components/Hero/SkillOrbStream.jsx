@@ -53,20 +53,20 @@ function getCubicBezierPoint(t, p0, p1, p2, p3) {
 }
 
 // Curve control points matching the reference mockup arches:
-// Tech to Center broker (Arcs upward from boy to broker)
+// Tech to Center broker (Arcs upward from boy towards broker, clear of center icon)
 const PATH_TECH_TO_BROKER = {
-  p0: { x: 120, y: 130 },
-  p1: { x: 260, y: 55 },
-  p2: { x: 420, y: 65 },
-  p3: { x: 500, y: 130 }
+  p0: { x: 130, y: 130 },
+  p1: { x: 230, y: 55 },
+  p2: { x: 350, y: 70 },
+  p3: { x: 425, y: 130 }
 };
 
-// Broker to Creative (Arcs upward from broker to girl)
+// Broker to Creative (Arcs upward from broker towards girl, clear of center icon)
 const PATH_BROKER_TO_CREATIVE = {
-  p0: { x: 500, y: 130 },
-  p1: { x: 580, y: 65 },
-  p2: { x: 740, y: 55 },
-  p3: { x: 880, y: 130 }
+  p0: { x: 575, y: 130 },
+  p1: { x: 650, y: 70 },
+  p2: { x: 770, y: 55 },
+  p3: { x: 870, y: 130 }
 };
 
 export default function SkillOrbStream({
@@ -168,25 +168,25 @@ export default function SkillOrbStream({
   let tTech = 0;
   let opacityTech = 0;
   if (!isReducedMotion) {
-    if (progress >= 0.05 && progress <= 0.60) {
-      tTech = (progress - 0.05) / 0.55;
-      opacityTech = tTech < 0.15 ? tTech * 6.6 : tTech > 0.85 ? (1 - tTech) * 6.6 : 1;
+    if (progress >= 0.05 && progress <= 0.48) {
+      tTech = (progress - 0.05) / 0.43;
+      opacityTech = tTech < 0.2 ? tTech * 5 : tTech > 0.8 ? (1 - tTech) * 5 : 1;
     }
   } else {
     tTech = 0.5;
-    opacityTech = 1;
+    opacityTech = 0.7;
   }
 
   let tCreative = 0;
   let opacityCreative = 0;
   if (!isReducedMotion) {
-    if (progress >= 0.40 && progress <= 0.95) {
-      tCreative = (progress - 0.40) / 0.55;
-      opacityCreative = tCreative < 0.15 ? tCreative * 6.6 : tCreative > 0.85 ? (1 - tCreative) * 6.6 : 1;
+    if (progress >= 0.52 && progress <= 0.95) {
+      tCreative = (progress - 0.52) / 0.43;
+      opacityCreative = tCreative < 0.2 ? tCreative * 5 : tCreative > 0.8 ? (1 - tCreative) * 5 : 1;
     }
   } else {
     tCreative = 0.5;
-    opacityCreative = 1;
+    opacityCreative = 0.7;
   }
 
   // Calculate positions
@@ -239,30 +239,30 @@ export default function SkillOrbStream({
 
         {/* Path 1: Tech -> Center Broker (Dashed Cyan Curve) */}
         <path
-          d={`M ${PATH_TECH_TO_BROKER.p0.x} ${PATH_TECH_TO_BROKER.p0.y} C ${PATH_TECH_TO_BROKER.p1.x} ${PATH_TECH_TO_BROKER.p1.y}, ${PATH_TECH_TO_BROKER.p2.x} ${PATH_TECH_TO_BROKER.p2.y}, ${PATH_TECH_TO_BROKER.p3.x - 20} ${PATH_TECH_TO_BROKER.p3.y - 10}`}
+          d={`M ${PATH_TECH_TO_BROKER.p0.x} ${PATH_TECH_TO_BROKER.p0.y} C ${PATH_TECH_TO_BROKER.p1.x} ${PATH_TECH_TO_BROKER.p1.y}, ${PATH_TECH_TO_BROKER.p2.x} ${PATH_TECH_TO_BROKER.p2.y}, ${PATH_TECH_TO_BROKER.p3.x} ${PATH_TECH_TO_BROKER.p3.y}`}
           fill="none"
           stroke="url(#gradient-tech-arc)"
-          strokeWidth="2.8"
-          strokeDasharray="6 6"
+          strokeWidth="2.5"
+          strokeDasharray="5 5"
           markerEnd="url(#arrow-tech)"
           className="animate-dash-flow opacity-80"
         />
 
         {/* Path 2: Center Broker -> Creative (Dashed Purple Curve) */}
         <path
-          d={`M ${PATH_BROKER_TO_CREATIVE.p0.x + 20} ${PATH_BROKER_TO_CREATIVE.p0.y - 10} C ${PATH_BROKER_TO_CREATIVE.p1.x} ${PATH_BROKER_TO_CREATIVE.p1.y}, ${PATH_BROKER_TO_CREATIVE.p2.x} ${PATH_BROKER_TO_CREATIVE.p2.y}, ${PATH_BROKER_TO_CREATIVE.p3.x} ${PATH_BROKER_TO_CREATIVE.p3.y}`}
+          d={`M ${PATH_BROKER_TO_CREATIVE.p0.x} ${PATH_BROKER_TO_CREATIVE.p0.y} C ${PATH_BROKER_TO_CREATIVE.p1.x} ${PATH_BROKER_TO_CREATIVE.p1.y}, ${PATH_BROKER_TO_CREATIVE.p2.x} ${PATH_BROKER_TO_CREATIVE.p2.y}, ${PATH_BROKER_TO_CREATIVE.p3.x} ${PATH_BROKER_TO_CREATIVE.p3.y}`}
           fill="none"
           stroke="url(#gradient-creative-arc)"
-          strokeWidth="2.8"
-          strokeDasharray="6 6"
+          strokeWidth="2.5"
+          strokeDasharray="5 5"
           markerEnd="url(#arrow-creative)"
           className="animate-dash-flow opacity-80"
         />
       </svg>
 
-      {/* 2. Traveling Skill Badge: Teach React (Mortarboard Icon Card) */}
+      {/* 2. Traveling Skill Badge: Teach Data Science / Teach React (Decreased Size Sleek Pill) */}
       <div
-        className="absolute z-30 transition-opacity duration-300 pointer-events-auto"
+        className="absolute z-20 transition-opacity duration-300 pointer-events-auto"
         style={{
           left: `${(techPos.x / 1000) * 100}%`,
           top: `${(techPos.y / 260) * 100}%`,
@@ -272,22 +272,22 @@ export default function SkillOrbStream({
         }}
       >
         {/* Soft radial glow */}
-        <div className="absolute inset-0 -m-2 bg-blue-400/20 rounded-full blur-xs pointer-events-none" />
+        <div className="absolute inset-0 -m-1.5 bg-blue-400/20 rounded-full blur-xs pointer-events-none" />
 
-        {/* Circular / Rounded Card matching mockup */}
-        <div className="relative flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-2xl bg-white border border-blue-200/90 shadow-md text-slate-800 select-none hover:scale-105 transition-transform min-w-[50px] sm:min-w-[58px]">
-          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center shadow-2xs">
-            <TechIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+        {/* Compact Pill Badge */}
+        <div className="relative flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-white/95 border border-blue-200/90 shadow-sm text-slate-800 select-none hover:scale-105 transition-transform backdrop-blur-xs">
+          <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+            <TechIcon className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
           </div>
-          <span className="text-[8px] sm:text-[9px] font-black text-blue-900 mt-1 whitespace-nowrap">
+          <span className="text-[7.5px] xs:text-[8px] sm:text-[9px] font-black text-blue-900 tracking-tight whitespace-nowrap leading-none pr-0.5">
             {currentPair.tech.name}
           </span>
         </div>
       </div>
 
-      {/* 3. Traveling Skill Badge: Learn UI/UX (Palette Icon Card) */}
+      {/* 3. Traveling Skill Badge: Learn UI/UX Design (Decreased Size Sleek Pill) */}
       <div
-        className="absolute z-30 transition-opacity duration-300 pointer-events-auto"
+        className="absolute z-20 transition-opacity duration-300 pointer-events-auto"
         style={{
           left: `${(creativePos.x / 1000) * 100}%`,
           top: `${(creativePos.y / 260) * 100}%`,
@@ -297,14 +297,14 @@ export default function SkillOrbStream({
         }}
       >
         {/* Soft radial glow */}
-        <div className="absolute inset-0 -m-2 bg-purple-400/20 rounded-full blur-xs pointer-events-none" />
+        <div className="absolute inset-0 -m-1.5 bg-purple-400/20 rounded-full blur-xs pointer-events-none" />
 
-        {/* Circular / Rounded Card matching mockup */}
-        <div className="relative flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-2xl bg-white border border-purple-200/90 shadow-md text-slate-800 select-none hover:scale-105 transition-transform min-w-[50px] sm:min-w-[58px]">
-          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center shadow-2xs">
-            <CreativeIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+        {/* Compact Pill Badge */}
+        <div className="relative flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-white/95 border border-purple-200/90 shadow-sm text-slate-800 select-none hover:scale-105 transition-transform backdrop-blur-xs">
+          <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+            <CreativeIcon className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
           </div>
-          <span className="text-[8px] sm:text-[9px] font-black text-purple-900 mt-1 whitespace-nowrap">
+          <span className="text-[7.5px] xs:text-[8px] sm:text-[9px] font-black text-purple-900 tracking-tight whitespace-nowrap leading-none pr-0.5">
             {currentPair.creative.name}
           </span>
         </div>
