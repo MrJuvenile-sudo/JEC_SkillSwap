@@ -38,7 +38,7 @@ export default function UpcomingSessions({ exchanges = [] }) {
           </div>
           <div>
             <h3 className="text-base font-black text-slate-900 tracking-tight">Upcoming Scheduled Sessions</h3>
-            <p className="text-xs text-slate-500 font-medium">Chronological agenda of your booked 1-on-1 barter appointments</p>
+            <p className="text-xs text-slate-500 font-medium">Chronological agenda of your booked 1-on-1 skill exchange appointments</p>
           </div>
         </div>
         <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
@@ -71,7 +71,7 @@ export default function UpcomingSessions({ exchanges = [] }) {
                     />
                     <div>
                       <h4 className="font-extrabold text-sm text-slate-900 flex items-center gap-1.5">
-                        <span>{s.partnerName || s.partner_name || "Barter Partner"}</span>
+                        <span>{s.partnerName || s.partner_name || "Exchange Partner"}</span>
                         <UserCheck className="w-4 h-4 text-blue-600" />
                       </h4>
                       <p className="text-[11px] text-indigo-600 font-semibold">{s.partnerRole || s.title || "Scheduled Session Room"}</p>

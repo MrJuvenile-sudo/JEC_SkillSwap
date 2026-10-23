@@ -81,7 +81,7 @@ export default function QuickChatWidget() {
             chatList = [
               {
                 id: 1,
-                sender: partnerName || "Barter Partner",
+                sender: partnerName || "Exchange Partner",
                 senderId: isRequester ? ex.receiver_id : ex.requester_id,
                 text: `Hi ${currentUser?.name || "there"}! Excited for our skill swap: ${ex.offered_skill_name || "Skill"} ⇄ ${ex.requested_skill_name || "Skill"}. When are you free to connect?`,
                 time: "10:30 AM",
@@ -96,7 +96,7 @@ export default function QuickChatWidget() {
           return {
             id: ex.id,
             exchangeId: ex.id,
-            name: partnerName || "Barter Partner",
+            name: partnerName || "Exchange Partner",
             role: partnerRole,
             avatar: partnerPic || get3DAvatarUrl("other", partnerName),
             lastMsg,
@@ -313,7 +313,7 @@ export default function QuickChatWidget() {
             {/* Direct Chat Date Stamp */}
             <div className="flex justify-center">
               <span className="px-3 py-0.5 rounded-full bg-white/90 border border-slate-200/60 text-[9px] font-extrabold text-slate-500 uppercase tracking-wider shadow-2xs">
-                TODAY • 1-ON-1 RECIPROCAL BARTER
+                TODAY • 1-ON-1 SKILL EXCHANGE
               </span>
             </div>
 

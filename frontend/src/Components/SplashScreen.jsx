@@ -63,7 +63,7 @@ export default function SplashScreen({ onFinish }) {
           </h1>
           <p className="text-[11px] font-extrabold text-blue-600 uppercase tracking-widest flex items-center justify-center gap-1">
             <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-            <span>Zero-Cost Reciprocal Barter Network</span>
+            <span>1-on-1 Peer Skill Exchange Network</span>
           </p>
         </div>
 

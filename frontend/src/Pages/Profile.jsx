@@ -381,13 +381,13 @@ export default function Profile() {
             <div className="grid grid-cols-2 gap-3 text-center">
               <div className="bg-blue-50/70 p-3.5 rounded-2xl border border-blue-100">
                 <span className="block text-2xl font-black text-blue-600">100%</span>
-                <span className="text-[10px] font-bold text-slate-600 uppercase">Barter Ratio</span>
+                <span className="text-[10px] font-bold text-slate-600 uppercase">Exchange Balance</span>
               </div>
               <div className="bg-amber-50/70 p-3.5 rounded-2xl border border-amber-100">
                 <span className="block text-2xl font-black text-amber-600 flex items-center justify-center gap-1">
                   <Star className="w-4 h-4 fill-amber-400" /> 4.9
                 </span>
-                <span className="text-[10px] font-bold text-slate-600 uppercase">Karma Rating</span>
+                <span className="text-[10px] font-bold text-slate-600 uppercase">Peer Rating</span>
               </div>
             </div>
           </div>
@@ -459,7 +459,7 @@ export default function Profile() {
                   <BookOpen className="w-5 h-5 text-blue-600" />
                   Skills You Want to Learn (Wanted)
                 </h3>
-                <p className="text-xs text-slate-500">Skills you want to master through reciprocal barter sessions</p>
+                <p className="text-xs text-slate-500">Skills you want to master through 1-on-1 skill exchange sessions</p>
               </div>
 
               <button
@@ -790,7 +790,7 @@ export default function Profile() {
                   rows="3"
                   value={editBio}
                   onChange={(e) => setEditBio(e.target.value)}
-                  placeholder="Describe your practical experience, hobbies, and why you love reciprocal barter learning..."
+                  placeholder="Describe your practical experience, hobbies, and what you would like to teach or learn in 1-on-1 swaps..."
                   className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               </div>

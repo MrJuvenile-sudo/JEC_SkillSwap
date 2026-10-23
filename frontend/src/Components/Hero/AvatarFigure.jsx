@@ -34,15 +34,21 @@ export default function AvatarFigure({
     setImgError(false);
   }, [imageSource]);
 
-  // Profile data matching the reference mockup
-  const primaryTeach = currentTeaching ? currentTeaching.replace(/^Teach\s+/i, "") : (isTech ? "Data Science" : "UI/UX Design");
-  const primaryWant = currentWanting ? currentWanting.replace(/^Learn\s+/i, "") : (isTech ? "UI/UX Design" : "Data Science");
+  // Skill alignment: Aarav teaches React & Node.js, wants UI/UX Design
+  // Ananya teaches UI/UX Design, wants React & Node.js
+  const primaryTeach = currentTeaching 
+    ? currentTeaching.replace(/^Teach\s+/i, "") 
+    : (isTech ? "React & Node.js" : "UI/UX Design");
+
+  const primaryWant = currentWanting 
+    ? currentWanting.replace(/^Learn\s+/i, "") 
+    : (isTech ? "UI/UX Design" : "React & Node.js");
 
   const profile = isTech
     ? {
         name: personName || "Aarav Sharma",
         location: personLocation || "Jabalpur, India",
-        role: personRole || "Full-Stack & ML",
+        role: personRole || "Full-Stack Developer",
         archGradient: "from-indigo-100/90 via-purple-50/60 to-blue-50/40 border-indigo-100/90",
         sparkColor: "text-blue-500",
         teachSkills: [primaryTeach],
@@ -111,7 +117,6 @@ export default function AvatarFigure({
                 decoding="async"
                 loading="eager"
                 onError={() => {
-                  // Fallback to existing public assets if clean crop path fails
                   if (imageSource !== (isTech ? "/hero/boy-tech.webp" : "/hero/girl-creative.png")) {
                     setImgError(false);
                   } else {
@@ -164,14 +169,14 @@ export default function AvatarFigure({
             </div>
             
             {/* Online Indicator */}
-            <div className="flex items-center gap-0.5 xs:gap-1 text-[7px] xs:text-[8px] sm:text-[9px] font-black text-emerald-600 shrink-0">
-              <span className="w-1 h-1 xs:w-1.5 xs:h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <div className="flex items-center gap-0.5 xs:gap-1 text-[7px] xs:text-[8px] sm:text-[9px] font-bold text-emerald-600 shrink-0">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
               <span>Online</span>
             </div>
           </div>
 
           {/* Location row */}
-          <div className="flex items-center gap-1 text-[7px] xs:text-[8px] sm:text-[9px] text-slate-500 font-bold pt-0.5 pb-0.5 truncate">
+          <div className="flex items-center gap-1 text-[7px] xs:text-[8px] sm:text-[9px] text-slate-500 font-semibold pt-0.5 pb-0.5 truncate">
             <MapPin className="w-2 h-2 xs:w-2.5 xs:h-2.5 text-slate-400 shrink-0" />
             <span className="truncate">{profile.location}</span>
           </div>

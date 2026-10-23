@@ -1,16 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Users, Sparkles } from "lucide-react";
 import AvatarFigure from "./AvatarFigure";
 import SwapNode from "./SwapNode";
 import SkillOrbStream, { SKILL_PAIRS } from "./SkillOrbStream";
 
 /**
- * HeroStage orchestrates the complete 1-on-1 reciprocal skill barter stage:
- * - Top Pills: Verified Peer-to-Peer Learning Network & AI-Powered Skill Matching
+ * HeroStage orchestrates the complete 1-on-1 skill exchange stage:
  * - Left Flank: "Share Your Skills" doodle & React, JS, Node.js floating badges
- * - Left Zone: Boy (Aarav Sharma) with arch, spark lines, & profile chip
- * - Center Zone: SkillSwap broker node with ⚡ badge, 92% Match, and animated dashed arcs
- * - Right Zone: Girl (Ananya Iyer) with arch, spark lines, & profile chip
+ * - Left Zone: Aarav Sharma teaching React & Node.js, wanting UI/UX Design
+ * - Center Zone: SkillSwap mutual matcher node with lightning badge & animated dashed exchange curves
+ * - Right Zone: Ananya Iyer teaching UI/UX Design, wanting React & Node.js
  * - Right Flank: "Learn New Skills" doodle & UI/UX, Figma, Product Design floating badges
  */
 export default function HeroStage({ heroConfig = {} }) {
@@ -132,29 +130,12 @@ export default function HeroStage({ heroConfig = {} }) {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       role="img"
-      aria-label="Aarav Sharma teaching Tech skills and Ananya Iyer teaching UI/UX Design, bartering skills through SkillSwap."
-      className="relative w-full max-w-6xl mx-auto px-2 sm:px-4 select-none flex flex-col items-center justify-center pt-2 pb-4"
+      aria-label="Aarav Sharma teaching Tech skills and Ananya Iyer teaching UI/UX Design, exchanging skills through SkillSwap."
+      className="relative w-full max-w-5xl mx-auto px-2 sm:px-4 select-none flex flex-col items-center justify-center pt-2 pb-2 overflow-visible"
     >
       
-      {/* ------------------------------------------------------------- */}
-      {/* TOP PILLS (DIRECTLY FROM MOCKUP) */}
-      {/* ------------------------------------------------------------- */}
-      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-4 sm:mb-8 z-30 px-1">
-        <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-white/95 border border-blue-200/90 text-blue-700 text-[10px] sm:text-xs font-bold shadow-xs hover:scale-105 transition-transform text-center">
-          <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 shrink-0" />
-          <span>{heroConfig?.pill1_text || "Verified Peer-to-Peer Learning Network"}</span>
-        </div>
-
-        <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-white/95 border border-emerald-200/90 text-emerald-700 text-[10px] sm:text-xs font-bold shadow-xs hover:scale-105 transition-transform text-center">
-          <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0" />
-          <span>{heroConfig?.pill2_text || "AI-Powered Skill Matching"}</span>
-        </div>
-      </div>
-
-      {/* ------------------------------------------------------------- */}
       {/* MAIN HERO STAGE ROW */}
-      {/* ------------------------------------------------------------- */}
-      <div className="relative w-full flex items-center justify-between gap-0.5 xs:gap-1.5 sm:gap-3 lg:gap-4 overflow-visible">
+      <div className="relative w-full flex items-center justify-between gap-1 xs:gap-2 sm:gap-4 overflow-visible">
         
         {/* ========================================================= */}
         {/* LEFT FLANK: "SHARE YOUR SKILLS" + FLOATING CHIPS */}
@@ -166,7 +147,6 @@ export default function HeroStage({ heroConfig = {} }) {
             <span className="font-handwriting text-xl lg:text-2xl font-black text-slate-800 -rotate-6 tracking-wide drop-shadow-2xs leading-tight text-center">
               Share<br />Your Skills
             </span>
-            {/* Hand-drawn curved arrow pointing down-right */}
             <svg viewBox="0 0 60 40" className="w-10 h-7 text-slate-800 -rotate-6 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M 14 6 C 26 14, 38 18, 48 28" />
               <path d="M 38 29 L 49 30 L 48 19" />
@@ -177,14 +157,13 @@ export default function HeroStage({ heroConfig = {} }) {
           <div className="flex flex-col gap-2.5 w-full">
             {/* 1. React Badge */}
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:scale-105 transition-all animate-float-gentle cursor-default">
-              {/* React SVG logo */}
               <svg viewBox="-11.5 -10.23174 23 20.46348" className="w-4 h-4 text-[#00d8ff] fill-none stroke-current shrink-0" strokeWidth="1.2">
                 <ellipse rx="11" ry="4.2" />
                 <ellipse rx="11" ry="4.2" transform="rotate(60)" />
                 <ellipse rx="11" ry="4.2" transform="rotate(120)" />
                 <circle r="2" fill="#00d8ff" />
               </svg>
-              <span className="text-xs font-black text-slate-800">React</span>
+              <span className="text-xs font-bold text-slate-800">React</span>
             </div>
 
             {/* 2. JavaScript Badge */}
@@ -192,7 +171,7 @@ export default function HeroStage({ heroConfig = {} }) {
               <div className="w-4 h-4 rounded-xs bg-[#f7df1e] text-black font-black text-[9px] flex items-center justify-center leading-none shrink-0 shadow-2xs">
                 JS
               </div>
-              <span className="text-xs font-black text-slate-800">JavaScript</span>
+              <span className="text-xs font-bold text-slate-800">JavaScript</span>
             </div>
 
             {/* 3. Node.js Badge */}
@@ -201,7 +180,7 @@ export default function HeroStage({ heroConfig = {} }) {
                 <path fill="#339933" d="M16 2.5l11.7 6.8v13.4L16 29.5 4.3 22.7V9.3L16 2.5z" />
                 <path fill="#fff" d="M13.5 12h-2v8h2v-5l3.5 5h1.5v-8h-2v5z" />
               </svg>
-              <span className="text-xs font-black text-slate-800">Node.js</span>
+              <span className="text-xs font-bold text-slate-800">Node.js</span>
             </div>
           </div>
 
@@ -215,7 +194,7 @@ export default function HeroStage({ heroConfig = {} }) {
             variant="tech"
             src={heroConfig?.boy_image || "/hero/boy-clean.png"}
             personName={heroConfig?.boy_name || "Aarav Sharma"}
-            personRole={heroConfig?.boy_role || "Full-Stack & ML"}
+            personRole={heroConfig?.boy_role || "Full-Stack Developer"}
             personLocation={heroConfig?.boy_location || "Jabalpur, India"}
             alt="Aarav Sharma with laptop teaching tech skills"
             isPaused={isPaused}
@@ -228,9 +207,9 @@ export default function HeroStage({ heroConfig = {} }) {
         </div>
 
         {/* ========================================================= */}
-        {/* ZONE 2: CENTER BROKER & LIVE BARTER STREAM */}
+        {/* ZONE 2: CENTER BROKER & LIVE EXCHANGE STREAM */}
         {/* ========================================================= */}
-        <div className="relative w-[24%] sm:w-[22%] md:w-[26%] lg:w-[28%] flex flex-col items-center justify-center py-1 min-h-[130px] sm:min-h-[170px]">
+        <div className="relative w-[24%] sm:w-[22%] md:w-[26%] lg:w-[28%] flex flex-col items-center justify-center py-1 min-h-[130px] sm:min-h-[170px] overflow-visible">
           {/* Central SkillSwap Matcher Node */}
           <div className="relative z-30 pointer-events-auto">
             <SwapNode
@@ -281,7 +260,6 @@ export default function HeroStage({ heroConfig = {} }) {
             <span className="font-handwriting text-xl lg:text-2xl font-black text-slate-800 rotate-6 tracking-wide drop-shadow-2xs leading-tight text-center">
               Learn<br />New Skills
             </span>
-            {/* Hand-drawn curved arrow pointing down-left */}
             <svg viewBox="0 0 60 40" className="w-10 h-7 text-slate-800 rotate-6 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M 46 6 C 34 14, 22 18, 12 28" />
               <path d="M 22 29 L 11 30 L 12 19" />
@@ -298,46 +276,30 @@ export default function HeroStage({ heroConfig = {} }) {
                 <rect x="3" y="14" width="7" height="7" rx="1.5" fill="#8b5cf6" />
                 <rect x="14" y="14" width="7" height="7" rx="1.5" fill="#10b981" />
               </svg>
-              <span className="text-xs font-black text-slate-800 truncate">UI/UX Design</span>
+              <span className="text-xs font-bold text-slate-800">UI/UX Design</span>
             </div>
 
             {/* 2. Figma Badge */}
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:scale-105 transition-all animate-float-gentle cursor-default" style={{ animationDelay: "1s" }}>
-              <svg viewBox="0 0 38 57" className="w-3 h-4 shrink-0">
-                <path fill="#1abcfe" d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z" />
-                <path fill="#0acf83" d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0z" />
-                <path fill="#ff7262" d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z" />
-                <path fill="#f24e1e" d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z" />
-                <path fill="#a259ff" d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z" />
+              <svg viewBox="0 0 38 57" className="w-3.5 h-4 shrink-0">
+                <path fill="#1abcfe" d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z"/>
+                <path fill="#0acf83" d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0z"/>
+                <path fill="#ff7262" d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z"/>
+                <path fill="#f24e1e" d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z"/>
+                <path fill="#a259ff" d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z"/>
               </svg>
-              <span className="text-xs font-black text-slate-800">Figma</span>
+              <span className="text-xs font-bold text-slate-800">Figma</span>
             </div>
 
             {/* 3. Product Design Badge */}
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:scale-105 transition-all animate-float-gentle cursor-default" style={{ animationDelay: "2s" }}>
-              <span className="text-sm leading-none shrink-0">💡</span>
-              <span className="text-xs font-black text-slate-800 truncate">Product Design</span>
+              <span className="text-sm">🎯</span>
+              <span className="text-xs font-bold text-slate-800">Product Design</span>
             </div>
           </div>
 
         </div>
 
-      </div>
-
-      {/* Mobile-only Floating Chips Strip (visible on mobile where side flanks are hidden) */}
-      <div className="flex md:hidden flex-wrap items-center justify-center gap-1.5 xs:gap-2 mt-3 sm:mt-4 z-20 px-2">
-        <span className="px-2 xs:px-2.5 py-0.5 xs:py-1 rounded-xl bg-white border border-slate-200 text-[9px] xs:text-[10px] font-black text-slate-800 flex items-center gap-1 shadow-2xs">
-          <span className="text-[#00d8ff]">⚛</span> React
-        </span>
-        <span className="px-2 xs:px-2.5 py-0.5 xs:py-1 rounded-xl bg-white border border-slate-200 text-[9px] xs:text-[10px] font-black text-slate-800 flex items-center gap-1 shadow-2xs">
-          <span className="text-amber-500">⚡</span> JavaScript
-        </span>
-        <span className="px-2 xs:px-2.5 py-0.5 xs:py-1 rounded-xl bg-white border border-slate-200 text-[9px] xs:text-[10px] font-black text-slate-800 flex items-center gap-1 shadow-2xs">
-          <span className="text-purple-500">🎨</span> UI/UX
-        </span>
-        <span className="px-2 xs:px-2.5 py-0.5 xs:py-1 rounded-xl bg-white border border-slate-200 text-[9px] xs:text-[10px] font-black text-slate-800 flex items-center gap-1 shadow-2xs">
-          <span className="text-pink-500">❖</span> Figma
-        </span>
       </div>
 
     </div>

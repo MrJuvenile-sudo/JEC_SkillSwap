@@ -7,23 +7,17 @@ import LoadingSpinner from "../Components/LoadingSpinner";
 import SkillBadge from "../Components/SkillBadge";
 import { 
   Search, 
-  Filter, 
   RefreshCw, 
   AlertCircle, 
   Sparkles, 
   X, 
   SlidersHorizontal, 
-  BookOpen, 
-  Star, 
-  Users, 
-  Award, 
   GraduationCap, 
   MapPin, 
-  Briefcase, 
   ShieldCheck, 
   Repeat, 
   ArrowRight,
-  UserCheck
+  Video
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { get3DAvatarUrl } from "../utils/avatarUtils";
@@ -33,13 +27,12 @@ export default function Explore() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const urlQuery = searchParams.get("query") || "";
+  const urlCategory = searchParams.get("category") || "";
 
   const [users, setUsers] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(urlQuery);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [genderFilter, setGenderFilter] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState(urlCategory);
   const [expFilter, setExpFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   
@@ -60,11 +53,6 @@ export default function Explore() {
       if (res.data.success) {
         setUsers(res.data.users || []);
       }
-
-      const catRes = await API.get("/skills");
-      if (catRes.data.success) {
-        setCategories(catRes.data.categories || []);
-      }
     } catch (err) {
       console.error("Error loading swappers:", err);
     } finally {
@@ -79,6 +67,12 @@ export default function Explore() {
   }, [urlQuery]);
 
   useEffect(() => {
+    if (urlCategory) {
+      setSelectedCategory(urlCategory);
+    }
+  }, [urlCategory]);
+
+  useEffect(() => {
     fetchUsers();
   }, [selectedCategory, searchQuery]);
 
@@ -90,7 +84,6 @@ export default function Explore() {
   const handleClearFilters = () => {
     setSearchQuery("");
     setSelectedCategory("");
-    setGenderFilter("all");
     setExpFilter("all");
     setSortBy("newest");
     fetchUsers();
@@ -106,17 +99,17 @@ export default function Explore() {
 
   // Filter & Sort client-side
   const filteredUsers = users.filter((u) => {
-    if (genderFilter !== "all") {
-      const g = (u.gender || "male").toLowerCase();
-      if (genderFilter === "male" && g !== "male") return false;
-      if (genderFilter === "female" && g !== "female") return false;
+    // Experience level filter
+    if (expFilter !== "all") {
+      const level = (u.experience_level || u.level || "intermediate").toLowerCase();
+      if (level !== expFilter.toLowerCase()) return false;
     }
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
       const nameMatch = u.name?.toLowerCase().includes(q);
       const bioMatch = u.bio?.toLowerCase().includes(q);
-      const locMatch = u.location?.toLowerCase().includes(q);
+      const locMatch = u.location?.toLowerCase().includes(q) || u.city?.toLowerCase().includes(q);
       const profMatch = u.profession?.toLowerCase().includes(q);
       const eduMatch = u.education_degree?.toLowerCase().includes(q);
       const offeredMatch = u.offered_skills?.some(s => s.skill_name?.toLowerCase().includes(q) || s.category?.toLowerCase().includes(q));
@@ -146,59 +139,16 @@ export default function Explore() {
         <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100/40 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold mb-2 border border-indigo-100">
-            <Search className="w-3.5 h-3.5 text-indigo-600" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold mb-2 border border-blue-100">
+            <Search className="w-3.5 h-3.5 text-blue-600" />
             <span>Peer Directory</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
             Discover Skill Swappers
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl font-medium">
-            Browse verified mentors offering 1-on-1 reciprocal skill exchanges. Filter by domain, academic track, or avatar type.
+            Connect directly with verified students and developers offering 1-on-1 practical skill exchanges across India.
           </p>
-        </div>
-      </div>
-
-      {/* Directory Live Stats Ribbon */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-            <Users className="w-5 h-5" />
-          </div>
-          <div>
-            <span className="block font-black text-slate-900 text-sm">{filteredUsers.length} Active</span>
-            <span className="text-[10px] text-slate-500 font-bold uppercase">Verified Swappers</span>
-          </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-            <Sparkles className="w-5 h-5 text-emerald-600" />
-          </div>
-          <div>
-            <span className="block font-black text-slate-900 text-sm">98.4% Match</span>
-            <span className="text-[10px] text-slate-500 font-bold uppercase">Bilateral Precision</span>
-          </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-            <Star className="w-5 h-5 fill-amber-400" />
-          </div>
-          <div>
-            <span className="block font-black text-slate-900 text-sm">4.9 / 5.0</span>
-            <span className="text-[10px] text-slate-500 font-bold uppercase">Karma Rating</span>
-          </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
-            <GraduationCap className="w-5 h-5" />
-          </div>
-          <div>
-            <span className="block font-black text-slate-900 text-sm">Computer Science & IT</span>
-            <span className="text-[10px] text-slate-500 font-bold uppercase">Curriculum Hub</span>
-          </div>
         </div>
       </div>
 
@@ -210,7 +160,7 @@ export default function Explore() {
         </div>
       )}
 
-      {/* Filter Bar */}
+      {/* Filter & Search Controls */}
       <div className="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-xs space-y-4">
         <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-12 gap-3">
           
@@ -221,8 +171,8 @@ export default function Explore() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by skill (React, Figma, DSA), name, or location..."
-              className="w-full pl-11 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="Search by skill (React, Figma, DSA), name, or college..."
+              className="w-full pl-11 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {searchQuery && (
               <button
@@ -235,33 +185,34 @@ export default function Explore() {
             )}
           </div>
 
-          {/* Category Dropdown */}
+          {/* Technical Domain Dropdown */}
           <div className="sm:col-span-3">
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">All Categories</option>
-              <option value="MCA Core & IT">MCA Core & IT Courses</option>
-              <option value="Top IT Courses">Top IT Courses</option>
-              <option value="Technology & Programming">Technology & Programming</option>
-              <option value="Design & Creative">Design & Creative</option>
-              <option value="Languages">Languages & Communication</option>
-              <option value="Business & Marketing">Business & Marketing</option>
+              <option value="">All Domains</option>
+              <option value="Technology & Programming">Web & Software Dev</option>
+              <option value="DSA & Core CS">DSA & Core CS</option>
+              <option value="AI & Data Science">AI & Machine Learning</option>
+              <option value="Design & Creative">UI/UX Design & Creative</option>
+              <option value="Cloud & DevOps">Cloud & DevOps</option>
+              <option value="Languages">Languages & Interview Prep</option>
             </select>
           </div>
 
-          {/* Gender Filter */}
+          {/* Experience Level Filter (Replaces Gender Filter) */}
           <div className="sm:col-span-2">
             <select
-              value={genderFilter}
-              onChange={(e) => setGenderFilter(e.target.value)}
-              className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 capitalize"
+              value={expFilter}
+              onChange={(e) => setExpFilter(e.target.value)}
+              className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="all">All Genders</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
+              <option value="all">All Levels</option>
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
             </select>
           </div>
 
@@ -277,7 +228,7 @@ export default function Explore() {
               <option value="skills">Most Skills</option>
             </select>
 
-            {(searchQuery || selectedCategory || genderFilter !== "all" || sortBy !== "newest") && (
+            {(searchQuery || selectedCategory || expFilter !== "all" || sortBy !== "newest") && (
               <button
                 type="button"
                 onClick={handleClearFilters}
@@ -291,20 +242,20 @@ export default function Explore() {
 
         </form>
 
-        {/* Quick Category Filter Chips */}
+        {/* Distinct Technical Domain Quick Chips */}
         <div className="flex items-center gap-2 overflow-x-auto pt-2 pb-1 no-scrollbar text-xs">
           <span className="text-slate-400 font-bold uppercase text-[10px] tracking-wider shrink-0 mr-1 flex items-center gap-1">
-            <SlidersHorizontal className="w-3 h-3 text-blue-600" /> Quick Track:
+            <SlidersHorizontal className="w-3 h-3 text-blue-600" /> Domains:
           </span>
 
           {[
-            { label: "All Swappers", value: "" },
-            { label: "🎓 MCA Core & IT", value: "MCA Core & IT" },
-            { label: "💻 Top IT Courses", value: "Top IT Courses" },
-            { label: "⚡ Technology & Code", value: "Technology & Programming" },
-            { label: "🎨 Design & UI/UX", value: "Design & Creative" },
-            { label: "🌐 Languages & Comms", value: "Languages" },
-            { label: "📈 Business & Marketing", value: "Business & Marketing" }
+            { label: "All Peers", value: "" },
+            { label: "💻 Web Development", value: "Technology & Programming" },
+            { label: "⚡ DSA & Core CS", value: "DSA & Core CS" },
+            { label: "🤖 AI & Machine Learning", value: "AI & Data Science" },
+            { label: "🎨 UI/UX Design", value: "Design & Creative" },
+            { label: "☁️ Cloud & DevOps", value: "Cloud & DevOps" },
+            { label: "🗣️ Languages & Comms", value: "Languages" }
           ].map((chip, idx) => (
             <button
               key={idx}
@@ -313,7 +264,7 @@ export default function Explore() {
                 setSelectedCategory(chip.value);
                 setSearchQuery("");
               }}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold shrink-0 transition-all ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold shrink-0 transition-all ${
                 selectedCategory === chip.value
                   ? "bg-blue-600 text-white shadow-xs scale-105"
                   : "bg-slate-100 text-slate-700 hover:bg-slate-200"
@@ -325,7 +276,7 @@ export default function Explore() {
         </div>
       </div>
 
-      {/* Users Card Grid */}
+      {/* Peers Card Grid */}
       {loading ? (
         <LoadingSpinner label="Searching swapper directory..." />
       ) : filteredUsers.length > 0 ? (
@@ -340,22 +291,42 @@ export default function Explore() {
           ))}
         </div>
       ) : (
-        <div className="bg-white rounded-3xl p-12 text-center border border-slate-200 max-w-md mx-auto my-8 space-y-4 shadow-xs">
-          <div className="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto">
-            <AlertCircle className="w-7 h-7" />
+        /* Clean Human Empty State with Quick Reset Tags */
+        <div className="bg-white rounded-3xl p-8 sm:p-12 text-center border border-slate-200 max-w-lg mx-auto my-8 space-y-4 shadow-xs">
+          <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
+            <Search className="w-7 h-7" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-slate-900">No Swappers Match Your Search</h3>
-            <p className="text-xs text-slate-500 mt-1">
-              Try adjusting your query terms or clearing the filter options.
+            <h3 className="text-base sm:text-lg font-bold text-slate-900">No peers found matching your criteria</h3>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-sm mx-auto">
+              Try searching for popular topics like <strong className="text-slate-700">React, Python, Figma, or DSA</strong>, or reset your filters.
             </p>
           </div>
-          <button
-            onClick={handleClearFilters}
-            className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all"
-          >
-            Clear Filters & View All
-          </button>
+
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+            {["React", "Python", "UI/UX Design", "DSA", "Figma", "Node.js"].map((term) => (
+              <button
+                key={term}
+                onClick={() => {
+                  setSearchQuery(term);
+                  setSelectedCategory("");
+                  setExpFilter("all");
+                }}
+                className="px-3 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 rounded-full text-xs font-semibold text-slate-700 transition-colors"
+              >
+                + Try "{term}"
+              </button>
+            ))}
+          </div>
+
+          <div className="pt-2">
+            <button
+              onClick={handleClearFilters}
+              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs"
+            >
+              Reset All Filters
+            </button>
+          </div>
         </div>
       )}
 
@@ -377,7 +348,7 @@ export default function Explore() {
                 className="w-20 h-20 rounded-2xl object-cover ring-2 ring-blue-500/20 shadow-md"
               />
               <div>
-                <h3 className="text-xl font-black text-slate-900 flex items-center gap-1.5">
+                <h3 className="text-xl font-bold text-slate-900 flex items-center gap-1.5">
                   {quickViewUser.name}
                   <ShieldCheck className="w-5 h-5 text-blue-600 inline" />
                 </h3>
@@ -386,20 +357,20 @@ export default function Explore() {
                 </p>
                 <p className="text-xs text-slate-500 flex items-center gap-1 mt-1 font-medium">
                   <MapPin className="w-3.5 h-3.5 text-rose-500" />
-                  {[quickViewUser.city, quickViewUser.location].filter(Boolean).join(", ") || "Location not specified"}
+                  {[quickViewUser.city, quickViewUser.location].filter(Boolean).join(", ") || "India (Remote)"}
                 </p>
               </div>
             </div>
 
             {/* Academic Credentials Box */}
             <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs space-y-1.5">
-              <div className="font-extrabold text-slate-900 flex items-center gap-1.5">
+              <div className="font-bold text-slate-900 flex items-center gap-1.5">
                 <GraduationCap className="w-4 h-4 text-blue-600" />
                 <span>Academic & Campus Credentials</span>
               </div>
-              <p className="text-slate-700">Course / Degree: <strong className="text-slate-900">{quickViewUser.education_degree || "Not specified"}</strong></p>
-              <p className="text-slate-700">College / Institute: <strong className="text-slate-900">{quickViewUser.education_institute || "Not specified"}</strong></p>
-              <p className="text-slate-700">University / Year: <strong className="text-slate-900">{quickViewUser.education_year || "Not specified"}</strong></p>
+              <p className="text-slate-700">Course / Degree: <strong className="text-slate-900">{quickViewUser.education_degree || "Engineering / Technology"}</strong></p>
+              <p className="text-slate-700">College / Institute: <strong className="text-slate-900">{quickViewUser.education_institute || "JEC / Engineering College"}</strong></p>
+              <p className="text-slate-700">Graduation Year: <strong className="text-slate-900">{quickViewUser.education_year || "2025 / 2026"}</strong></p>
             </div>
 
             {/* Bio */}
@@ -411,14 +382,14 @@ export default function Explore() {
 
             {/* Skills Offered */}
             <div>
-              <p className="text-[10px] uppercase font-black text-emerald-700 tracking-wider mb-2">Can Teach / Offers:</p>
+              <p className="text-[10px] uppercase font-bold text-emerald-700 tracking-wider mb-2">Can Teach / Offers:</p>
               <div className="flex flex-wrap gap-1.5">
                 {quickViewUser.offered_skills && quickViewUser.offered_skills.length > 0 ? (
                   quickViewUser.offered_skills.map((s) => (
                     <SkillBadge key={s.id} skill={s} type="offered" size="sm" />
                   ))
                 ) : (
-                  <span className="text-xs text-slate-400 italic">No skills specified</span>
+                  <span className="text-xs text-slate-400 italic">No skills listed</span>
                 )}
               </div>
             </div>
@@ -436,7 +407,7 @@ export default function Explore() {
                   setQuickViewUser(null);
                   handleRequestSwap(quickViewUser);
                 }}
-                className="flex-1 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white rounded-xl text-xs font-extrabold shadow-md flex items-center justify-center gap-2"
+                className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md flex items-center justify-center gap-2"
               >
                 <Repeat className="w-4 h-4" />
                 <span>Request Swap Session</span>
@@ -460,40 +431,40 @@ export default function Explore() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
           <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-5 border border-slate-200 text-center">
             <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
-              <Sparkles className="w-7 h-7 text-blue-600 fill-blue-600 animate-pulse" />
+              <Sparkles className="w-7 h-7 text-blue-600 fill-blue-600" />
             </div>
 
             <div>
-              <h3 className="text-xl font-black text-slate-900">Unlock 1-on-1 Barter Feature</h3>
+              <h3 className="text-xl font-bold text-slate-900">Start Exchanging Skills 1-on-1</h3>
               <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                You are currently in <strong className="text-slate-900">Pre-Login Directory Mode</strong>. To initiate direct reciprocal barter proposals, access AI Synergy Matcher, and launch live 1-on-1 video rooms, please sign in or register!
+                Sign in to send direct exchange requests, match with complementary learning partners, and launch 1-on-1 video rooms with built-in code sandboxes!
               </p>
             </div>
 
             <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-left space-y-1.5 text-xs">
               <div className="flex items-center gap-2 font-bold text-slate-800">
-                <span className="text-emerald-500 font-black">✓</span> Send direct bilateral proposals
+                <span className="text-emerald-500 font-black">✓</span> Send mutual skill exchange proposals
               </div>
               <div className="flex items-center gap-2 font-bold text-slate-800">
-                <span className="text-emerald-500 font-black">✓</span> Live 1-on-1 video call rooms
+                <span className="text-emerald-500 font-black">✓</span> 1-on-1 video rooms with code sandbox
               </div>
               <div className="flex items-center gap-2 font-bold text-slate-800">
-                <span className="text-emerald-500 font-black">✓</span> AI Synergy Matcher & Karma score
+                <span className="text-emerald-500 font-black">✓</span> Verified peer reviews and karma ratings
               </div>
             </div>
 
             <div className="flex items-center gap-3 pt-2">
               <button
                 onClick={() => navigate("/login")}
-                className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-extrabold transition-all"
+                className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition-all"
               >
                 Log In
               </button>
               <button
                 onClick={() => navigate("/register")}
-                className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-extrabold shadow-md shadow-blue-500/20 transition-all"
+                className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/20 transition-all"
               >
-                Join Free →
+                Get Started Free →
               </button>
             </div>
 

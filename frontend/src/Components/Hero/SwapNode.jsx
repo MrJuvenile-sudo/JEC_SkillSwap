@@ -4,7 +4,7 @@ import { Repeat } from "lucide-react";
 /**
  * SwapNode represents the central SkillSwap matching engine / broker.
  * Features the gradient logo with top-right green lightning bolt badge,
- * brand heading, and 92% Match indicator.
+ * brand heading, and clean Mutual Match status.
  */
 export default function SwapNode({ isPulsing = false, activePairIndex = 0 }) {
   return (
@@ -55,14 +55,14 @@ export default function SwapNode({ isPulsing = false, activePairIndex = 0 }) {
           </span>
         </div>
 
-        {/* Brand label & verification badge */}
+        {/* Brand label & status */}
         <div className="mt-1 xs:mt-1.5 text-center">
           <h4 className="text-[10px] xs:text-xs sm:text-sm font-black tracking-tight text-slate-900 leading-tight">
             SkillSwap
           </h4>
           <div className="text-[7.5px] xs:text-[9px] sm:text-[11px] text-slate-600 font-bold flex items-center justify-center gap-1 xs:gap-1.5 mt-0.5">
-            <span className="w-1 h-1 xs:w-1.5 xs:h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>92% Match</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Mutual Match</span>
           </div>
         </div>
       </div>
