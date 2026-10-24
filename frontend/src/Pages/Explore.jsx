@@ -160,7 +160,7 @@ export default function Explore() {
       if (!matchesCategory) return false;
     }
 
-    // Specific Skill Filter (when user clicks any of the 50+ skills)
+    // Specific Skill Filter (when user selects any technical skill)
     if (selectedSkill) {
       const targetSkill = selectedSkill.toLowerCase();
       const hasSkill = 
@@ -212,18 +212,18 @@ export default function Explore() {
             Discover Skill Swappers
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl font-medium">
-            Browse verified mentors offering 1-on-1 skill exchanges. Explore 50+ domain skills below, select your category, and find the perfect learning partner.
+            Browse verified mentors offering 1-on-1 skill exchanges. Explore domain skills below, select your category, and find the perfect learning partner.
           </p>
         </div>
 
         {/* Total Catalog Badge */}
         <div className="z-10 flex items-center gap-3 bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200">
           <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-sm">
-            86+
+            <BookOpen className="w-5 h-5 text-white" />
           </div>
           <div>
-            <span className="block font-black text-slate-900 text-xs sm:text-sm">50+ Cataloged Skills</span>
-            <span className="text-[10px] text-blue-600 font-bold uppercase">6 Technical Domains</span>
+            <span className="block font-black text-slate-900 text-xs sm:text-sm">Technical Skills Catalog</span>
+            <span className="text-[10px] text-blue-600 font-bold uppercase">All Technical Domains</span>
           </div>
         </div>
       </div>
@@ -239,10 +239,10 @@ export default function Explore() {
       {/* Filter Bar */}
       <div className="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-xs space-y-4">
         
-        <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+        <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
           
           {/* Search Input */}
-          <div className="sm:col-span-5 relative">
+          <div className="sm:col-span-2 lg:col-span-3 relative">
             <Search className="w-5 h-5 text-slate-400 absolute left-4 top-3.5" />
             <input
               type="text"
@@ -262,32 +262,86 @@ export default function Explore() {
             )}
           </div>
 
-          {/* Consolidated Category Dropdown */}
-          <div className="sm:col-span-3">
+          {/* Consolidated Domain Dropdown */}
+          <div className="sm:col-span-1 lg:col-span-3">
             <select
               value={selectedCategory}
               onChange={(e) => {
                 setSelectedCategory(e.target.value);
                 setSelectedSkill("");
               }}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+              aria-label="Filter by Technical Domain"
             >
-              <option value="">All Technical Domains (86 Skills)</option>
-              <option value="Web Development">💻 Web Development (12 Skills)</option>
-              <option value="DSA & Core CS">⚡ DSA & Core CS (12 Skills)</option>
-              <option value="AI & Machine Learning">🤖 AI & Machine Learning (12 Skills)</option>
-              <option value="UI/UX Design">🎨 UI/UX Design (12 Skills)</option>
-              <option value="Cloud & DevOps">☁️ Cloud & DevOps (12 Skills)</option>
-              <option value="Languages & Comms">🌐 Languages & Comms (11 Skills)</option>
+              <option value="">All Technical Domains</option>
+              <option value="Web Development">💻 Web Development</option>
+              <option value="DSA & Core CS">⚡ DSA & Core CS</option>
+              <option value="AI & Machine Learning">🤖 AI & Machine Learning</option>
+              <option value="UI/UX Design">🎨 UI/UX Design</option>
+              <option value="Cloud & DevOps">☁️ Cloud & DevOps</option>
+              <option value="Languages & Comms">🌐 Languages & Comms</option>
+            </select>
+          </div>
+
+          {/* Technical Skills Dropdown */}
+          <div className="sm:col-span-1 lg:col-span-2">
+            <select
+              value={selectedSkill}
+              onChange={(e) => setSelectedSkill(e.target.value)}
+              className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer truncate"
+              aria-label="Filter by Technical Skill"
+            >
+              <option value="">
+                {selectedCategory ? `All ${selectedCategory} Skills` : "All Technical Skills"}
+              </option>
+              {selectedCategory ? (
+                masterSkills
+                  .filter((s) => {
+                    const isDirectMatch = s.category === selectedCategory;
+                    const keywords = domainKeywords[selectedCategory] || [];
+                    const isKeywordMatch = keywords.some((kw) => (s.name || "").toLowerCase().includes(kw));
+                    return isDirectMatch || isKeywordMatch;
+                  })
+                  .sort((a, b) => (a.name || "").localeCompare(b.name || ""))
+                  .map((s) => (
+                    <option key={s.id} value={s.name}>
+                      {s.name}
+                    </option>
+                  ))
+              ) : (
+                Object.keys(domainKeywords).map((dom) => {
+                  const skillsInDom = masterSkills
+                    .filter((s) => {
+                      const isDirectMatch = s.category === dom;
+                      const keywords = domainKeywords[dom] || [];
+                      const isKeywordMatch = keywords.some((kw) => (s.name || "").toLowerCase().includes(kw));
+                      return isDirectMatch || isKeywordMatch;
+                    })
+                    .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+
+                  if (skillsInDom.length === 0) return null;
+
+                  return (
+                    <optgroup key={dom} label={dom}>
+                      {skillsInDom.map((s) => (
+                        <option key={`${dom}-${s.id}`} value={s.name}>
+                          {s.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                  );
+                })
+              )}
             </select>
           </div>
 
           {/* Experience Level Filter */}
-          <div className="sm:col-span-2">
+          <div className="sm:col-span-1 lg:col-span-2">
             <select
               value={expFilter}
               onChange={(e) => setExpFilter(e.target.value)}
-              className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+              aria-label="Filter by Experience Level"
             >
               <option value="all">All Levels</option>
               <option value="beginner">Beginner</option>
@@ -297,11 +351,12 @@ export default function Explore() {
           </div>
 
           {/* Sort Dropdown & Clear */}
-          <div className="sm:col-span-2 flex gap-2">
+          <div className="sm:col-span-1 lg:col-span-2 flex gap-2">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+              aria-label="Sort Swappers"
             >
               <option value="newest">Newest</option>
               <option value="rating">Highest Rated</option>
@@ -329,13 +384,13 @@ export default function Explore() {
           </span>
 
           {[
-            { label: "All Technical Domains (86)", value: "" },
-            { label: "💻 Web Development (12)", value: "Web Development" },
-            { label: "⚡ DSA & Core CS (12)", value: "DSA & Core CS" },
-            { label: "🤖 AI & Machine Learning (12)", value: "AI & Machine Learning" },
-            { label: "🎨 UI/UX Design (12)", value: "UI/UX Design" },
-            { label: "☁️ Cloud & DevOps (12)", value: "Cloud & DevOps" },
-            { label: "🌐 Languages & Comms (11)", value: "Languages & Comms" }
+            { label: "All Technical Domains", value: "" },
+            { label: "💻 Web Development", value: "Web Development" },
+            { label: "⚡ DSA & Core CS", value: "DSA & Core CS" },
+            { label: "🤖 AI & Machine Learning", value: "AI & Machine Learning" },
+            { label: "🎨 UI/UX Design", value: "UI/UX Design" },
+            { label: "☁️ Cloud & DevOps", value: "Cloud & DevOps" },
+            { label: "🌐 Languages & Comms", value: "Languages & Comms" }
           ].map((chip, idx) => (
             <button
               key={idx}
@@ -356,7 +411,7 @@ export default function Explore() {
         </div>
 
         {/* ============================================================== */}
-        {/* INTERACTIVE 50+ TECHNICAL DOMAIN SKILLS CATALOG TRAY */}
+        {/* INTERACTIVE TECHNICAL DOMAIN SKILLS CATALOG TRAY */}
         {/* ============================================================== */}
         <div className="pt-3 border-t border-slate-100 space-y-3">
           
@@ -364,10 +419,10 @@ export default function Explore() {
             <div className="flex items-center gap-2">
               <span className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 font-extrabold text-[11px] flex items-center gap-1.5 border border-indigo-100">
                 <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
-                <span>50+ Skills in {selectedCategory || "All Technical Domains"}</span>
+                <span>Skills in {selectedCategory || "All Technical Domains"}</span>
               </span>
               <span className="text-xs text-slate-500 font-semibold">
-                ({domainSkills.length} skills cataloged)
+                Interactive Skill Directory
               </span>
             </div>
 
@@ -393,7 +448,7 @@ export default function Explore() {
               type="text"
               value={skillSearchQuery}
               onChange={(e) => setSkillSearchQuery(e.target.value)}
-              placeholder="Search 50+ skills (e.g. React, Next.js, PyTorch, Figma, AWS, DSA)..."
+              placeholder="Search technical skills (e.g. React, Next.js, PyTorch, Figma, AWS, DSA)..."
               className="w-full pl-8 pr-8 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder:text-slate-400"
             />
             {skillSearchQuery && (
@@ -407,7 +462,7 @@ export default function Explore() {
             )}
           </div>
 
-          {/* 50+ Skills Interactive Chips Grid */}
+          {/* Skills Interactive Chips Grid */}
           <div className="flex flex-wrap items-center gap-1.5 pt-1">
             {(showAllSkills ? domainSkills : domainSkills.slice(0, 24)).map((s) => {
               const isSelected = selectedSkill === s.name;
@@ -452,7 +507,7 @@ export default function Explore() {
                   </>
                 ) : (
                   <>
-                    <span>Show All {domainSkills.length} Cataloged Skills</span>
+                    <span>Show All Skills</span>
                     <ChevronDown className="w-3.5 h-3.5" />
                   </>
                 )}

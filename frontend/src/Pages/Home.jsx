@@ -277,39 +277,39 @@ export default function Home() {
     { 
       title: "Web Development", 
       icon: Code, 
-      count: "12+ Skills", 
+      count: "Featured Track", 
       color: "from-blue-500 to-indigo-600", 
       desc: "React.js, Next.js, Node.js, TypeScript, Tailwind, Django, Spring Boot, GraphQL",
       categoryName: "Web Development"
     },
     { 
-      title: "DSA & Core CS", 
-      icon: Layers, 
-      count: "12+ Skills", 
+      title: "DSA & Core CS",
+      icon: Layers,
+      count: "Foundation Track", 
       color: "from-amber-500 to-orange-600", 
       desc: "Data Structures, Algorithms, Dynamic Programming, Java, C++, DBMS, System Design",
       categoryName: "DSA & Core CS"
     },
     { 
-      title: "AI & Machine Learning", 
-      icon: Sparkles, 
-      count: "12+ Skills", 
+      title: "AI & Machine Learning",
+      icon: Sparkles,
+      count: "Trending Track", 
       color: "from-cyan-500 to-blue-600", 
       desc: "Machine Learning, PyTorch, TensorFlow, NLP, Computer Vision, Generative AI & LLMs",
       categoryName: "AI & Machine Learning"
     },
     { 
-      title: "UI/UX Design", 
-      icon: Palette, 
-      count: "12+ Skills", 
+      title: "UI/UX Design",
+      icon: Palette,
+      count: "Creative Track", 
       color: "from-purple-500 to-pink-600", 
       desc: "Figma Prototyping, Wireframing, Mobile App Design, Design Systems, User Research",
       categoryName: "UI/UX Design"
     },
     { 
-      title: "Cloud & DevOps", 
-      icon: Globe, 
-      count: "12+ Skills", 
+      title: "Cloud & DevOps",
+      icon: Globe,
+      count: "Infrastructure Track", 
       color: "from-emerald-500 to-teal-600", 
       desc: "AWS Architecture, Microsoft Azure, Docker, Kubernetes, CI/CD Actions, Linux",
       categoryName: "Cloud & DevOps"
@@ -317,7 +317,7 @@ export default function Home() {
     { 
       title: "Languages & Comms", 
       icon: MessageSquare, 
-      count: "11+ Skills", 
+      count: "Essential Track", 
       color: "from-rose-500 to-red-600", 
       desc: "English Fluency, Technical Writing, Public Speaking, Tech Interview Storytelling, Spanish",
       categoryName: "Languages & Comms"
@@ -610,7 +610,7 @@ export default function Home() {
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-200/80 bg-[#fdfbf7]">
         <div className="text-center max-w-2xl mx-auto mb-16 space-y-2">
           <h2 className="text-3xl font-serif font-black text-slate-900">Explore Technical Domains & Skills</h2>
-          <p className="text-slate-600 text-sm font-medium">Browse verified mentors offering 1-on-1 skill exchanges across 50+ cataloged technical skills.</p>
+          <p className="text-slate-600 text-sm font-medium">Browse verified mentors offering 1-on-1 skill exchanges across comprehensive technical skill tracks.</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

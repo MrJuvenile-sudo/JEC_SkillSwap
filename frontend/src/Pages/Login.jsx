@@ -165,8 +165,8 @@ export default function Login() {
                 <span className="text-slate-400">Live Sandbox</span>
               </div>
               <div className="p-2 rounded-xl bg-white/5 border border-white/10">
-                <span className="block text-cyan-300 font-black">50+ Domains</span>
-                <span className="text-slate-400">80+ Skills</span>
+                <span className="block text-cyan-300 font-black">All Domains</span>
+                <span className="text-slate-400">Curated Skills</span>
               </div>
             </div>
 

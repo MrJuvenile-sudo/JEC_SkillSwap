@@ -106,7 +106,7 @@ export default function Register() {
                 <span>Join Global Co-Learners</span>
               </span>
               <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30">
-                50+ Domains • 80+ Skills
+                All Domains • Technical Skills
               </span>
             </div>
 
