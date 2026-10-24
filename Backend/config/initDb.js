@@ -192,6 +192,62 @@ async function initDb() {
       );
     `);
 
+    // SkillSwap Live: Group Learning Sessions & Classes (Google Meet Provider)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS live_sessions (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        host_id INT NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        skill_topic VARCHAR(150) NOT NULL,
+        category VARCHAR(100) DEFAULT 'General',
+        description TEXT,
+        session_date DATE NOT NULL,
+        start_time TIME NOT NULL,
+        duration_minutes INT NOT NULL DEFAULT 60,
+        max_participants INT NOT NULL DEFAULT 10,
+        meeting_provider ENUM('GOOGLE_MEET') NOT NULL DEFAULT 'GOOGLE_MEET',
+        meeting_url VARCHAR(600) NULL,
+        google_meet_space_name VARCHAR(255) NULL,
+        visibility ENUM('public', 'private') NOT NULL DEFAULT 'public',
+        status ENUM('draft', 'published', 'in_progress', 'completed', 'cancelled') NOT NULL DEFAULT 'published',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_host_id (host_id),
+        INDEX idx_session_date (session_date),
+        INDEX idx_status (status)
+      );
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS session_registrations (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        session_id INT NOT NULL,
+        user_id INT NOT NULL,
+        status ENUM('registered', 'attended', 'cancelled') NOT NULL DEFAULT 'registered',
+        registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        UNIQUE KEY uq_session_user (session_id, user_id),
+        INDEX idx_session_id (session_id),
+        INDEX idx_user_id (user_id)
+      );
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS session_attendances (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        session_id INT NOT NULL,
+        user_id INT NOT NULL,
+        attended BOOLEAN DEFAULT TRUE,
+        rating INT NULL CHECK (rating >= 1 AND rating <= 5),
+        feedback TEXT NULL,
+        marked_by_host_id INT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        UNIQUE KEY uq_attendance (session_id, user_id),
+        INDEX idx_session_att (session_id)
+      );
+    `);
+
     // Seed default master skills (including Top IT & MCA Core Courses)
     const seedSkills = [
       ['React.js Frontend Development', 'Technology & Programming', 'Building modern single-page web applications with React'],

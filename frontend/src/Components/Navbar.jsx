@@ -77,11 +77,21 @@ export default function Navbar() {
                 <>
                   <Link
                     to="/explore"
-                    className={`px-5 py-2 rounded-full text-xs font-bold transition-all ${
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
                       isActive("/explore") ? "bg-blue-600 text-white shadow-xs" : "text-slate-700 hover:text-blue-600 hover:bg-slate-200/60"
                     }`}
                   >
                     Explore Peers
+                  </Link>
+
+                  <Link
+                    to="/live"
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${
+                      isActive("/live") ? "bg-blue-600 text-white shadow-xs" : "text-slate-700 hover:text-blue-600 hover:bg-slate-200/60"
+                    }`}
+                  >
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Live Classes</span>
                   </Link>
 
                   <Link
@@ -121,6 +131,16 @@ export default function Navbar() {
                     }`}
                   >
                     Explore
+                  </Link>
+
+                  <Link
+                    to="/live"
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${
+                      isActive("/live") ? "bg-blue-600 text-white shadow-xs" : "text-slate-700 hover:text-blue-600 hover:bg-slate-200/60"
+                    }`}
+                  >
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Live</span>
                   </Link>
 
                   <Link
@@ -361,6 +381,7 @@ export default function Navbar() {
               >
                 <Compass className="w-4 h-4 text-indigo-600" /> Explore Peers
               </Link>
+              <Link to="/live" onClick={() => setMobileMenuOpen(false)} className="p-3 bg-slate-50 hover:bg-slate-100 rounded-2xl text-slate-800 flex items-center gap-2"><Video className="w-4 h-4 text-emerald-600" /> Live Classes</Link>
               <Link 
                 to="/features" 
                 onClick={() => setMobileMenuOpen(false)} 

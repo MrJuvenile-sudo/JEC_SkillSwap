@@ -13,6 +13,7 @@ import HowItWorks from "./Pages/HowItWorks";
 import FAQ from "./Pages/FAQ";
 
 import Explore from "./Pages/Explore";
+import LiveSessions from "./Pages/LiveSessions";
 import Requests from "./Pages/Requests";
 import Exchanges from "./Pages/Exchanges";
 import Profile from "./Pages/Profile";
@@ -104,6 +105,9 @@ function AppRoutes() {
           <Route path="/faq" element={<FAQ />} />
 
           <Route path="/explore" element={<Explore />} />
+          <Route path="/live" element={<LiveSessions />} />
+          <Route path="/live-sessions" element={<Navigate to="/live" replace />} />
+          <Route path="/classes" element={<Navigate to="/live" replace />} />
           <Route path="/profile/:id" element={<UserProfileView />} />
           
           {/* Auth Routes */}
