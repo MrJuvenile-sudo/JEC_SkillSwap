@@ -846,7 +846,7 @@ ${ex.meeting_link || "N/A"}
               <CheckCircle2 className="w-5 h-5 text-emerald-600" />
               <span>Completed Session History ({completedExchangesList.length})</span>
             </h3>
-            <p className="text-xs text-slate-500 font-medium">Finished reciprocal barter sessions. Leave star reviews to build your Karma rating.</p>
+            <p className="text-xs text-slate-500 font-medium">Finished 1-on-1 skill exchange sessions. Leave star reviews to build your peer trust score.</p>
           </div>
 
           {completedExchangesList.length > 0 ? (

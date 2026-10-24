@@ -87,9 +87,9 @@ export default function Admin() {
     hero_stat2_value: "99.4%",
     hero_stat2_label: "Synergy Match Accuracy",
     hero_stat3_value: "4.9 / 5",
-    hero_stat3_label: "Average Karma",
+    hero_stat3_label: "Average Rating",
     hero_badge_pill1: "Verified Reciprocal Peer-to-Peer Learning Network",
-    hero_badge_pill2: "Live AI Synergy Matching Active",
+    hero_badge_pill2: "Live Mutual Skill Matching Active",
     hero_headline_static: "Teach what you know.",
     hero_headline_dynamic_prefix: "Master",
     hero_dynamic_phrases: "what you need next.\nData Structures & Algorithms.\nCloud Computing & AWS.\nSystem Design & DevOps.\nFigma & UI/UX Design.\nPython & Machine Learning.",
@@ -822,7 +822,7 @@ export default function Admin() {
 
                 <div className="bg-white p-6 rounded-3xl border border-slate-200 space-y-4 shadow-xs lg:col-span-2">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                    <span className="text-xs font-extrabold text-slate-900">Platform Karma Rating Analytics</span>
+                    <span className="text-xs font-extrabold text-slate-900">Platform Peer Review & Trust Analytics</span>
                     <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
                   </div>
                   <div className="flex items-center justify-around text-center py-2">
@@ -1423,7 +1423,7 @@ export default function Admin() {
                           hero_stat2_value: "99.4%",
                           hero_stat2_label: "Synergy Match Accuracy",
                           hero_stat3_value: stats?.averageRating ? `${stats.averageRating} / 5` : "4.9 / 5",
-                          hero_stat3_label: "Average Karma"
+                          hero_stat3_label: "Average Rating"
                         }));
                         setNotification("Populated with real-time database counts! Click 'Save' to persist.");
                       }}
@@ -1508,7 +1508,7 @@ export default function Admin() {
                           type="text"
                           value={settingsData.hero_stat3_label || ""}
                           onChange={(e) => setSettingsData({ ...settingsData, hero_stat3_label: e.target.value })}
-                          placeholder="e.g. Average Karma"
+                          placeholder="e.g. Average Rating"
                           className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-amber-600"
                         />
                       </div>
@@ -1574,7 +1574,7 @@ export default function Admin() {
                           type="text"
                           value={settingsData.hero_badge_pill2 || ""}
                           onChange={(e) => setSettingsData({ ...settingsData, hero_badge_pill2: e.target.value })}
-                          placeholder="e.g. Live AI Synergy Matching Active"
+                          placeholder="e.g. Live Mutual Skill Matching Active"
                           className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-600 focus:bg-white"
                         />
                       </div>

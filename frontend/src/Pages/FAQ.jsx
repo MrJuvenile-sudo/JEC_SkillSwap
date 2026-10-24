@@ -10,23 +10,23 @@ export default function FAQ() {
   const faqs = [
     {
       q: "What is SkillSwap?",
-      a: "SkillSwap is a 1-on-1 peer skill exchange platform. Instead of paying money or purchasing subscription courses, users trade expertise directly (e.g., you teach React or JavaScript to a peer, and they teach you UI/UX design or DSA in return)."
+      a: "SkillSwap is a peer-to-peer reciprocal knowledge exchange platform. Instead of paying money or purchasing subscription courses, users trade expertise 1-on-1 (e.g. you teach React.js to a peer, and they teach you Spanish in return)."
     },
     {
       q: "Is SkillSwap really 100% free?",
       a: "Yes! Zero fees forever. There are no subscription tiers, hidden token fees, or credit card requirements. You invest your time and knowledge to learn from other practitioners."
     },
     {
-      q: "How does the mutual matching algorithm work?",
-      a: "Our algorithm compares your listed offered skills (skills you can teach) and wanted skills (topics you want to learn) with thousands of active profiles. It prioritizes 2-way matches where two users complement each other's learning goals."
+      q: "How does the Bilateral Synergy Matcher work?",
+      a: "Our algorithm compares your listed offered skills (skills you can teach) and wanted skills (topics you want to learn) with thousands of active profiles. It prioritizes '2-Way Matches' where two users complementary complement each other's learning goals."
     },
     {
       q: "What happens after my swap proposal is accepted?",
-      a: "Once an exchange proposal is accepted, an Active Exchange Session Room is automatically generated. You can conduct your 1-on-1 session with built-in video, live code sandbox, shared notes, and leave star reviews."
+      a: "Once an exchange proposal is accepted, an Active Exchange Session Room is automatically generated. You can add a Google Meet or Zoom video link, set agenda notes, conduct your 1-on-1 session, and leave star reviews."
     },
     {
       q: "How are sessions conducted?",
-      a: "Sessions take place via built-in WebRTC video or an external meeting link. Typically, users split a 1-hour session into 30 minutes of teaching one skill and 30 minutes of learning the partner's skill."
+      a: "Sessions take place via video call (Google Meet, Zoom, Jitsi). Typically, users split a 1-hour session into 30 minutes of teaching one skill and 30 minutes of learning the partner's skill."
     },
     {
       q: "What if a skill I want to learn is not listed in the catalog?",
@@ -34,11 +34,11 @@ export default function FAQ() {
     },
     {
       q: "How is user trust and quality maintained?",
-      a: "Every session ends with mutual 1-to-5 star rating reviews and feedback comments. High ratings increase your peer trust score and feature your profile in top recommendation lists."
+      a: "Every session ends with mutual 1-to-5 star rating reviews and feedback comments. High ratings increase your Karma score and feature your profile in top recommendation lists."
     },
     {
       q: "Can I decline a swap proposal if I'm busy?",
-      a: "Absolutely. You can accept, decline, or message any user before agreeing to schedule a 1-on-1 co-learning session."
+      a: "Absolutely. You can accept, decline, or message any user before agreeing to schedule a video co-learning session."
     }
   ];
 
@@ -52,7 +52,7 @@ export default function FAQ() {
       {/* Header */}
       <section className="py-16 sm:py-24 bg-gradient-to-b from-indigo-950 via-indigo-900 to-slate-900 text-white border-b border-slate-800 relative overflow-hidden">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-4 relative z-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-xs font-bold">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-xs font-extrabold">
             <HelpCircle className="w-3.5 h-3.5 text-amber-300" />
             <span>Help Center & Knowledge Base</span>
           </div>
@@ -60,7 +60,7 @@ export default function FAQ() {
             Frequently Asked Questions
           </h1>
           <p className="text-base sm:text-lg text-indigo-200 max-w-2xl mx-auto leading-relaxed">
-            Everything you need to know about peer skill exchange, matching algorithms, and session safety.
+            Everything you need to know about peer skill barter, matching algorithms, and session safety.
           </p>
         </div>
       </section>
@@ -78,7 +78,7 @@ export default function FAQ() {
                 onClick={() => toggleFAQ(idx)}
                 className="w-full text-left p-6 flex items-center justify-between gap-4 focus:outline-none"
               >
-                <span className="text-base sm:text-lg font-bold text-slate-900">
+                <span className="text-base sm:text-lg font-extrabold text-slate-900">
                   {faq.q}
                 </span>
                 <div className={`w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 transition-transform ${isOpen ? "rotate-180 bg-blue-600 text-white" : "text-slate-500"}`}>
@@ -99,13 +99,13 @@ export default function FAQ() {
       {/* CTA */}
       <section className="py-20 bg-blue-600 text-white text-center">
         <div className="max-w-3xl mx-auto px-4 space-y-6">
-          <h2 className="text-3xl sm:text-4xl font-serif font-bold">Still Have Questions?</h2>
-          <p className="text-blue-100 text-sm">Create your profile and start exchanging skills today.</p>
+          <h2 className="text-3xl font-serif font-bold">Have More Questions?</h2>
+          <p className="text-blue-100 text-sm">Our community of swappers is ready to help you get started.</p>
           <Link
             to={isAuthenticated ? "/explore" : "/register"}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-900 hover:bg-slate-100 rounded-full font-bold text-xs shadow-xl transition-all hover:scale-105"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-900 hover:bg-slate-100 rounded-full font-black text-xs shadow-xl transition-all hover:scale-105"
           >
-            <span>Get Started Free</span>
+            <span>Start Free Today</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

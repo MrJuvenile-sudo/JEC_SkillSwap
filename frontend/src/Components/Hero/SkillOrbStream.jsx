@@ -13,14 +13,14 @@ import {
 } from "lucide-react";
 
 /**
- * 4 Rotating Skill Pairs matching the platform's core exchange pairs.
- * Default starts with Teach React & Node.js ⇄ Learn UI/UX Design.
+ * 4 Rotating Skill Pairs matching the platform's core barter pairs.
+ * Default starts with Teach React ⇄ Learn UI/UX as seen in user mockup.
  */
 export const SKILL_PAIRS = [
   {
     id: 0,
-    tech: { name: "Teach React & Node.js", tag: "Frontend", icon: GraduationCap, color: "text-blue-600", bg: "bg-blue-50/95 border-blue-300" },
-    creative: { name: "Learn UI/UX Design", tag: "Design", icon: Palette, color: "text-purple-600", bg: "bg-purple-50/95 border-purple-300" }
+    tech: { name: "Teach React", tag: "Frontend", icon: GraduationCap, color: "text-blue-600", bg: "bg-blue-50/95 border-blue-300" },
+    creative: { name: "Learn UI/UX", tag: "Design", icon: Palette, color: "text-purple-600", bg: "bg-purple-50/95 border-purple-300" }
   },
   {
     id: 1,
@@ -34,8 +34,8 @@ export const SKILL_PAIRS = [
   },
   {
     id: 3,
-    tech: { name: "Teach Python", tag: "Backend", icon: Sparkles, color: "text-indigo-600", bg: "bg-indigo-50/95 border-indigo-300" },
-    creative: { name: "Learn Data Structures", tag: "DSA", icon: Cpu, color: "text-cyan-600", bg: "bg-cyan-50/95 border-cyan-300" }
+    tech: { name: "Teach Python", tag: "AI / Data", icon: Sparkles, color: "text-indigo-600", bg: "bg-indigo-50/95 border-indigo-300" },
+    creative: { name: "Learn Machine Learning", tag: "AI", icon: Cpu, color: "text-cyan-600", bg: "bg-cyan-50/95 border-cyan-300" }
   }
 ];
 
@@ -53,20 +53,20 @@ function getCubicBezierPoint(t, p0, p1, p2, p3) {
 }
 
 // Curve control points matching the reference mockup arches:
-// Tech to Center broker (Arcs upward from boy towards broker)
+// Tech to Center broker (Arcs upward from boy towards broker, clear of center icon)
 const PATH_TECH_TO_BROKER = {
-  p0: { x: 140, y: 130 },
+  p0: { x: 130, y: 130 },
   p1: { x: 230, y: 55 },
   p2: { x: 350, y: 70 },
-  p3: { x: 430, y: 130 }
+  p3: { x: 425, y: 130 }
 };
 
-// Broker to Creative (Arcs upward from broker towards girl, safely within view)
+// Broker to Creative (Arcs upward from broker towards girl, clear of center icon)
 const PATH_BROKER_TO_CREATIVE = {
-  p0: { x: 570, y: 130 },
+  p0: { x: 575, y: 130 },
   p1: { x: 650, y: 70 },
-  p2: { x: 760, y: 55 },
-  p3: { x: 840, y: 130 }
+  p2: { x: 770, y: 55 },
+  p3: { x: 870, y: 130 }
 };
 
 export default function SkillOrbStream({
@@ -81,72 +81,69 @@ export default function SkillOrbStream({
   const pairsList = (customPairs && customPairs.length > 0)
     ? customPairs.map((p, idx) => ({
         id: idx,
-        tech: { 
-          name: p.tech?.startsWith("Teach ") ? p.tech : `Teach ${p.tech}`, 
-          icon: GraduationCap, 
-          color: "text-blue-600", 
-          bg: "bg-blue-50/95 border-blue-300" 
+        tech: {
+          name: p.tech?.startsWith("Teach") ? p.tech : `Teach ${p.tech || "React"}`,
+          icon: [GraduationCap, Code, Layers, Sparkles][idx % 4]
         },
-        creative: { 
-          name: p.creative?.startsWith("Learn ") ? p.creative : `Learn ${p.creative}`, 
-          icon: Palette, 
-          color: "text-purple-600", 
-          bg: "bg-purple-50/95 border-purple-300" 
+        creative: {
+          name: p.creative?.startsWith("Learn") ? p.creative : `Learn ${p.creative || "UI/UX"}`,
+          icon: [Palette, Palette, Target, Cpu][idx % 4]
         }
       }))
     : SKILL_PAIRS;
 
   const [activePairIndex, setActivePairIndex] = useState(0);
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(0); // 0 to 1 loop over 8000ms
 
-  const animFrameRef = useRef(null);
+  // Ref tracking last arrival trigger to prevent duplicate toasts in single cycle
+  const arrivalStateRef = useRef({ girlFired: false, boyFired: false, brokerFired: false });
   const lastTimeRef = useRef(null);
-  const hasTriggeredArrivalGirl = useRef(false);
-  const hasTriggeredArrivalBoy = useRef(false);
-  const hasTriggeredPulse = useRef(false);
+  const animFrameRef = useRef(null);
+
+  const CYCLE_DURATION = 8000; // 8 seconds per rotation
+
+  useEffect(() => {
+    onPairChange(activePairIndex);
+  }, [activePairIndex, onPairChange]);
 
   useEffect(() => {
     if (isPaused || isReducedMotion) {
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
-      lastTimeRef.current = null;
       return;
     }
 
-    const CYCLE_DURATION_MS = 6000;
-
-    const animate = (time) => {
-      if (!lastTimeRef.current) lastTimeRef.current = time;
-      const delta = time - lastTimeRef.current;
-      lastTimeRef.current = time;
+    const animate = (currentTime) => {
+      if (!lastTimeRef.current) lastTimeRef.current = currentTime;
+      const deltaTime = currentTime - lastTimeRef.current;
+      lastTimeRef.current = currentTime;
 
       setProgress((prev) => {
-        const next = prev + delta / CYCLE_DURATION_MS;
+        const next = (prev + deltaTime / CYCLE_DURATION) % 1;
 
-        // At progress ~0.45: Tech arrives at Broker -> Trigger Pulse
-        if (prev < 0.45 && next >= 0.45 && !hasTriggeredPulse.current) {
-          hasTriggeredPulse.current = true;
+        // Boy -> Broker orb reaches broker around t=0.45
+        if (prev < 0.45 && next >= 0.45 && !arrivalStateRef.current.brokerFired) {
           onBrokerPulse();
+          arrivalStateRef.current.brokerFired = true;
         }
 
-        // At progress ~0.92: Creative arrives at Girl
-        if (prev < 0.92 && next >= 0.92 && !hasTriggeredArrivalGirl.current) {
-          hasTriggeredArrivalGirl.current = true;
-          const currentPair = pairsList[activePairIndex % pairsList.length];
-          onArrivalGirl(currentPair.creative.name);
-          onArrivalBoy(currentPair.tech.name);
+        // Broker -> Girl orb reaches girl at t=0.75
+        if (prev < 0.75 && next >= 0.75 && !arrivalStateRef.current.girlFired) {
+          const currentPair = pairsList[activePairIndex % pairsList.length] || pairsList[0];
+          onArrivalGirl(currentPair.tech.name.replace("Teach ", ""));
+          arrivalStateRef.current.girlFired = true;
         }
 
-        // Loop cycle
-        if (next >= 1) {
-          hasTriggeredArrivalGirl.current = false;
-          hasTriggeredArrivalBoy.current = false;
-          hasTriggeredPulse.current = false;
+        // Girl -> Boy completion at t=0.90
+        if (prev < 0.90 && next >= 0.90 && !arrivalStateRef.current.boyFired) {
+          const currentPair = pairsList[activePairIndex % pairsList.length] || pairsList[0];
+          onArrivalBoy(currentPair.creative.name.replace("Learn ", ""));
+          arrivalStateRef.current.boyFired = true;
+        }
 
-          const nextIndex = (activePairIndex + 1) % pairsList.length;
-          setActivePairIndex(nextIndex);
-          onPairChange(nextIndex);
-
-          return 0;
+        // Cycle rollover at t=0.99
+        if (next < prev) {
+          arrivalStateRef.current = { girlFired: false, boyFired: false, brokerFired: false };
+          setActivePairIndex((idx) => (idx + 1) % pairsList.length);
         }
 
         return next;
@@ -161,7 +158,7 @@ export default function SkillOrbStream({
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
       lastTimeRef.current = null;
     };
-  }, [isPaused, isReducedMotion, activePairIndex, pairsList, onArrivalGirl, onArrivalBoy, onBrokerPulse, onPairChange]);
+  }, [isPaused, isReducedMotion, activePairIndex, pairsList, onArrivalGirl, onArrivalBoy, onBrokerPulse]);
 
   const currentPair = pairsList[activePairIndex % pairsList.length] || pairsList[0];
   const TechIcon = currentPair.tech.icon;
@@ -210,8 +207,8 @@ export default function SkillOrbStream({
   );
 
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-visible z-40">
-      {/* 1. Curved Glowing Exchange Dashed Paths */}
+    <div className="absolute inset-0 pointer-events-none overflow-visible">
+      {/* 1. Curved Glowing Exchange Dashed Paths (Matching Mockup) */}
       <svg
         className="w-full h-full overflow-visible"
         viewBox="0 0 1000 260"
@@ -242,7 +239,7 @@ export default function SkillOrbStream({
 
         {/* Path 1: Tech -> Center Broker (Dashed Cyan Curve) */}
         <path
-          d={`M ${PATH_TECH_TO_BROKER.p0.x} ${PATH_TECH_TO_BROKER.p0.y} C ${PATH_TECH_TO_BROKER.p1.x} ${PATH_TECH_TO_BROKER.p1.y}, ${PATH_TECH_TO_BROKER.p2.x} ${PATH_TECH_TO_BROKER.p2.x}, ${PATH_TECH_TO_BROKER.p3.x} ${PATH_TECH_TO_BROKER.p3.y}`}
+          d={`M ${PATH_TECH_TO_BROKER.p0.x} ${PATH_TECH_TO_BROKER.p0.y} C ${PATH_TECH_TO_BROKER.p1.x} ${PATH_TECH_TO_BROKER.p1.y}, ${PATH_TECH_TO_BROKER.p2.x} ${PATH_TECH_TO_BROKER.p2.y}, ${PATH_TECH_TO_BROKER.p3.x} ${PATH_TECH_TO_BROKER.p3.y}`}
           fill="none"
           stroke="url(#gradient-tech-arc)"
           strokeWidth="2.5"
@@ -253,7 +250,7 @@ export default function SkillOrbStream({
 
         {/* Path 2: Center Broker -> Creative (Dashed Purple Curve) */}
         <path
-          d={`M ${PATH_BROKER_TO_CREATIVE.p0.x} ${PATH_BROKER_TO_CREATIVE.p0.y} C ${PATH_BROKER_TO_CREATIVE.p1.x} ${PATH_BROKER_TO_CREATIVE.p1.y}, ${PATH_BROKER_TO_CREATIVE.p2.x} ${PATH_BROKER_TO_CREATIVE.p2.x}, ${PATH_BROKER_TO_CREATIVE.p3.x} ${PATH_BROKER_TO_CREATIVE.p3.y}`}
+          d={`M ${PATH_BROKER_TO_CREATIVE.p0.x} ${PATH_BROKER_TO_CREATIVE.p0.y} C ${PATH_BROKER_TO_CREATIVE.p1.x} ${PATH_BROKER_TO_CREATIVE.p1.y}, ${PATH_BROKER_TO_CREATIVE.p2.x} ${PATH_BROKER_TO_CREATIVE.p2.y}, ${PATH_BROKER_TO_CREATIVE.p3.x} ${PATH_BROKER_TO_CREATIVE.p3.y}`}
           fill="none"
           stroke="url(#gradient-creative-arc)"
           strokeWidth="2.5"
@@ -263,9 +260,9 @@ export default function SkillOrbStream({
         />
       </svg>
 
-      {/* 2. Traveling Skill Badge: Teach React & Node.js (High Z-Index, No Clipping) */}
+      {/* 2. Traveling Skill Badge: Teach Data Science / Teach React (Decreased Size Sleek Pill) */}
       <div
-        className="absolute z-40 transition-opacity duration-300 pointer-events-auto"
+        className="absolute z-20 transition-opacity duration-300 pointer-events-auto"
         style={{
           left: `${(techPos.x / 1000) * 100}%`,
           top: `${(techPos.y / 260) * 100}%`,
@@ -274,20 +271,23 @@ export default function SkillOrbStream({
           willChange: "transform, opacity"
         }}
       >
+        {/* Soft radial glow */}
         <div className="absolute inset-0 -m-1.5 bg-blue-400/20 rounded-full blur-xs pointer-events-none" />
-        <div className="relative flex items-center gap-1 sm:gap-1.5 px-2.5 py-1 rounded-full bg-white/95 border border-blue-200 shadow-sm text-slate-800 select-none hover:scale-105 transition-transform backdrop-blur-xs whitespace-nowrap">
+
+        {/* Compact Pill Badge */}
+        <div className="relative flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-white/95 border border-blue-200/90 shadow-sm text-slate-800 select-none hover:scale-105 transition-transform backdrop-blur-xs">
           <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
             <TechIcon className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
           </div>
-          <span className="text-[7.5px] xs:text-[8px] sm:text-[9.5px] font-bold text-blue-900 tracking-tight whitespace-nowrap leading-none pr-0.5">
+          <span className="text-[7.5px] xs:text-[8px] sm:text-[9px] font-black text-blue-900 tracking-tight whitespace-nowrap leading-none pr-0.5">
             {currentPair.tech.name}
           </span>
         </div>
       </div>
 
-      {/* 3. Traveling Skill Badge: Learn UI/UX Design (High Z-Index, Explicit No Clipping) */}
+      {/* 3. Traveling Skill Badge: Learn UI/UX Design (Decreased Size Sleek Pill) */}
       <div
-        className="absolute z-40 transition-opacity duration-300 pointer-events-auto"
+        className="absolute z-20 transition-opacity duration-300 pointer-events-auto"
         style={{
           left: `${(creativePos.x / 1000) * 100}%`,
           top: `${(creativePos.y / 260) * 100}%`,
@@ -296,12 +296,15 @@ export default function SkillOrbStream({
           willChange: "transform, opacity"
         }}
       >
+        {/* Soft radial glow */}
         <div className="absolute inset-0 -m-1.5 bg-purple-400/20 rounded-full blur-xs pointer-events-none" />
-        <div className="relative flex items-center gap-1 sm:gap-1.5 px-2.5 py-1 rounded-full bg-white/95 border border-purple-200 shadow-sm text-slate-800 select-none hover:scale-105 transition-transform backdrop-blur-xs whitespace-nowrap">
+
+        {/* Compact Pill Badge */}
+        <div className="relative flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-white/95 border border-purple-200/90 shadow-sm text-slate-800 select-none hover:scale-105 transition-transform backdrop-blur-xs">
           <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
             <CreativeIcon className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
           </div>
-          <span className="text-[7.5px] xs:text-[8px] sm:text-[9.5px] font-bold text-purple-900 tracking-tight whitespace-nowrap leading-none pr-0.5">
+          <span className="text-[7.5px] xs:text-[8px] sm:text-[9px] font-black text-purple-900 tracking-tight whitespace-nowrap leading-none pr-0.5">
             {currentPair.creative.name}
           </span>
         </div>

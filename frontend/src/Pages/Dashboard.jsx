@@ -279,10 +279,10 @@ export default function Dashboard() {
       {/* 3. MAIN P2P BARTER HUB LAYOUT GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        {/* Left Column (8 Columns on desktop): Escrow Karma, Upcoming Sessions, Saved Swappers */}
+        {/* Left Column (8 Columns on desktop): Peer Review & Trust, Upcoming Sessions, Saved Swappers */}
         <div className="lg:col-span-8 space-y-8">
           
-          {/* Module 1: Escrow Karma / Trust & Credit Balance Tracker */}
+          {/* Module 1: Peer Review & Trust Balance Tracker */}
           <EscrowKarmaCard user={user} karmaStats={karmaStats} />
 
           {/* Module 2: Upcoming Scheduled Sessions Timeline */}
@@ -303,7 +303,7 @@ export default function Dashboard() {
 
       </div>
 
-      {/* 4. AI SYNERGY RECOMMENDED BARTER PARTNERS */}
+      {/* 4. MUTUAL SKILL MATCHING RECOMMENDED PARTNERS */}
       <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
           <div>

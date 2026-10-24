@@ -38,8 +38,22 @@ exports.searchUsers = async (req, res) => {
     }
 
     if (category) {
-      sql += " AND s.category = ?";
-      params.push(category);
+      if (category === "Web Development") {
+        sql += " AND (s.name IN ('React', 'HTML', 'CSS', 'JavaScript', 'Node.js', 'Frontend', 'Backend') OR s.category LIKE '%Web%')";
+      } else if (category === "DSA & Core CS") {
+        sql += " AND (s.name IN ('Java', 'C', 'C++', 'Data Structures', 'Algorithms', 'DSA', 'Python', 'DBMS', 'OS') OR s.category LIKE '%Core%')";
+      } else if (category === "AI & Machine Learning") {
+        sql += " AND (s.name IN ('Python', 'Machine Learning', 'AI', 'Deep Learning', 'Data Science') OR s.category LIKE '%AI%')";
+      } else if (category === "UI/UX Design") {
+        sql += " AND (s.name IN ('UI/UX Design', 'Figma', 'Graphic Design') OR s.category LIKE '%Design%')";
+      } else if (category === "Cloud & DevOps") {
+        sql += " AND (s.name IN ('AWS', 'Docker', 'Kubernetes', 'Cloud', 'DevOps', 'Linux') OR s.category LIKE '%Cloud%')";
+      } else if (category === "Languages & Comms") {
+        sql += " AND (s.name IN ('English', 'Spanish', 'German', 'French', 'Communication') OR s.category LIKE '%Language%')";
+      } else {
+        sql += " AND (s.category = ? OR s.name LIKE ?)";
+        params.push(category, `%${category}%`);
+      }
     }
 
     sql += " ORDER BY u.created_at DESC LIMIT 50";
