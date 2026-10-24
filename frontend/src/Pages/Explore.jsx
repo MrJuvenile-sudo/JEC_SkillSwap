@@ -14,7 +14,12 @@ import {
   SlidersHorizontal, 
   GraduationCap, 
   MapPin, 
-  ShieldCheck
+  ShieldCheck,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Layers,
+  BookOpen
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { get3DAvatarUrl } from "../utils/avatarUtils";
@@ -24,11 +29,16 @@ export default function Explore() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const urlQuery = searchParams.get("query") || "";
+  const urlCategory = searchParams.get("category") || "";
 
   const [users, setUsers] = useState([]);
+  const [masterSkills, setMasterSkills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(urlQuery);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(urlCategory);
+  const [selectedSkill, setSelectedSkill] = useState("");
+  const [skillSearchQuery, setSkillSearchQuery] = useState("");
+  const [showAllSkills, setShowAllSkills] = useState(false);
   const [expFilter, setExpFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   
@@ -49,6 +59,11 @@ export default function Explore() {
       if (res.data.success) {
         setUsers(res.data.users || []);
       }
+
+      const skillsRes = await API.get("/skills");
+      if (skillsRes.data.success) {
+        setMasterSkills(skillsRes.data.skills || []);
+      }
     } catch (err) {
       console.error("Error loading swappers:", err);
     } finally {
@@ -60,7 +75,10 @@ export default function Explore() {
     if (urlQuery) {
       setSearchQuery(urlQuery);
     }
-  }, [urlQuery]);
+    if (urlCategory) {
+      setSelectedCategory(urlCategory);
+    }
+  }, [urlQuery, urlCategory]);
 
   useEffect(() => {
     fetchUsers();
@@ -74,6 +92,8 @@ export default function Explore() {
   const handleClearFilters = () => {
     setSearchQuery("");
     setSelectedCategory("");
+    setSelectedSkill("");
+    setSkillSearchQuery("");
     setExpFilter("all");
     setSortBy("newest");
     fetchUsers();
@@ -89,20 +109,37 @@ export default function Explore() {
 
   // Domain keyword mappings for consolidated categories
   const domainKeywords = {
-    "Web Development": ["web", "react", "html", "css", "javascript", "js", "node", "frontend", "backend", "fullstack"],
-    "DSA & Core CS": ["dsa", "data structures", "algorithm", "java", "c++", "c", "python", "core", "dbms", "os", "sql"],
-    "AI & Machine Learning": ["ai", "machine learning", "ml", "deep learning", "data science", "nlp", "neural", "python"],
-    "UI/UX Design": ["ui", "ux", "design", "figma", "graphic", "adobe", "prototype", "wireframe"],
-    "Cloud & DevOps": ["cloud", "devops", "aws", "docker", "kubernetes", "linux", "azure", "ci/cd"],
-    "Languages & Comms": ["language", "english", "spanish", "communication", "german", "french", "speaking"]
+    "Web Development": ["web", "react", "html", "css", "javascript", "js", "node", "frontend", "backend", "fullstack", "next", "vue", "angular", "django", "spring"],
+    "DSA & Core CS": ["dsa", "data structures", "algorithm", "java", "c++", "c", "python", "core", "dbms", "os", "sql", "system design", "operating", "network"],
+    "AI & Machine Learning": ["ai", "machine learning", "ml", "deep learning", "data science", "nlp", "neural", "python", "pytorch", "tensorflow", "generative", "langchain"],
+    "UI/UX Design": ["ui", "ux", "design", "figma", "graphic", "adobe", "prototype", "wireframe", "mobile", "persona", "usability"],
+    "Cloud & DevOps": ["cloud", "devops", "aws", "docker", "kubernetes", "linux", "azure", "ci/cd", "terraform", "nginx", "prometheus"],
+    "Languages & Comms": ["language", "english", "spanish", "communication", "german", "french", "japanese", "speaking", "writing", "interview", "public"]
   };
+
+  // Get active domain skills list for the catalog tray
+  const domainSkills = masterSkills.filter((s) => {
+    if (selectedCategory) {
+      const isDirectMatch = s.category === selectedCategory;
+      const keywords = domainKeywords[selectedCategory] || [];
+      const isKeywordMatch = keywords.some((kw) => (s.name || "").toLowerCase().includes(kw));
+      if (!isDirectMatch && !isKeywordMatch) return false;
+    }
+
+    if (skillSearchQuery.trim()) {
+      const q = skillSearchQuery.toLowerCase().trim();
+      return (s.name || "").toLowerCase().includes(q) || (s.category || "").toLowerCase().includes(q);
+    }
+
+    return true;
+  });
 
   // Filter & Sort client-side
   const filteredUsers = users.filter((u) => {
     // Experience Level Filter
     if (expFilter !== "all") {
       const targetExp = expFilter.toLowerCase();
-      const hasExp = u.offered_skills?.some(s => {
+      const hasExp = u.offered_skills?.some((s) => {
         const lvl = (s.experience_level || "intermediate").toLowerCase();
         if (targetExp === "advanced") {
           return lvl === "advanced" || lvl === "expert";
@@ -116,11 +153,20 @@ export default function Explore() {
     if (selectedCategory) {
       const keywords = domainKeywords[selectedCategory] || [selectedCategory.toLowerCase()];
       const matchesCategory = 
-        u.offered_skills?.some(s => keywords.some(kw => (s.skill_name || "").toLowerCase().includes(kw) || (s.category || "").toLowerCase().includes(kw))) ||
-        u.wanted_skills?.some(s => keywords.some(kw => (s.skill_name || "").toLowerCase().includes(kw) || (s.category || "").toLowerCase().includes(kw))) ||
-        keywords.some(kw => (u.profession || "").toLowerCase().includes(kw) || (u.bio || "").toLowerCase().includes(kw));
+        u.offered_skills?.some((s) => keywords.some((kw) => (s.skill_name || "").toLowerCase().includes(kw) || (s.category || "").toLowerCase().includes(kw))) ||
+        u.wanted_skills?.some((s) => keywords.some((kw) => (s.skill_name || "").toLowerCase().includes(kw) || (s.category || "").toLowerCase().includes(kw))) ||
+        keywords.some((kw) => (u.profession || "").toLowerCase().includes(kw) || (u.bio || "").toLowerCase().includes(kw));
 
       if (!matchesCategory) return false;
+    }
+
+    // Specific Skill Filter (when user clicks any of the 50+ skills)
+    if (selectedSkill) {
+      const targetSkill = selectedSkill.toLowerCase();
+      const hasSkill = 
+        u.offered_skills?.some((s) => (s.skill_name || "").toLowerCase().includes(targetSkill) || targetSkill.includes((s.skill_name || "").toLowerCase())) ||
+        u.wanted_skills?.some((s) => (s.skill_name || "").toLowerCase().includes(targetSkill) || targetSkill.includes((s.skill_name || "").toLowerCase()));
+      if (!hasSkill) return false;
     }
 
     // Search query keyword filter
@@ -131,8 +177,8 @@ export default function Explore() {
       const locMatch = u.location?.toLowerCase().includes(q);
       const profMatch = u.profession?.toLowerCase().includes(q);
       const eduMatch = u.education_degree?.toLowerCase().includes(q);
-      const offeredMatch = u.offered_skills?.some(s => s.skill_name?.toLowerCase().includes(q) || s.category?.toLowerCase().includes(q));
-      const wantedMatch = u.wanted_skills?.some(s => s.skill_name?.toLowerCase().includes(q) || s.category?.toLowerCase().includes(q));
+      const offeredMatch = u.offered_skills?.some((s) => s.skill_name?.toLowerCase().includes(q) || s.category?.toLowerCase().includes(q));
+      const wantedMatch = u.wanted_skills?.some((s) => s.skill_name?.toLowerCase().includes(q) || s.category?.toLowerCase().includes(q));
 
       if (!nameMatch && !bioMatch && !locMatch && !profMatch && !eduMatch && !offeredMatch && !wantedMatch) {
         return false;
@@ -166,8 +212,19 @@ export default function Explore() {
             Discover Skill Swappers
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl font-medium">
-            Browse verified mentors offering 1-on-1 reciprocal skill exchanges. Filter by domain, experience level, or specific skill topics.
+            Browse verified mentors offering 1-on-1 skill exchanges. Explore 50+ domain skills below, select your category, and find the perfect learning partner.
           </p>
+        </div>
+
+        {/* Total Catalog Badge */}
+        <div className="z-10 flex items-center gap-3 bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200">
+          <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-sm">
+            86+
+          </div>
+          <div>
+            <span className="block font-black text-slate-900 text-xs sm:text-sm">50+ Cataloged Skills</span>
+            <span className="text-[10px] text-blue-600 font-bold uppercase">6 Technical Domains</span>
+          </div>
         </div>
       </div>
 
@@ -175,12 +232,13 @@ export default function Explore() {
       {notification && (
         <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs font-bold flex items-center justify-between shadow-xs animate-in fade-in">
           <span>{notification}</span>
-          <button onClick={() => setNotification("")} className="text-emerald-600 hover:text-emerald-900 font-bold ml-4">✕</button>
+          <button onClick={() => setNotification("")} className="text-emerald-600 hover:text-emerald-900 font-bold ml-4 cursor-pointer">✕</button>
         </div>
       )}
 
       {/* Filter Bar */}
       <div className="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-xs space-y-4">
+        
         <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-12 gap-3">
           
           {/* Search Input */}
@@ -190,14 +248,14 @@ export default function Explore() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by skill (React, Figma, DSA), name, or location..."
+              placeholder="Search by swapper name, city, or bio..."
               className="w-full pl-11 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
-                className="absolute right-3.5 top-3.5 p-0.5 text-slate-400 hover:text-slate-600"
+                className="absolute right-3.5 top-3.5 p-0.5 text-slate-400 hover:text-slate-600 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -208,20 +266,23 @@ export default function Explore() {
           <div className="sm:col-span-3">
             <select
               value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              onChange={(e) => {
+                setSelectedCategory(e.target.value);
+                setSelectedSkill("");
+              }}
               className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">All Technical Domains</option>
-              <option value="Web Development">Web Development</option>
-              <option value="DSA & Core CS">DSA & Core CS</option>
-              <option value="AI & Machine Learning">AI & Machine Learning</option>
-              <option value="UI/UX Design">UI/UX Design</option>
-              <option value="Cloud & DevOps">Cloud & DevOps</option>
-              <option value="Languages & Comms">Languages & Comms</option>
+              <option value="">All Technical Domains (86 Skills)</option>
+              <option value="Web Development">💻 Web Development (12 Skills)</option>
+              <option value="DSA & Core CS">⚡ DSA & Core CS (12 Skills)</option>
+              <option value="AI & Machine Learning">🤖 AI & Machine Learning (12 Skills)</option>
+              <option value="UI/UX Design">🎨 UI/UX Design (12 Skills)</option>
+              <option value="Cloud & DevOps">☁️ Cloud & DevOps (12 Skills)</option>
+              <option value="Languages & Comms">🌐 Languages & Comms (11 Skills)</option>
             </select>
           </div>
 
-          {/* Experience Level Filter (Replaced Gender) */}
+          {/* Experience Level Filter */}
           <div className="sm:col-span-2">
             <select
               value={expFilter}
@@ -235,7 +296,7 @@ export default function Explore() {
             </select>
           </div>
 
-          {/* Sort Dropdown */}
+          {/* Sort Dropdown & Clear */}
           <div className="sm:col-span-2 flex gap-2">
             <select
               value={sortBy}
@@ -247,11 +308,11 @@ export default function Explore() {
               <option value="skills">Most Skills</option>
             </select>
 
-            {(searchQuery || selectedCategory || expFilter !== "all" || sortBy !== "newest") && (
+            {(searchQuery || selectedCategory || selectedSkill || expFilter !== "all" || sortBy !== "newest") && (
               <button
                 type="button"
                 onClick={handleClearFilters}
-                title="Reset Filters"
+                title="Reset All Filters"
                 className="p-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl transition-colors shrink-0 cursor-pointer"
               >
                 <RefreshCw className="w-4 h-4" />
@@ -261,26 +322,27 @@ export default function Explore() {
 
         </form>
 
-        {/* Consolidated Technical Domain Category Pills */}
+        {/* Technical Domain Tabs Strip */}
         <div className="flex items-center gap-2 overflow-x-auto pt-2 pb-1 no-scrollbar text-xs">
           <span className="text-slate-400 font-bold uppercase text-[10px] tracking-wider shrink-0 mr-1 flex items-center gap-1">
             <SlidersHorizontal className="w-3 h-3 text-blue-600" /> Domain:
           </span>
 
           {[
-            { label: "All Swappers", value: "" },
-            { label: "💻 Web Development", value: "Web Development" },
-            { label: "⚡ DSA & Core CS", value: "DSA & Core CS" },
-            { label: "🤖 AI & Machine Learning", value: "AI & Machine Learning" },
-            { label: "🎨 UI/UX Design", value: "UI/UX Design" },
-            { label: "☁️ Cloud & DevOps", value: "Cloud & DevOps" },
-            { label: "🌐 Languages & Comms", value: "Languages & Comms" }
+            { label: "All Technical Domains (86)", value: "" },
+            { label: "💻 Web Development (12)", value: "Web Development" },
+            { label: "⚡ DSA & Core CS (12)", value: "DSA & Core CS" },
+            { label: "🤖 AI & Machine Learning (12)", value: "AI & Machine Learning" },
+            { label: "🎨 UI/UX Design (12)", value: "UI/UX Design" },
+            { label: "☁️ Cloud & DevOps (12)", value: "Cloud & DevOps" },
+            { label: "🌐 Languages & Comms (11)", value: "Languages & Comms" }
           ].map((chip, idx) => (
             <button
               key={idx}
               type="button"
               onClick={() => {
                 setSelectedCategory(chip.value);
+                setSelectedSkill("");
               }}
               className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold shrink-0 transition-all cursor-pointer ${
                 selectedCategory === chip.value
@@ -292,6 +354,131 @@ export default function Explore() {
             </button>
           ))}
         </div>
+
+        {/* ============================================================== */}
+        {/* INTERACTIVE 50+ TECHNICAL DOMAIN SKILLS CATALOG TRAY */}
+        {/* ============================================================== */}
+        <div className="pt-3 border-t border-slate-100 space-y-3">
+          
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 font-extrabold text-[11px] flex items-center gap-1.5 border border-indigo-100">
+                <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
+                <span>50+ Skills in {selectedCategory || "All Technical Domains"}</span>
+              </span>
+              <span className="text-xs text-slate-500 font-semibold">
+                ({domainSkills.length} skills cataloged)
+              </span>
+            </div>
+
+            {/* Active Skill Filter Indicator */}
+            {selectedSkill && (
+              <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-900 border border-amber-200 rounded-full text-xs font-bold animate-in fade-in">
+                <span>Filtering by: <strong className="text-slate-950">{selectedSkill}</strong></span>
+                <button
+                  onClick={() => setSelectedSkill("")}
+                  className="p-0.5 hover:bg-amber-200 rounded-full text-amber-700 cursor-pointer ml-1"
+                  title="Remove skill filter"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Quick Skill Search Input inside Tray */}
+          <div className="relative max-w-sm">
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+            <input
+              type="text"
+              value={skillSearchQuery}
+              onChange={(e) => setSkillSearchQuery(e.target.value)}
+              placeholder="Search 50+ skills (e.g. React, Next.js, PyTorch, Figma, AWS, DSA)..."
+              className="w-full pl-8 pr-8 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder:text-slate-400"
+            />
+            {skillSearchQuery && (
+              <button
+                type="button"
+                onClick={() => setSkillSearchQuery("")}
+                className="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
+
+          {/* 50+ Skills Interactive Chips Grid */}
+          <div className="flex flex-wrap items-center gap-1.5 pt-1">
+            {(showAllSkills ? domainSkills : domainSkills.slice(0, 24)).map((s) => {
+              const isSelected = selectedSkill === s.name;
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedSkill(isSelected ? "" : s.name);
+                  }}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer border ${
+                    isSelected
+                      ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-600 shadow-md scale-105"
+                      : "bg-slate-50 hover:bg-blue-50 text-slate-800 hover:text-blue-700 border-slate-200/90 hover:border-blue-300 shadow-2xs"
+                  }`}
+                  title={s.description || s.name}
+                >
+                  {isSelected && <Check className="w-3 h-3 text-white stroke-[3]" />}
+                  <span>{s.name}</span>
+                  {!selectedCategory && s.category && (
+                    <span className={`text-[9px] px-1.5 py-0.2 rounded-md font-extrabold ${isSelected ? "bg-white/20 text-white" : "bg-slate-200/80 text-slate-600"}`}>
+                      {s.category.split(" ")[0]}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Toggle Expand / Collapse button if domain has > 24 skills */}
+          {domainSkills.length > 24 && (
+            <div className="pt-1 text-center">
+              <button
+                type="button"
+                onClick={() => setShowAllSkills(!showAllSkills)}
+                className="inline-flex items-center gap-1 text-xs font-extrabold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+              >
+                {showAllSkills ? (
+                  <>
+                    <span>Show Fewer Skills</span>
+                    <ChevronUp className="w-3.5 h-3.5" />
+                  </>
+                ) : (
+                  <>
+                    <span>Show All {domainSkills.length} Cataloged Skills</span>
+                    <ChevronDown className="w-3.5 h-3.5" />
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+
+        </div>
+
+      </div>
+
+      {/* Results Count Bar */}
+      <div className="flex items-center justify-between px-2 text-xs font-semibold text-slate-500">
+        <div>
+          Showing <strong className="text-slate-900">{filteredUsers.length}</strong> verified swapper{filteredUsers.length === 1 ? "" : "s"}
+          {selectedCategory && <span> in <strong className="text-blue-600">{selectedCategory}</strong></span>}
+          {selectedSkill && <span> offering or learning <strong className="text-amber-700">"{selectedSkill}"</strong></span>}
+        </div>
+        {(selectedCategory || selectedSkill || searchQuery || expFilter !== "all") && (
+          <button
+            onClick={handleClearFilters}
+            className="text-xs text-blue-600 hover:underline font-bold cursor-pointer"
+          >
+            Clear all filters
+          </button>
+        )}
       </div>
 
       {/* Users Card Grid */}
@@ -314,9 +501,11 @@ export default function Explore() {
             <AlertCircle className="w-7 h-7" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-slate-900">No Swappers Match Your Search</h3>
+            <h3 className="text-base font-bold text-slate-900">No Swappers Match This Skill Search</h3>
             <p className="text-xs text-slate-500 mt-1">
-              Try adjusting your query terms, selecting another domain, or try one of these suggestions:
+              {selectedSkill 
+                ? `No swappers currently match "${selectedSkill}". Try another skill chip from the catalog or clear filters.`
+                : "Try selecting another domain or clearing your active filters."}
             </p>
           </div>
 
@@ -325,18 +514,20 @@ export default function Explore() {
             <button
               onClick={() => {
                 setExpFilter("all");
-                setSelectedCategory("");
-                setSearchQuery("React");
+                setSelectedCategory("Web Development");
+                setSelectedSkill("React.js Frontend Development");
+                setSearchQuery("");
               }}
               className="px-3.5 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl text-xs font-extrabold border border-blue-200/80 transition-all flex items-center gap-1.5 hover:scale-105 active:scale-95 cursor-pointer"
             >
-              <span>+ Try "React"</span>
+              <span>+ Try "React.js"</span>
             </button>
             <button
               onClick={() => {
                 setExpFilter("all");
-                setSelectedCategory("");
-                setSearchQuery("DSA");
+                setSelectedCategory("DSA & Core CS");
+                setSelectedSkill("Data Structures & Algorithms (DSA)");
+                setSearchQuery("");
               }}
               className="px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl text-xs font-extrabold border border-indigo-200/80 transition-all flex items-center gap-1.5 hover:scale-105 active:scale-95 cursor-pointer"
             >

@@ -274,12 +274,54 @@ export default function Home() {
   ];
 
   const categories = [
-    { title: "Technology & Code", icon: Code, count: "450+ Skills", color: "from-blue-500 to-indigo-600", desc: "React, Node, Python, Rust, System Design, DevOps" },
-    { title: "Design & Creative", icon: Palette, count: "320+ Skills", color: "from-purple-500 to-pink-600", desc: "UI/UX, Figma, Photoshop, Motion Graphics, Blender" },
-    { title: "Languages", icon: Globe, count: "280+ Skills", color: "from-emerald-500 to-teal-600", desc: "Spanish, French, English, German, Mandarin, Japanese" },
-    { title: "Business & Marketing", icon: TrendingUp, count: "190+ Skills", color: "from-amber-500 to-orange-600", desc: "Digital Marketing, SEO, Finance, Investing, Growth" },
-    { title: "Music & Audio", icon: Music, count: "140+ Skills", color: "from-rose-500 to-red-600", desc: "Guitar, Piano, Vocal Practice, Music Production, Mixing" },
-    { title: "AI & Data Science", icon: Sparkles, count: "210+ Skills", color: "from-cyan-500 to-blue-600", desc: "Machine Learning, PyTorch, Prompt Engineering, SQL" }
+    { 
+      title: "Web Development", 
+      icon: Code, 
+      count: "12+ Skills", 
+      color: "from-blue-500 to-indigo-600", 
+      desc: "React.js, Next.js, Node.js, TypeScript, Tailwind, Django, Spring Boot, GraphQL",
+      categoryName: "Web Development"
+    },
+    { 
+      title: "DSA & Core CS", 
+      icon: Layers, 
+      count: "12+ Skills", 
+      color: "from-amber-500 to-orange-600", 
+      desc: "Data Structures, Algorithms, Dynamic Programming, Java, C++, DBMS, System Design",
+      categoryName: "DSA & Core CS"
+    },
+    { 
+      title: "AI & Machine Learning", 
+      icon: Sparkles, 
+      count: "12+ Skills", 
+      color: "from-cyan-500 to-blue-600", 
+      desc: "Machine Learning, PyTorch, TensorFlow, NLP, Computer Vision, Generative AI & LLMs",
+      categoryName: "AI & Machine Learning"
+    },
+    { 
+      title: "UI/UX Design", 
+      icon: Palette, 
+      count: "12+ Skills", 
+      color: "from-purple-500 to-pink-600", 
+      desc: "Figma Prototyping, Wireframing, Mobile App Design, Design Systems, User Research",
+      categoryName: "UI/UX Design"
+    },
+    { 
+      title: "Cloud & DevOps", 
+      icon: Globe, 
+      count: "12+ Skills", 
+      color: "from-emerald-500 to-teal-600", 
+      desc: "AWS Architecture, Microsoft Azure, Docker, Kubernetes, CI/CD Actions, Linux",
+      categoryName: "Cloud & DevOps"
+    },
+    { 
+      title: "Languages & Comms", 
+      icon: MessageSquare, 
+      count: "11+ Skills", 
+      color: "from-rose-500 to-red-600", 
+      desc: "English Fluency, Technical Writing, Public Speaking, Tech Interview Storytelling, Spanish",
+      categoryName: "Languages & Comms"
+    }
   ];
 
   const comparison = [
@@ -567,8 +609,8 @@ export default function Home() {
       {/* ------------------------------------------------------------- */}
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-200/80 bg-[#fdfbf7]">
         <div className="text-center max-w-2xl mx-auto mb-16 space-y-2">
-          <h2 className="text-3xl font-serif font-black text-slate-900">Explore Popular Fields</h2>
-          <p className="text-slate-600 text-sm font-medium">Browse verified mentors offering 1-on-1 skill exchanges across top domains.</p>
+          <h2 className="text-3xl font-serif font-black text-slate-900">Explore Technical Domains & Skills</h2>
+          <p className="text-slate-600 text-sm font-medium">Browse verified mentors offering 1-on-1 skill exchanges across 50+ cataloged technical skills.</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -590,7 +632,7 @@ export default function Home() {
                   <span className="font-extrabold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">
                     {cat.count}
                   </span>
-                  <Link to="/explore" className="font-bold text-slate-400 group-hover:text-blue-600 flex items-center gap-1 transition-colors">
+                  <Link to={`/explore?category=${encodeURIComponent(cat.categoryName)}`} className="font-bold text-slate-400 group-hover:text-blue-600 flex items-center gap-1 transition-colors">
                     Browse <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
