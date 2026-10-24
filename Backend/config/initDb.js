@@ -107,6 +107,7 @@ async function initDb() {
     `);
 
     await ensureColumn(pool, "skills", "category", "VARCHAR(100) NOT NULL DEFAULT 'Technology & Programming'");
+    await ensureColumn(pool, "skills", "category_id", "INT DEFAULT 1");
     await ensureColumn(pool, "skills", "description", "TEXT");
 
     await pool.query(`

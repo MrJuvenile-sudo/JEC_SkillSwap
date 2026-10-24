@@ -742,70 +742,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ------------------------------------------------------------- */}
-      {/* 9. BOTTOM CONVERSION BANNER */}
-      {/* ------------------------------------------------------------- */}
-      <section className="py-16 sm:py-24 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-3xl sm:rounded-4xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 border border-slate-800/80 shadow-2xl overflow-hidden p-8 sm:p-12 text-center space-y-6">
-          
-          {/* Ambient Lighting Gradients */}
-          <div className="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-blue-500/20 blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-violet-500/20 blur-3xl pointer-events-none" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
-
-          {/* Trust Badge */}
-          <div className="relative z-10 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/15 border border-blue-400/30 text-blue-300 text-xs font-extrabold">
-            <Sparkles className="w-3.5 h-3.5 text-amber-300 fill-amber-300" />
-            <span>Zero Tuition • 100% Peer Reciprocal Learning</span>
-          </div>
-
-          {/* Main Headline */}
-          <div className="relative z-10 space-y-3">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-white tracking-tight leading-tight">
-              Ready for 1-on-1 Skill Exchange?
-            </h2>
-            <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto leading-relaxed">
-              Connect 1-on-1 with verified peers. Teach what you excel at, learn what you desire, and accelerate your growth without spending a single rupee or dollar.
-            </p>
-          </div>
-
-          {/* CTAs */}
-          <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-            <Link
-              to={isAuthenticated ? "/explore" : "/register"}
-              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-2xl font-black text-xs sm:text-sm shadow-xl shadow-blue-500/25 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
-            >
-              <span>Start Swapping Today</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link
-              to="/explore"
-              className="w-full sm:w-auto px-8 py-4 bg-slate-800/90 hover:bg-slate-700/90 text-slate-200 rounded-2xl font-black text-xs sm:text-sm border border-slate-700 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
-            >
-              <Search className="w-4 h-4 text-slate-400" />
-              <span>Explore Skills Directory</span>
-            </Link>
-          </div>
-
-          {/* Trust Checkmarks */}
-          <div className="relative z-10 pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-slate-400 font-semibold">
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>100% Free 1-on-1 Skill Exchange</span>
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-blue-400" />
-              <span>Integrated HD Video & Sandbox</span>
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-violet-400" />
-              <span>Verified Peer Review Ratings</span>
-            </span>
-          </div>
-
-        </div>
-      </section>
-
+      
     </div>
   );
 }

@@ -1,10 +1,16 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Repeat, Globe, Share2, MessageSquare, Mail, Sparkles, ShieldCheck, Zap, Lock, ArrowUp } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 export default function Footer() {
   const { isAuthenticated } = useAuth();
+  const location = useLocation();
+
+  // Exclude pre-footer from Login, Register, Admin as per industry best practices
+  const isAuthPage = ["/login", "/register"].includes(location.pathname);
+  const isAdminPage = location.pathname.startsWith("/admin");
+  const showPrefooter = !isAuthenticated && !isAuthPage && !isAdminPage;
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -13,8 +19,8 @@ export default function Footer() {
   return (
     <div className="bg-[#fdfbf7] text-slate-900 font-sans border-t border-slate-200/90">
       
-      {/* 1. PRE-FOOTER CTA BANNER (Pre-Login Pages Only - Eye-Friendly Soft Midnight Tone) */}
-      {!isAuthenticated && (
+      {/* 1. PRE-FOOTER CTA BANNER (Single Global Prefooter, Excluded from Auth Pages & Admin) */}
+      {showPrefooter && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white rounded-3xl p-8 sm:p-12 shadow-xl border border-slate-800/80 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
             {/* Soft Ambient Ambiance (Low Opacity, Zero Glare) */}
