@@ -15,11 +15,7 @@ import {
   GraduationCap, 
   MapPin, 
   ShieldCheck,
-  Check,
-  ChevronDown,
-  ChevronUp,
-  Layers,
-  BookOpen
+  Layers
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { get3DAvatarUrl } from "../utils/avatarUtils";
@@ -37,8 +33,6 @@ export default function Explore() {
   const [searchQuery, setSearchQuery] = useState(urlQuery);
   const [selectedCategory, setSelectedCategory] = useState(urlCategory);
   const [selectedSkill, setSelectedSkill] = useState("");
-  const [skillSearchQuery, setSkillSearchQuery] = useState("");
-  const [showAllSkills, setShowAllSkills] = useState(false);
   const [expFilter, setExpFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   
@@ -93,7 +87,6 @@ export default function Explore() {
     setSearchQuery("");
     setSelectedCategory("");
     setSelectedSkill("");
-    setSkillSearchQuery("");
     setExpFilter("all");
     setSortBy("newest");
     fetchUsers();
@@ -116,23 +109,6 @@ export default function Explore() {
     "Cloud & DevOps": ["cloud", "devops", "aws", "docker", "kubernetes", "linux", "azure", "ci/cd", "terraform", "nginx", "prometheus"],
     "Languages & Comms": ["language", "english", "spanish", "communication", "german", "french", "japanese", "speaking", "writing", "interview", "public"]
   };
-
-  // Get active domain skills list for the catalog tray
-  const domainSkills = masterSkills.filter((s) => {
-    if (selectedCategory) {
-      const isDirectMatch = s.category === selectedCategory;
-      const keywords = domainKeywords[selectedCategory] || [];
-      const isKeywordMatch = keywords.some((kw) => (s.name || "").toLowerCase().includes(kw));
-      if (!isDirectMatch && !isKeywordMatch) return false;
-    }
-
-    if (skillSearchQuery.trim()) {
-      const q = skillSearchQuery.toLowerCase().trim();
-      return (s.name || "").toLowerCase().includes(q) || (s.category || "").toLowerCase().includes(q);
-    }
-
-    return true;
-  });
 
   // Filter & Sort client-side
   const filteredUsers = users.filter((u) => {
@@ -208,22 +184,22 @@ export default function Explore() {
             <Search className="w-3.5 h-3.5 text-indigo-600" />
             <span>Peer Directory</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
             Discover Skill Swappers
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl font-medium">
-            Browse verified mentors offering 1-on-1 skill exchanges. Explore domain skills below, select your category, and find the perfect learning partner.
+            Connect with verified peers for 1-on-1 skill exchanges. Filter by domain, skill, or experience level to find your ideal learning partner.
           </p>
         </div>
 
-        {/* Total Catalog Badge */}
-        <div className="z-10 flex items-center gap-3 bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200">
-          <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-sm">
-            <BookOpen className="w-5 h-5 text-white" />
+        {/* Network Badge */}
+        <div className="z-10 flex items-center gap-3 bg-slate-50/90 p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs backdrop-blur-xs">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-sm">
+            <ShieldCheck className="w-5 h-5 text-white" />
           </div>
           <div>
-            <span className="block font-black text-slate-900 text-xs sm:text-sm">Technical Skills Catalog</span>
-            <span className="text-[10px] text-blue-600 font-bold uppercase">All Technical Domains</span>
+            <span className="block font-black text-slate-900 text-xs sm:text-sm">Verified Peer Network</span>
+            <span className="text-[10px] text-blue-600 font-bold uppercase tracking-wide">1-on-1 Co-Learning</span>
           </div>
         </div>
       </div>
@@ -377,145 +353,81 @@ export default function Explore() {
 
         </form>
 
-        {/* Technical Domain Tabs Strip */}
-        <div className="flex items-center gap-2 overflow-x-auto pt-2 pb-1 no-scrollbar text-xs">
-          <span className="text-slate-400 font-bold uppercase text-[10px] tracking-wider shrink-0 mr-1 flex items-center gap-1">
-            <SlidersHorizontal className="w-3 h-3 text-blue-600" /> Domain:
-          </span>
+        {/* Active Filters Pill Bar (Industry Best Practice: only shows applied filters) */}
+        {(selectedCategory || selectedSkill || searchQuery || expFilter !== "all") && (
+          <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-100 text-xs animate-in fade-in">
+            <span className="text-slate-400 font-bold text-[11px] uppercase tracking-wider flex items-center gap-1 shrink-0 mr-1">
+              <SlidersHorizontal className="w-3.5 h-3.5 text-blue-600" /> Active:
+            </span>
 
-          {[
-            { label: "All Technical Domains", value: "" },
-            { label: "💻 Web Development", value: "Web Development" },
-            { label: "⚡ DSA & Core CS", value: "DSA & Core CS" },
-            { label: "🤖 AI & Machine Learning", value: "AI & Machine Learning" },
-            { label: "🎨 UI/UX Design", value: "UI/UX Design" },
-            { label: "☁️ Cloud & DevOps", value: "Cloud & DevOps" },
-            { label: "🌐 Languages & Comms", value: "Languages & Comms" }
-          ].map((chip, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => {
-                setSelectedCategory(chip.value);
-                setSelectedSkill("");
-              }}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold shrink-0 transition-all cursor-pointer ${
-                selectedCategory === chip.value
-                  ? "bg-blue-600 text-white shadow-xs scale-105"
-                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-              }`}
-            >
-              {chip.label}
-            </button>
-          ))}
-        </div>
-
-        {/* ============================================================== */}
-        {/* INTERACTIVE TECHNICAL DOMAIN SKILLS CATALOG TRAY */}
-        {/* ============================================================== */}
-        <div className="pt-3 border-t border-slate-100 space-y-3">
-          
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 font-extrabold text-[11px] flex items-center gap-1.5 border border-indigo-100">
-                <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
-                <span>Skills in {selectedCategory || "All Technical Domains"}</span>
-              </span>
-              <span className="text-xs text-slate-500 font-semibold">
-                Interactive Skill Directory
-              </span>
-            </div>
-
-            {/* Active Skill Filter Indicator */}
-            {selectedSkill && (
-              <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-900 border border-amber-200 rounded-full text-xs font-bold animate-in fade-in">
-                <span>Filtering by: <strong className="text-slate-950">{selectedSkill}</strong></span>
+            {searchQuery && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-800 rounded-full font-bold">
+                <span>Keyword: "{searchQuery}"</span>
                 <button
-                  onClick={() => setSelectedSkill("")}
-                  className="p-0.5 hover:bg-amber-200 rounded-full text-amber-700 cursor-pointer ml-1"
-                  title="Remove skill filter"
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="hover:text-rose-600 cursor-pointer"
+                  title="Remove keyword filter"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-3 h-3" />
                 </button>
-              </div>
+              </span>
             )}
-          </div>
 
-          {/* Quick Skill Search Input inside Tray */}
-          <div className="relative max-w-sm">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
-            <input
-              type="text"
-              value={skillSearchQuery}
-              onChange={(e) => setSkillSearchQuery(e.target.value)}
-              placeholder="Search technical skills (e.g. React, Next.js, PyTorch, Figma, AWS, DSA)..."
-              className="w-full pl-8 pr-8 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder:text-slate-400"
-            />
-            {skillSearchQuery && (
-              <button
-                type="button"
-                onClick={() => setSkillSearchQuery("")}
-                className="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600 cursor-pointer"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            )}
-          </div>
-
-          {/* Skills Interactive Chips Grid */}
-          <div className="flex flex-wrap items-center gap-1.5 pt-1">
-            {(showAllSkills ? domainSkills : domainSkills.slice(0, 24)).map((s) => {
-              const isSelected = selectedSkill === s.name;
-              return (
+            {selectedCategory && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-800 border border-blue-200 rounded-full font-bold">
+                <span>Domain: {selectedCategory}</span>
                 <button
-                  key={s.id}
                   type="button"
                   onClick={() => {
-                    setSelectedSkill(isSelected ? "" : s.name);
+                    setSelectedCategory("");
+                    setSelectedSkill("");
                   }}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer border ${
-                    isSelected
-                      ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-600 shadow-md scale-105"
-                      : "bg-slate-50 hover:bg-blue-50 text-slate-800 hover:text-blue-700 border-slate-200/90 hover:border-blue-300 shadow-2xs"
-                  }`}
-                  title={s.description || s.name}
+                  className="hover:text-rose-600 cursor-pointer"
+                  title="Remove domain filter"
                 >
-                  {isSelected && <Check className="w-3 h-3 text-white stroke-[3]" />}
-                  <span>{s.name}</span>
-                  {!selectedCategory && s.category && (
-                    <span className={`text-[9px] px-1.5 py-0.2 rounded-md font-extrabold ${isSelected ? "bg-white/20 text-white" : "bg-slate-200/80 text-slate-600"}`}>
-                      {s.category.split(" ")[0]}
-                    </span>
-                  )}
+                  <X className="w-3 h-3" />
                 </button>
-              );
-            })}
+              </span>
+            )}
+
+            {selectedSkill && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-800 border border-indigo-200 rounded-full font-bold">
+                <span>Skill: {selectedSkill}</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedSkill("")}
+                  className="hover:text-rose-600 cursor-pointer"
+                  title="Remove skill filter"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+
+            {expFilter !== "all" && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full font-bold capitalize">
+                <span>Level: {expFilter}</span>
+                <button
+                  type="button"
+                  onClick={() => setExpFilter("all")}
+                  className="hover:text-rose-600 cursor-pointer"
+                  title="Remove level filter"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+
+            <button
+              type="button"
+              onClick={handleClearFilters}
+              className="text-xs text-blue-600 hover:text-blue-800 font-extrabold hover:underline cursor-pointer ml-auto shrink-0"
+            >
+              Reset all
+            </button>
           </div>
-
-          {/* Toggle Expand / Collapse button if domain has > 24 skills */}
-          {domainSkills.length > 24 && (
-            <div className="pt-1 text-center">
-              <button
-                type="button"
-                onClick={() => setShowAllSkills(!showAllSkills)}
-                className="inline-flex items-center gap-1 text-xs font-extrabold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
-              >
-                {showAllSkills ? (
-                  <>
-                    <span>Show Fewer Skills</span>
-                    <ChevronUp className="w-3.5 h-3.5" />
-                  </>
-                ) : (
-                  <>
-                    <span>Show All Skills</span>
-                    <ChevronDown className="w-3.5 h-3.5" />
-                  </>
-                )}
-              </button>
-            </div>
-          )}
-
-        </div>
+        )}
 
       </div>
 
@@ -559,7 +471,7 @@ export default function Explore() {
             <h3 className="text-base font-bold text-slate-900">No Swappers Match This Skill Search</h3>
             <p className="text-xs text-slate-500 mt-1">
               {selectedSkill 
-                ? `No swappers currently match "${selectedSkill}". Try another skill chip from the catalog or clear filters.`
+                ? `No swappers currently match "${selectedSkill}". Try selecting another technical skill or clearing your active filters.`
                 : "Try selecting another domain or clearing your active filters."}
             </p>
           </div>
