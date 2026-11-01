@@ -160,26 +160,44 @@ exports.login = async (req, res) => {
 exports.getMe = async (req, res) => {
   try {
     const userId = req.user.id;
-    const [users] = await db.query(
-      "SELECT id, name, email, bio, location, city, gender, profession, education_degree, education_institute, education_year, availability, github_url, linkedin_url, portfolio_url, profile_picture, role, karma_balance, created_at FROM users WHERE id = ?",
-      [userId]
-    );
+    let users;
 
-    if (users.length === 0) {
+    try {
+      [users] = await db.query(
+        "SELECT id, name, email, bio, location, city, gender, profession, education_degree, education_institute, education_year, availability, github_url, linkedin_url, portfolio_url, profile_picture, role, karma_balance, created_at FROM users WHERE id = ?",
+        [userId]
+      );
+    } catch (colErr) {
+      // Fallback query if karma_balance or any optional column is not present
+      [users] = await db.query(
+        "SELECT id, name, email, bio, location, city, gender, profession, education_degree, education_institute, education_year, availability, github_url, linkedin_url, portfolio_url, profile_picture, role, created_at FROM users WHERE id = ?",
+        [userId]
+      );
+    }
+
+    if (!users || users.length === 0) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
     const user = users[0];
+    if (user.karma_balance === undefined || user.karma_balance === null) {
+      user.karma_balance = 100;
+    }
 
     // Fetch skills
-    const [skills] = await db.query(
-      `SELECT us.id, us.skill_id, us.type, us.experience_level, us.description,
-              s.name as skill_name, s.category
-       FROM user_skills us
-       JOIN skills s ON us.skill_id = s.id
-       WHERE us.user_id = ?`,
-      [userId]
-    );
+    let skills = [];
+    try {
+      [skills] = await db.query(
+        `SELECT us.id, us.skill_id, us.type, us.experience_level, us.description,
+                s.name as skill_name, s.category
+         FROM user_skills us
+         JOIN skills s ON us.skill_id = s.id
+         WHERE us.user_id = ?`,
+        [userId]
+      );
+    } catch (skErr) {
+      console.warn("Could not fetch user skills:", skErr.message);
+    }
 
     user.offered_skills = skills.filter((s) => s.type === "offered");
     user.wanted_skills = skills.filter((s) => s.type === "wanted");

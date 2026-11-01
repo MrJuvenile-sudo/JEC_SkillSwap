@@ -71,6 +71,7 @@ async function initDb() {
         location VARCHAR(100),
         profile_picture VARCHAR(500) DEFAULT 'https://api.dicebear.com/7.x/lorelei/svg?seed=Swapper&backgroundColor=b6e3f4,c0aedd',
         role VARCHAR(20) DEFAULT 'user',
+        karma_balance INT DEFAULT 100,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       );
@@ -94,6 +95,7 @@ async function initDb() {
     await pool.query("ALTER TABLE users MODIFY COLUMN profile_picture LONGTEXT").catch(() => {});
     await ensureColumn(pool, "users", "role", "VARCHAR(20) DEFAULT 'user'");
     await ensureColumn(pool, "users", "status", "VARCHAR(20) DEFAULT 'active'");
+    await ensureColumn(pool, "users", "karma_balance", "INT DEFAULT 100");
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS system_settings (

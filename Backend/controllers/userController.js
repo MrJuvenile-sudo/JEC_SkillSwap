@@ -98,10 +98,18 @@ exports.updateProfile = async (req, res) => {
       );
     }
 
-    const [updatedUsers] = await db.query(
-      "SELECT id, name, email, bio, location, city, gender, profession, education_degree, education_institute, education_year, availability, github_url, linkedin_url, portfolio_url, profile_picture, role, karma_balance FROM users WHERE id = ?",
-      [userId]
-    );
+    let updatedUsers;
+    try {
+      [updatedUsers] = await db.query(
+        "SELECT id, name, email, bio, location, city, gender, profession, education_degree, education_institute, education_year, availability, github_url, linkedin_url, portfolio_url, profile_picture, role, karma_balance FROM users WHERE id = ?",
+        [userId]
+      );
+    } catch (colErr) {
+      [updatedUsers] = await db.query(
+        "SELECT id, name, email, bio, location, city, gender, profession, education_degree, education_institute, education_year, availability, github_url, linkedin_url, portfolio_url, profile_picture, role FROM users WHERE id = ?",
+        [userId]
+      );
+    }
 
     res.json({
       success: true,
@@ -216,12 +224,22 @@ exports.getKarmaStats = async (req, res) => {
     const totalSessions = exchangeRows.length;
 
     // 4. Fetch user profile fields for verification and karma balance
-    const [userRows] = await db.query(
-      "SELECT karma_balance, profession, education_institute FROM users WHERE id = ?",
-      [userId]
-    );
-    const karmaBalance = userRows[0]?.karma_balance || 50;
-    const isScholar = Boolean(userRows[0]?.education_institute);
+    let karmaBalance = 50;
+    let isScholar = false;
+    try {
+      const [userRows] = await db.query(
+        "SELECT karma_balance, profession, education_institute FROM users WHERE id = ?",
+        [userId]
+      );
+      karmaBalance = userRows[0]?.karma_balance || 50;
+      isScholar = Boolean(userRows[0]?.education_institute);
+    } catch (colErr) {
+      const [userRows] = await db.query(
+        "SELECT profession, education_institute FROM users WHERE id = ?",
+        [userId]
+      );
+      isScholar = Boolean(userRows[0]?.education_institute);
+    }
 
     // Dynamic level title based on rating & sessions
     let levelTitle = "5-Star Verified Co-Mentor";
