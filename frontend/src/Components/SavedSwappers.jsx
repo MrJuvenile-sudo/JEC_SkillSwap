@@ -11,10 +11,24 @@ import {
 import { get3DAvatarUrl } from "../utils/avatarUtils";
 
 export default function SavedSwappers({ initialSaved = [] }) {
-  const [savedList, setSavedList] = useState(initialSaved);
+  const [savedList, setSavedList] = useState(() => {
+    if (initialSaved && initialSaved.length > 0) return initialSaved;
+    try {
+      const stored = localStorage.getItem("skillswap_saved_swappers");
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
 
   const removeBookmark = (id) => {
-    setSavedList((prev) => prev.filter((item) => item.id !== id));
+    setSavedList((prev) => {
+      const updated = prev.filter((item) => item.id !== id);
+      try {
+        localStorage.setItem("skillswap_saved_swappers", JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
   };
 
   return (

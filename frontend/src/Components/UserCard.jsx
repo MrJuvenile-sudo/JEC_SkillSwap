@@ -1,12 +1,46 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import SkillBadge from "./SkillBadge";
-import { MapPin, Star, Repeat, ArrowRight, ShieldCheck, Zap } from "lucide-react";
+import { MapPin, Star, Repeat, ArrowRight, ShieldCheck, Zap, Bookmark } from "lucide-react";
 import { get3DAvatarUrl } from "../utils/avatarUtils";
 
 export default function UserCard({ user, onRequestSwap, onQuickView }) {
   const isTwoWay = user.isTwoWayMatch;
   const matchScore = user.matchScore;
+  const [isSaved, setIsSaved] = React.useState(() => {
+    try {
+      const stored = localStorage.getItem("skillswap_saved_swappers");
+      if (!stored) return false;
+      const list = JSON.parse(stored);
+      return list.some(item => Number(item.id) === Number(user.id));
+    } catch {
+      return false;
+    }
+  });
+
+  const toggleBookmark = (e) => {
+    e.stopPropagation();
+    try {
+      const stored = localStorage.getItem("skillswap_saved_swappers");
+      let list = stored ? JSON.parse(stored) : [];
+      if (isSaved) {
+        list = list.filter(item => Number(item.id) !== Number(user.id));
+        setIsSaved(false);
+      } else {
+        list.push({
+          id: user.id,
+          name: user.name,
+          role: user.profession || "SkillSwap Co-Learner",
+          avatar: user.profile_picture || get3DAvatarUrl(user.gender, user.name),
+          rating: user.rating || 5.0,
+          matchScore: matchScore || 95,
+          offeredSkills: user.offered_skills?.map(s => s.skill_name) || ["Technical Track"]
+        });
+        setIsSaved(true);
+      }
+      localStorage.setItem("skillswap_saved_swappers", JSON.stringify(list));
+    } catch (err) {}
+  };
 
   return (
     <div className="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative group overflow-hidden">
@@ -116,20 +150,33 @@ export default function UserCard({ user, onRequestSwap, onQuickView }) {
       </div>
 
       {/* Action Footer */}
-      <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-2.5">
+      <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
+        <button
+          type="button"
+          onClick={toggleBookmark}
+          title={isSaved ? "Remove bookmark" : "Save to my swappers shelf"}
+          className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
+            isSaved 
+              ? "bg-violet-50 text-violet-600 border-violet-200" 
+              : "bg-slate-50 text-slate-400 hover:text-violet-600 hover:bg-violet-50 border-slate-200"
+          }`}
+        >
+          <Bookmark className={`w-4 h-4 ${isSaved ? "fill-violet-600 text-violet-600" : ""}`} />
+        </button>
+
         <button
           onClick={() => onQuickView ? onQuickView(user) : null}
-          className="text-xs font-bold text-slate-600 hover:text-indigo-600 px-3 py-2.5 rounded-xl hover:bg-slate-100/70 transition-all flex items-center gap-1"
+          className="text-xs font-bold text-slate-600 hover:text-indigo-600 px-3 py-2.5 rounded-xl hover:bg-slate-100/70 transition-all flex items-center gap-1 cursor-pointer"
         >
           <span>Quick View</span>
         </button>
 
         <button
           onClick={() => onRequestSwap(user)}
-          className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-500/20 hover:shadow-indigo-500/35 transition-all hover:scale-[1.02]"
+          className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-black shadow-md shadow-blue-500/20 hover:shadow-blue-500/35 transition-all hover:scale-[1.02] cursor-pointer"
         >
           <Repeat className="w-4 h-4" />
-          <span>Request Swap</span>
+          <span>Connect</span>
         </button>
       </div>
 

@@ -53,12 +53,16 @@ export default function CreateLiveClassModal({ isOpen, onClose, onSessionCreated
     setError("");
   };
 
-  // Google Meet validation
+  // Google Meet and live call validation
   const isMeetUrlValid = (url) => {
     if (!url) return false;
     const trimmed = url.trim().toLowerCase();
     return (
-      (trimmed.includes("meet.google.com/") && trimmed.split("meet.google.com/")[1]?.length >= 3)
+      trimmed.includes("meet.google.com/") ||
+      trimmed.includes("zoom.us/") ||
+      trimmed.includes("teams.microsoft.com/") ||
+      trimmed.includes("meet.jit.si/") ||
+      (trimmed.startsWith("http") && trimmed.includes("."))
     );
   };
 
@@ -85,7 +89,7 @@ export default function CreateLiveClassModal({ isOpen, onClose, onSessionCreated
 
     if (publishStatus !== "draft") {
       if (!formData.meeting_url || !isMeetUrlValid(formData.meeting_url)) {
-        setError("Please enter a valid Google Meet link (e.g. https://meet.google.com/abc-defg-hij).");
+        setError("Please enter a valid Google Meet or live call link (e.g. https://meet.google.com/abc-defg-hij or Zoom).");
         return;
       }
     }

@@ -52,7 +52,7 @@ export default function QuickChatWidget() {
         
         const initialMessages = {};
         const formatted = activeList.map((ex) => {
-          const isRequester = currentUser?.id === ex.requester_id;
+          const isRequester = Number(currentUser?.id) === Number(ex.requester_id);
           const partnerName = isRequester ? ex.receiver_name : ex.requester_name;
           const partnerPic = isRequester ? ex.receiver_picture : ex.requester_picture;
           const partnerRole = isRequester 

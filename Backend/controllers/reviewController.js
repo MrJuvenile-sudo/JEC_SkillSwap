@@ -116,3 +116,63 @@ exports.getUserReviews = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error fetching user reviews" });
   }
 };
+
+// Submit a platform/website review (shows on the landing page)
+exports.submitWebsiteReview = async (req, res) => {
+  try {
+    const { rating, comment, quote, skill_traded, author_name, author_role } = req.body;
+    const finalComment = comment || quote;
+
+    if (!finalComment || !finalComment.trim()) {
+      return res.status(400).json({ success: false, message: "Please provide your review or feedback." });
+    }
+
+    const reviewRating = parseInt(rating) || 5;
+    const safeRating = Math.max(1, Math.min(5, reviewRating));
+
+    // Name & avatar from authenticated user or form
+    let name = author_name;
+    let role = author_role;
+    let avatar = null;
+
+    if (req.user) {
+      name = req.user.name || name || "SkillSwap Member";
+      role = req.user.profession || role || "Verified Swapper";
+      avatar = req.user.profile_picture;
+    } else {
+      name = name || "SkillSwap Learner";
+      role = role || "Peer Swapper";
+    }
+
+    if (!avatar) {
+      avatar = `https://api.dicebear.com/7.x/lorelei/svg?seed=${encodeURIComponent(name)}&backgroundColor=b6e3f4`;
+    }
+
+    const traded = skill_traded || "1-on-1 Peer Learning";
+
+    const [result] = await db.query(
+      `INSERT INTO testimonials (author_name, author_role, skill_traded, rating, quote, avatar_url, is_featured, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, 1, NOW())`,
+      [name, role, traded, safeRating, finalComment.trim(), avatar]
+    );
+
+    res.status(201).json({
+      success: true,
+      message: "Thank you! Your review has been submitted and is now published on the website.",
+      id: result.insertId,
+      review: {
+        id: result.insertId,
+        author_name: name,
+        author_role: role,
+        skill_traded: traded,
+        rating: safeRating,
+        quote: finalComment.trim(),
+        avatar_url: avatar,
+        is_featured: 1
+      }
+    });
+  } catch (error) {
+    console.error("SubmitWebsiteReview Error:", error);
+    res.status(500).json({ success: false, message: "Failed to submit website review" });
+  }
+};

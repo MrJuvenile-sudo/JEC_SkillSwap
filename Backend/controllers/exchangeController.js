@@ -80,7 +80,7 @@ exports.updateExchange = async (req, res) => {
     }
 
     const ex = exchanges[0];
-    if (ex.requester_id !== userId && ex.receiver_id !== userId) {
+    if (Number(ex.requester_id) !== Number(userId) && Number(ex.receiver_id) !== Number(userId)) {
       return res.status(403).json({ success: false, message: "Unauthorized to update this exchange session" });
     }
 
@@ -111,7 +111,7 @@ exports.updateExchange = async (req, res) => {
     );
 
     // Trigger Notification for Recipient
-    const recipientId = (ex.requester_id === userId) ? ex.receiver_id : ex.requester_id;
+    const recipientId = (Number(ex.requester_id) === Number(userId)) ? ex.receiver_id : ex.requester_id;
     const senderName = req.user.name || "Your partner";
 
     if (chat_history) {
@@ -174,7 +174,7 @@ exports.completeExchange = async (req, res) => {
     }
 
     const ex = exchanges[0];
-    if (ex.requester_id !== userId && ex.receiver_id !== userId) {
+    if (Number(ex.requester_id) !== Number(userId) && Number(ex.receiver_id) !== Number(userId)) {
       return res.status(403).json({ success: false, message: "Unauthorized to mark this exchange complete" });
     }
 

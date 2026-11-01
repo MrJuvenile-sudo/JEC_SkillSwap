@@ -17,6 +17,7 @@ const adminAccessControl = (req, res, next) => {
 
 // Public Unauthenticated Testimonials & Settings Route
 router.get("/public/testimonials", adminController.getPublicTestimonials);
+router.post("/public/testimonials", adminController.createTestimonial);
 router.get("/public/settings", adminController.getSettings);
 
 router.use(adminAccessControl);

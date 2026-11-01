@@ -122,6 +122,20 @@ exports.login = async (req, res) => {
       { expiresIn: "7d" }
     );
 
+    let skills = [];
+    try {
+      [skills] = await db.query(
+        `SELECT us.id, us.skill_id, us.type, us.experience_level, us.description,
+                s.name as skill_name, s.category
+         FROM user_skills us
+         JOIN skills s ON us.skill_id = s.id
+         WHERE us.user_id = ?`,
+        [user.id]
+      );
+    } catch (skErr) {}
+    const offered_skills = skills.filter((s) => s.type === "offered");
+    const wanted_skills = skills.filter((s) => s.type === "wanted");
+
     res.json({
       success: true,
       message: "Login successful",
@@ -145,6 +159,8 @@ exports.login = async (req, res) => {
         profile_picture: user.profile_picture,
         role: user.role,
         karma_balance: user.karma_balance,
+        offered_skills,
+        wanted_skills,
       },
     });
   } catch (error) {

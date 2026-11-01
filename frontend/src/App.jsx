@@ -107,9 +107,6 @@ function AppRoutes() {
           <Route path="/faq" element={<FAQ />} />
 
           <Route path="/explore" element={<Explore />} />
-          <Route path="/live" element={<LiveSessions />} />
-          <Route path="/live-sessions" element={<Navigate to="/live" replace />} />
-          <Route path="/classes" element={<Navigate to="/live" replace />} />
           <Route path="/profile/:id" element={<UserProfileView />} />
           
           {/* Auth Routes */}
@@ -118,6 +115,30 @@ function AppRoutes() {
 
           {/* Protected Routes */}
           <Route path="/matches" element={<Navigate to="/explore" replace />} />
+          <Route
+            path="/live"
+            element={
+              <ProtectedRoute>
+                <LiveSessions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/live-sessions"
+            element={
+              <ProtectedRoute>
+                <Navigate to="/live" replace />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/classes"
+            element={
+              <ProtectedRoute>
+                <Navigate to="/live" replace />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/requests"
             element={

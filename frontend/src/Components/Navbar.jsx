@@ -86,16 +86,6 @@ export default function Navbar() {
                   </Link>
 
                   <Link
-                    to="/live"
-                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${
-                      isActive("/live") ? "bg-blue-600 text-white shadow-xs" : "text-slate-700 hover:text-blue-600 hover:bg-slate-200/60"
-                    }`}
-                  >
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span>Live Classes</span>
-                  </Link>
-
-                  <Link
                     to="/how-it-works"
                     className={`px-5 py-2 rounded-full text-xs font-bold transition-all ${
                       isActive("/how-it-works") ? "bg-blue-600 text-white shadow-xs" : "text-slate-700 hover:text-blue-600 hover:bg-slate-200/60"
@@ -395,7 +385,6 @@ export default function Navbar() {
               >
                 <Compass className="w-4 h-4 text-indigo-600" /> Explore Peers
               </Link>
-              <Link to="/live" onClick={() => setMobileMenuOpen(false)} className="p-3 bg-slate-50 hover:bg-slate-100 rounded-2xl text-slate-800 flex items-center gap-2"><Video className="w-4 h-4 text-emerald-600" /> Live Classes</Link>
               <Link 
                 to="/features" 
                 onClick={() => setMobileMenuOpen(false)} 
@@ -413,7 +402,7 @@ export default function Navbar() {
               <Link 
                 to="/faq" 
                 onClick={() => setMobileMenuOpen(false)} 
-                className="p-3 bg-slate-50 hover:bg-slate-100 rounded-2xl text-slate-800 flex items-center gap-2 col-span-2"
+                className="p-3 bg-slate-50 hover:bg-slate-100 rounded-2xl text-slate-800 flex items-center gap-2"
               >
                 <HelpCircle className="w-4 h-4 text-purple-600" /> FAQ
               </Link>
@@ -424,6 +413,10 @@ export default function Navbar() {
               <div className="pt-2 border-t border-slate-100 space-y-2 text-xs font-extrabold">
                 <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="block py-2.5 px-4 bg-blue-50 text-blue-700 rounded-xl">
                   Dashboard
+                </Link>
+                <Link to="/live" onClick={() => setMobileMenuOpen(false)} className="block py-2.5 px-4 bg-emerald-50 text-emerald-700 rounded-xl flex items-center justify-between">
+                  <span>Live Classes & Workshops</span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 </Link>
                 <Link to="/requests" onClick={() => setMobileMenuOpen(false)} className="block py-2.5 px-4 bg-slate-50 text-slate-800 rounded-xl">
                   Swaps & Proposals

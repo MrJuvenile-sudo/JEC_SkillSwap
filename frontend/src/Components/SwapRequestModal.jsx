@@ -1,44 +1,68 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import API from "../services/api";
 import { X, Repeat, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 
 export default function SwapRequestModal({ targetUser, onClose, onSuccess }) {
   const { user: currentUser } = useAuth();
-  
+
+  const [availableSkills, setAvailableSkills] = useState([]);
   const [offeredSkillId, setOfferedSkillId] = useState(
-    currentUser?.offered_skills?.[0]?.skill_id || ""
+    currentUser?.offered_skills?.[0]?.skill_id || "1"
   );
   const [requestedSkillId, setRequestedSkillId] = useState(
-    targetUser?.offered_skills?.[0]?.skill_id || ""
+    targetUser?.offered_skills?.[0]?.skill_id || "4"
   );
   const [message, setMessage] = useState(
-    `Hi ${targetUser.name}! I would love to learn ${targetUser?.offered_skills?.[0]?.skill_name || 'your skill'} and can teach you in return.`
+    `Hi ${targetUser.name}! I would love to connect and exchange skills 1-on-1 with you. Looking forward to our session!`
   );
-  
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Fetch all system skills so dropdowns are never empty
+  useEffect(() => {
+    let isMounted = true;
+    API.get("/skills")
+      .then((res) => {
+        if (isMounted && res.data.success && res.data.skills) {
+          setAvailableSkills(res.data.skills);
+          // Set intelligent defaults if not already set
+          if (!offeredSkillId && res.data.skills.length > 0) {
+            setOfferedSkillId(String(res.data.skills[0].id));
+          }
+          if (!requestedSkillId && res.data.skills.length > 1) {
+            setRequestedSkillId(String(res.data.skills[1].id));
+          }
+        }
+      })
+      .catch((err) => console.warn("Could not load master skills list:", err.message));
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!offeredSkillId || !requestedSkillId) {
-      setError("Please select both a skill you offer and a skill you request.");
-      return;
-    }
-
     setLoading(true);
     setError("");
+
+    const finalOffered = offeredSkillId ? parseInt(offeredSkillId) : 1;
+    const finalRequested = requestedSkillId ? parseInt(requestedSkillId) : 4;
 
     try {
       const res = await API.post("/requests", {
         receiver_id: targetUser.id,
-        offered_skill_id: parseInt(offeredSkillId),
-        requested_skill_id: parseInt(requestedSkillId),
+        offered_skill_id: finalOffered,
+        requested_skill_id: finalRequested,
         message,
       });
 
       if (res.data.success) {
-        onSuccess(res.data.message || "Swap request sent successfully!");
+        if (onSuccess) {
+          onSuccess(res.data.message || `Connected with ${targetUser.name}! Your 1-on-1 session is ready in Sessions.`);
+        }
         onClose();
       }
     } catch (err) {
@@ -48,33 +72,36 @@ export default function SwapRequestModal({ targetUser, onClose, onSuccess }) {
     }
   };
 
+  const userOffered = currentUser?.offered_skills || [];
+  const targetOffered = targetUser?.offered_skills || [];
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
-      <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-150 relative">
+      <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative animate-in zoom-in-95">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-1.5 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100 transition-colors"
+          className="absolute top-5 right-5 p-1.5 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Modal Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+        <div className="flex items-center gap-3.5 mb-6">
+          <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
             <Repeat className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-900">Request Skill Swap</h2>
-            <p className="text-xs text-slate-500">Propose a exchange session with {targetUser.name}</p>
+            <h2 className="text-xl font-black text-slate-900">Connect & Request Swap</h2>
+            <p className="text-xs text-slate-500 font-medium">Propose a 1-on-1 peer exchange session with {targetUser.name}</p>
           </div>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+          <div className="mb-4 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
-            {error}
+            <span>{error}</span>
           </div>
         )}
 
@@ -82,63 +109,73 @@ export default function SwapRequestModal({ targetUser, onClose, onSuccess }) {
           
           {/* Skill You Offer */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">
               1. What Skill Will You Teach? (Your Skill)
             </label>
-            {currentUser?.offered_skills?.length > 0 ? (
-              <select
-                value={offeredSkillId}
-                onChange={(e) => setOfferedSkillId(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-              >
-                {currentUser.offered_skills.map((s) => (
-                  <option key={s.id} value={s.skill_id}>
-                    {s.skill_name} ({s.experience_level})
+            <select
+              value={offeredSkillId}
+              onChange={(e) => setOfferedSkillId(e.target.value)}
+              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            >
+              {userOffered.length > 0 && (
+                <optgroup label="Your Profile Skills">
+                  {userOffered.map((s) => (
+                    <option key={`my-${s.id}`} value={s.skill_id}>
+                      {s.skill_name} ({s.experience_level || "Intermediate"})
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+              <optgroup label="All Technical Skills">
+                {availableSkills.map((s) => (
+                  <option key={`avail-${s.id}`} value={s.id}>
+                    {s.name} ({s.category || "Skill"})
                   </option>
                 ))}
-              </select>
-            ) : (
-              <p className="text-xs text-rose-600 bg-rose-50 p-2.5 rounded-xl border border-rose-200">
-                You haven't listed any offered skills on your profile yet. Please update your profile first.
-              </p>
-            )}
+              </optgroup>
+            </select>
           </div>
 
           {/* Skill You Request */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">
               2. What Skill Do You Want to Learn? (From {targetUser.name})
             </label>
-            {targetUser?.offered_skills?.length > 0 ? (
-              <select
-                value={requestedSkillId}
-                onChange={(e) => setRequestedSkillId(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-              >
-                {targetUser.offered_skills.map((s) => (
-                  <option key={s.id} value={s.skill_id}>
-                    {s.skill_name} ({s.experience_level})
+            <select
+              value={requestedSkillId}
+              onChange={(e) => setRequestedSkillId(e.target.value)}
+              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            >
+              {targetOffered.length > 0 && (
+                <optgroup label={`${targetUser.name}'s Listed Skills`}>
+                  {targetOffered.map((s) => (
+                    <option key={`target-${s.id}`} value={s.skill_id}>
+                      {s.skill_name} ({s.experience_level || "Intermediate"})
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+              <optgroup label="All Technical Skills">
+                {availableSkills.map((s) => (
+                  <option key={`target-avail-${s.id}`} value={s.id}>
+                    {s.name} ({s.category || "Skill"})
                   </option>
                 ))}
-              </select>
-            ) : (
-              <p className="text-xs text-amber-600 bg-amber-50 p-2.5 rounded-xl border border-amber-200">
-                {targetUser.name} hasn't listed specific offered skills.
-              </p>
-            )}
+              </optgroup>
+            </select>
           </div>
 
           {/* Message Input */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-              3. Personal Message
+            <label className="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">
+              3. Message to {targetUser.name}
             </label>
             <textarea
               rows="3"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Introduce yourself and describe your availability..."
-              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium"
             />
           </div>
 
@@ -147,24 +184,24 @@ export default function SwapRequestModal({ targetUser, onClose, onSuccess }) {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+              className="px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={loading || !currentUser?.offered_skills?.length}
-              className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl text-xs font-semibold shadow-md shadow-indigo-200 transition-all"
+              disabled={loading}
+              className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl text-xs font-black shadow-md hover:shadow-lg transition-all cursor-pointer hover:scale-105"
             >
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Sending...
+                  <span>Connecting...</span>
                 </>
               ) : (
                 <>
                   <Repeat className="w-4 h-4" />
-                  Send Proposal
+                  <span>Send Proposal & Connect</span>
                 </>
               )}
             </button>

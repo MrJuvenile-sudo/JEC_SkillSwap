@@ -47,7 +47,8 @@ import {
   Minimize2,
   X,
   Grid,
-  ListFilter
+  ListFilter,
+  Compass
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { get3DAvatarUrl } from "../utils/avatarUtils";
@@ -366,6 +367,30 @@ export default function Exchanges() {
         const fetchedExchanges = exRes.data.exchanges || [];
         setExchanges(fetchedExchanges);
 
+        // Derive Real Connected Swappers from user's active exchanges & swap requests
+        const swapperMap = new Map();
+        fetchedExchanges.forEach(ex => {
+          const isReq = Number(currentUser?.id) === Number(ex.requester_id);
+          const partnerId = isReq ? ex.receiver_id : ex.requester_id;
+          if (partnerId && !swapperMap.has(partnerId)) {
+            swapperMap.set(partnerId, {
+              id: partnerId,
+              exchangeId: ex.id,
+              name: isReq ? ex.receiver_name : ex.requester_name,
+              profile_picture: isReq ? ex.receiver_picture : ex.requester_picture,
+              profession: isReq ? (ex.receiver_profession || ex.receiver_degree || "Co-Learner") : (ex.requester_profession || ex.requester_degree || "Co-Learner"),
+              city: isReq ? (ex.receiver_city || ex.receiver_location) : (ex.requester_city || ex.requester_location),
+              teaches: isReq ? ex.requested_skill_name : ex.offered_skill_name,
+              learns: isReq ? ex.offered_skill_name : ex.requested_skill_name,
+              meeting_link: ex.meeting_link,
+              scheduled_at: ex.scheduled_at,
+              status: ex.status,
+              rawExchange: ex
+            });
+          }
+        });
+        setConnectedSwappers(Array.from(swapperMap.values()));
+
         // Initialize chat history from database
         const chatsObj = {};
         fetchedExchanges.forEach(ex => {
@@ -391,9 +416,6 @@ export default function Exchanges() {
       if (skillsRes.data.success) {
         setMasterSkills(skillsRes.data.skills || []);
         setSkillCategories(skillsRes.data.categories || []);
-      }
-      if (usersRes.data.success) {
-        setConnectedSwappers(usersRes.data.users || []);
       }
     } catch (err) {
       console.error("Error fetching real session data:", err);
@@ -677,7 +699,7 @@ ${ex.meeting_link || "N/A"}
           {activeExchangesList.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {activeExchangesList.map((ex) => {
-                const isRequester = currentUser?.id === ex.requester_id;
+                const isRequester = Number(currentUser?.id) === Number(ex.requester_id);
                 const partnerName = isRequester ? ex.receiver_name : ex.requester_name;
                 const partnerPic = isRequester ? ex.receiver_picture : ex.requester_picture;
                 const partnerDegree = isRequester ? ex.receiver_degree : ex.requester_degree;
@@ -852,7 +874,7 @@ ${ex.meeting_link || "N/A"}
           {completedExchangesList.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {completedExchangesList.map((ex) => {
-                const isRequester = currentUser?.id === ex.requester_id;
+                const isRequester = Number(currentUser?.id) === Number(ex.requester_id);
                 const partnerName = isRequester ? ex.receiver_name : ex.requester_name;
                 const partnerPic = isRequester ? ex.receiver_picture : ex.requester_picture;
 
@@ -1005,65 +1027,116 @@ ${ex.meeting_link || "N/A"}
       ) : (
         /* TAB 4: REAL CONNECTED SWAPPERS DIRECTORY */
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-xs space-y-2">
-            <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
-              <Users className="w-5 h-5 text-blue-600" />
-              <span>Real Connected Swappers ({connectedSwappers.length})</span>
-            </h3>
-            <p className="text-xs text-slate-500 font-medium">
-              Real swapper profiles fetched from your database with active skill offers and learning objectives.
-            </p>
+          <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+                <Users className="w-5 h-5 text-blue-600" />
+                <span>Connected Swappers ({connectedSwappers.length})</span>
+              </h3>
+              <p className="text-xs text-slate-500 font-medium mt-0.5">
+                Your active peer partners from 1-on-1 skill swaps. Chat, meet live, or schedule a session.
+              </p>
+            </div>
+
+            <Link
+              to="/explore"
+              className="px-4 py-2 bg-slate-100 hover:bg-blue-50 text-slate-800 hover:text-blue-700 rounded-xl text-xs font-extrabold border border-slate-200 transition-all flex items-center gap-1.5 self-start sm:self-center"
+            >
+              <Compass className="w-4 h-4 text-blue-600" />
+              <span>Explore More Peers</span>
+            </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {connectedSwappers.map((user) => (
-              <div key={user.id} className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-lg transition-all space-y-4 flex flex-col justify-between">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-4">
-                    <img
-                      src={user.profile_picture || get3DAvatarUrl(user.gender, user.name)}
-                      alt={user.name}
-                      className="w-14 h-14 rounded-2xl object-cover ring-2 ring-indigo-500/20 shadow-sm shrink-0"
-                    />
-                    <div>
-                      <h4 className="font-extrabold text-slate-900 text-sm">{user.name}</h4>
-                      <p className="text-xs text-blue-600 font-semibold">{user.profession || "SkillSwap Co-Learner"}</p>
-                      <span className="text-[10px] text-slate-400 font-medium block">{user.city || user.location || "Online / Remote"}</span>
+          {connectedSwappers.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {connectedSwappers.map((swapper) => (
+                <div key={swapper.id} className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 space-y-4 flex flex-col justify-between group hover:-translate-y-1">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3.5">
+                      <img
+                        src={swapper.profile_picture || get3DAvatarUrl("other", swapper.name)}
+                        alt={swapper.name}
+                        className="w-14 h-14 rounded-2xl object-cover ring-2 ring-blue-500/20 shadow-xs shrink-0"
+                      />
+                      <div className="min-w-0">
+                        <h4 className="font-black text-slate-900 text-sm truncate flex items-center gap-1.5">
+                          <span>{swapper.name}</span>
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" title="Connected Partner"></span>
+                        </h4>
+                        <p className="text-xs text-blue-600 font-semibold truncate">{swapper.profession}</p>
+                        <span className="text-[10px] text-slate-400 font-medium block truncate">{swapper.city || "Online"}</span>
+                      </div>
+                    </div>
+
+                    <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-150 text-xs space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Teaches You:</span>
+                        <span className="font-extrabold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-150 text-[11px] truncate max-w-[60%]">
+                          {swapper.teaches || "Skill"}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Learns:</span>
+                        <span className="font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-150 text-[11px] truncate max-w-[60%]">
+                          {swapper.learns || "Skill"}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  <p className="text-xs text-slate-600 line-clamp-2 italic font-medium bg-slate-50/70 p-2.5 rounded-xl border border-slate-150">
-                    "{user.bio || "Enthusiastic lifelong learner."}"
-                  </p>
+                  <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center gap-2">
+                    <button
+                      onClick={() => setActiveChatExchange(swapper.rawExchange)}
+                      className="flex-1 min-w-[90px] py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5" />
+                      <span>Chat</span>
+                    </button>
 
-                  <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-150 text-xs space-y-1.5">
-                    <p><strong className="text-emerald-700">Teaches:</strong> {user.offered_skills?.map(s => s.skill_name).join(", ") || "Technical Skills"}</p>
-                    <p><strong className="text-indigo-700 font-extrabold">Wants:</strong> {user.wanted_skills?.map(s => s.skill_name).join(", ") || "Learning Goals"}</p>
+                    <button
+                      onClick={() => handleStartInstantGoogleMeet(swapper.exchangeId, swapper.meeting_link)}
+                      className="flex-1 min-w-[90px] py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer"
+                      title="Launch Google Meet"
+                    >
+                      <Video className="w-3.5 h-3.5" />
+                      <span>Meet</span>
+                    </button>
+
+                    <button
+                      onClick={() => handleOpenScheduler(swapper.rawExchange)}
+                      className="py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                      title="Schedule Session"
+                    >
+                      <Calendar className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
-
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-1 text-xs font-bold text-amber-600">
-                    <Star className="w-4 h-4 fill-amber-400" />
-                    <span>{user.rating || "5.0"}</span>
-                  </div>
-
-                  <Link
-                    to={`/profile/${user.id}`}
-                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-extrabold shadow-xs transition-colors"
-                  >
-                    View & Connect →
-                  </Link>
-                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white rounded-3xl p-12 text-center border border-slate-200 space-y-4 max-w-lg mx-auto">
+              <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center mx-auto">
+                <Users className="w-8 h-8" />
               </div>
-            ))}
-          </div>
+              <h4 className="text-lg font-black text-slate-900">No Connected Swappers Yet</h4>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                Connect with verified mentors and peers to trade skills 1-on-1. Once you send or accept a proposal, your partners will appear here for easy instant chat and video calls.
+              </p>
+              <Link
+                to="/explore"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-xs font-black shadow-md transition-all hover:scale-105"
+              >
+                <Compass className="w-4 h-4" />
+                <span>Explore Swappers Directory</span>
+              </Link>
+            </div>
+          )}
         </div>
       )}
 
       {/* FULL INTERACTIVE CLASSROOM OVERLAY MODAL */}
       {selectedRoomModal && (() => {
-        const isRequester = currentUser?.id === selectedRoomModal.requester_id;
+        const isRequester = Number(currentUser?.id) === Number(selectedRoomModal.requester_id);
         const partnerName = isRequester ? selectedRoomModal.receiver_name : selectedRoomModal.requester_name;
         const partnerPic = isRequester ? selectedRoomModal.receiver_picture : selectedRoomModal.requester_picture;
         const partnerDegree = isRequester ? selectedRoomModal.receiver_degree : selectedRoomModal.requester_degree;
@@ -1446,7 +1519,7 @@ ${ex.meeting_link || "N/A"}
 
       {/* DEDICATED FULL SCREEN SKILLSWAP CHAT MODAL (2-COLUMN STYLE) */}
       {activeChatExchange && (() => {
-        const isRequester = currentUser?.id === activeChatExchange.requester_id;
+        const isRequester = Number(currentUser?.id) === Number(activeChatExchange.requester_id);
         const partnerName = isRequester ? activeChatExchange.receiver_name : activeChatExchange.requester_name;
         const partnerPic = isRequester ? activeChatExchange.receiver_picture : activeChatExchange.requester_picture;
         const partnerDegree = isRequester ? activeChatExchange.receiver_degree : activeChatExchange.requester_degree;
@@ -1497,7 +1570,7 @@ ${ex.meeting_link || "N/A"}
                 {/* Conversations List */}
                 <div className="flex-1 overflow-y-auto divide-y divide-slate-800/60">
                   {activeExchangesList.map((ex) => {
-                    const isReq = currentUser?.id === ex.requester_id;
+                    const isReq = Number(currentUser?.id) === Number(ex.requester_id);
                     const pName = isReq ? ex.receiver_name : ex.requester_name;
                     const pPic = isReq ? ex.receiver_picture : ex.requester_picture;
                     const exChat = chatMessages[ex.id] || [];
@@ -1876,7 +1949,7 @@ ${ex.meeting_link || "N/A"}
 
       {/* MUTUAL SESSION SCHEDULING MODAL */}
       {schedulingExchange && (() => {
-        const isRequester = currentUser?.id === schedulingExchange.requester_id;
+        const isRequester = Number(currentUser?.id) === Number(schedulingExchange.requester_id);
         const partnerName = isRequester ? schedulingExchange.receiver_name : schedulingExchange.requester_name;
         const partnerPic = isRequester ? schedulingExchange.receiver_picture : schedulingExchange.requester_picture;
         const mySkill = isRequester ? schedulingExchange.offered_skill_name : schedulingExchange.requested_skill_name;

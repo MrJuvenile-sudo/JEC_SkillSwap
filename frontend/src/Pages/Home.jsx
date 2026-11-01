@@ -40,7 +40,7 @@ import { get3DAvatarUrl } from "../utils/avatarUtils";
 import HeroStage from "../Components/Hero/HeroStage";
 
 export default function Home() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -49,6 +49,57 @@ export default function Home() {
   const [fadeState, setFadeState] = useState(true);
 
   const [testimonials, setTestimonials] = useState([]);
+  const [showAllReviews, setShowAllReviews] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewFormData, setReviewFormData] = useState({
+    rating: 5,
+    quote: "",
+    skill_traded: "Fullstack Web ⇄ Python ML",
+    author_name: "",
+    author_role: ""
+  });
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [reviewMessage, setReviewMessage] = useState("");
+
+  const handleSubmitWebsiteReview = async (e) => {
+    e.preventDefault();
+    if (!reviewFormData.quote.trim()) {
+      alert("Please write your review feedback.");
+      return;
+    }
+    setSubmittingReview(true);
+    setReviewMessage("");
+    try {
+      const res = await API.post("/reviews/website", {
+        rating: reviewFormData.rating,
+        quote: reviewFormData.quote,
+        skill_traded: reviewFormData.skill_traded,
+        author_name: user?.name || reviewFormData.author_name || "Community Swapper",
+        author_role: user?.profession || reviewFormData.author_role || "Student / Learner",
+      });
+      if (res.data.success) {
+        setReviewMessage("🎉 Thank you! Your review is now live on our website.");
+        if (res.data.review) {
+          setTestimonials(prev => [res.data.review, ...prev]);
+        }
+        setTimeout(() => {
+          setShowReviewModal(false);
+          setReviewMessage("");
+          setReviewFormData({
+            rating: 5,
+            quote: "",
+            skill_traded: "Fullstack Web ⇄ Python ML",
+            author_name: "",
+            author_role: ""
+          });
+        }, 1500);
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to submit review.");
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
   const [heroStats, setHeroStats] = useState({
     stat1_value: "14,200+",
     stat1_label: "Swaps Completed",
@@ -692,17 +743,36 @@ export default function Home() {
       {/* 7. VERIFIED SWAPPER TESTIMONIALS (LIVE ADMIN SYNCHRONIZED) */}
       {/* ------------------------------------------------------------- */}
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-200/80 bg-[#fdfbf7]">
-        <div className="text-center max-w-2xl mx-auto mb-16 space-y-2">
-          <span className="px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 text-xs font-black uppercase tracking-wider inline-flex items-center gap-1.5">
-            <MessageSquareQuote className="w-3.5 h-3.5 text-indigo-600" />
-            <span>Community Stories</span>
-          </span>
-          <h2 className="text-3xl font-serif font-black text-slate-900">What Our Swappers Say</h2>
-          <p className="text-slate-600 text-sm font-medium">Real experiences from students, scholars, and verified peer mentors worldwide.</p>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-6">
+          <div className="space-y-2 max-w-2xl">
+            <span className="px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 text-xs font-black uppercase tracking-wider inline-flex items-center gap-1.5">
+              <MessageSquareQuote className="w-3.5 h-3.5 text-indigo-600" />
+              <span>Community Stories</span>
+            </span>
+            <h2 className="text-3xl font-serif font-black text-slate-900">What Our Swappers Say</h2>
+            <p className="text-slate-600 text-sm font-medium">Real experiences from students, scholars, and verified peer mentors worldwide.</p>
+          </div>
+
+          <div className="shrink-0 flex items-center gap-3">
+            <button
+              onClick={() => {
+                if (!isAuthenticated) {
+                  navigate("/login?redirect=/");
+                  return;
+                }
+                setShowReviewModal(true);
+              }}
+              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-xs font-black shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer hover:scale-105"
+            >
+              <Sparkles className="w-4 h-4 text-amber-300 fill-amber-300" />
+              <span>Write a Review</span>
+            </button>
+          </div>
         </div>
 
+        {/* 3 Latest Reviews by Default */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {testimonials.map((t, i) => (
+          {(showAllReviews ? testimonials : testimonials.slice(0, 3)).map((t, i) => (
             <div
               key={t.id || i}
               className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1 relative"
@@ -742,6 +812,125 @@ export default function Home() {
             </div>
           ))}
         </div>
+
+        {/* Show All Reviews Button (when more than 3 reviews exist) */}
+        {testimonials.length > 3 && (
+          <div className="mt-10 text-center">
+            <button
+              onClick={() => setShowAllReviews(!showAllReviews)}
+              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 rounded-2xl text-xs font-black shadow-xs transition-all hover:scale-105 cursor-pointer inline-flex items-center gap-2"
+            >
+              <span>{showAllReviews ? "Show Latest 3 Reviews" : `Show All Reviews (${testimonials.length})`}</span>
+              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAllReviews ? "rotate-180" : ""}`} />
+            </button>
+          </div>
+        )}
+
+        {/* WRITE A REVIEW MODAL */}
+        {showReviewModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
+            <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative animate-in zoom-in-95">
+              <button
+                onClick={() => setShowReviewModal(false)}
+                className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                  <Star className="w-6 h-6 fill-amber-400 text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900">Write a Website Review</h3>
+                  <p className="text-xs text-slate-500">Share your peer learning experience with the SkillSwap community</p>
+                </div>
+              </div>
+
+              {reviewMessage ? (
+                <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs font-bold text-center">
+                  {reviewMessage}
+                </div>
+              ) : (
+                <form onSubmit={handleSubmitWebsiteReview} className="space-y-4">
+                  {/* Star Rating Selector */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                      Star Rating
+                    </label>
+                    <div className="flex items-center gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setReviewFormData(prev => ({ ...prev, rating: star }))}
+                          className="p-1 focus:outline-none transition-transform hover:scale-125 cursor-pointer"
+                        >
+                          <Star
+                            className={`w-7 h-7 ${
+                              star <= reviewFormData.rating
+                                ? "fill-amber-400 text-amber-400"
+                                : "text-slate-300"
+                            }`}
+                          />
+                        </button>
+                      ))}
+                      <span className="ml-2 text-xs font-bold text-slate-600">
+                        {reviewFormData.rating} / 5 Stars
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Skills Traded */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                      Skills Traded / Learned
+                    </label>
+                    <input
+                      type="text"
+                      value={reviewFormData.skill_traded}
+                      onChange={(e) => setReviewFormData(prev => ({ ...prev, skill_traded: e.target.value }))}
+                      placeholder="e.g. React.js ⇄ Machine Learning"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    />
+                  </div>
+
+                  {/* Feedback / Review Text */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                      Your Review / Story
+                    </label>
+                    <textarea
+                      rows="4"
+                      value={reviewFormData.quote}
+                      onChange={(e) => setReviewFormData(prev => ({ ...prev, quote: e.target.value }))}
+                      placeholder="Tell the community how SkillSwap helped you learn or teach skills 1-on-1..."
+                      required
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="pt-2 flex items-center justify-end gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowReviewModal(false)}
+                      className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={submittingReview}
+                      className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black shadow-md hover:shadow-lg transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    >
+                      {submittingReview ? "Publishing..." : "Publish Review"}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        )}
       </section>
 
       {/* ------------------------------------------------------------- */}

@@ -5,21 +5,25 @@ const { createNotification } = require("../utils/notificationService");
 exports.createRequest = async (req, res) => {
   try {
     const requester_id = req.user.id;
-    const { receiver_id, offered_skill_id, requested_skill_id, message } = req.body;
+    let { receiver_id, offered_skill_id, requested_skill_id, message } = req.body;
 
-    if (!receiver_id || !offered_skill_id || !requested_skill_id) {
+    if (!receiver_id) {
       return res.status(400).json({
         success: false,
-        message: "Receiver user, offered skill, and requested skill are required",
+        message: "Receiver user is required",
       });
     }
 
-    if (requester_id === parseInt(receiver_id)) {
+    if (Number(requester_id) === Number(receiver_id)) {
       return res.status(400).json({
         success: false,
         message: "You cannot send a swap request to yourself",
       });
     }
+
+    // Default skill IDs (HTML / React) if not explicitly supplied or empty
+    const cleanOfferedId = (offered_skill_id && !isNaN(offered_skill_id)) ? parseInt(offered_skill_id) : 1;
+    const cleanRequestedId = (requested_skill_id && !isNaN(requested_skill_id)) ? parseInt(requested_skill_id) : 4;
 
     // Check existing pending request
     const [existing] = await db.query(
@@ -38,8 +42,22 @@ exports.createRequest = async (req, res) => {
     const [result] = await db.query(
       `INSERT INTO swap_requests (requester_id, receiver_id, offered_skill_id, requested_skill_id, message)
        VALUES (?, ?, ?, ?, ?)`,
-      [requester_id, receiver_id, offered_skill_id, requested_skill_id, message || "Hi! I would love to exchange skills with you."]
+      [requester_id, receiver_id, cleanOfferedId, cleanRequestedId, message || "Hi! I would love to exchange skills with you."]
     );
+
+    const newRequestId = result.insertId;
+
+    // Automatically create the 1-on-1 virtual classroom/exchange record so it immediately appears in Chat List & Sessions
+    const defaultMeeting = "https://meet.google.com/new";
+    try {
+      await db.query(
+        `INSERT INTO exchanges (request_id, status, meeting_link, notes)
+         VALUES (?, 'scheduled', ?, 'Welcome to your 1-on-1 skill exchange session! Share meeting links, study guides, and session agenda.')`,
+        [newRequestId, defaultMeeting]
+      );
+    } catch (exErr) {
+      console.warn("Could not auto-create exchange for new request:", exErr.message);
+    }
 
     // Notify receiver
     createNotification({
@@ -47,15 +65,15 @@ exports.createRequest = async (req, res) => {
       senderId: requester_id,
       type: "swap_request",
       title: "New Swap Request",
-      message: `${req.user.name || "A learner"} sent you a 1-on-1 swap request!`,
+      message: `${req.user.name || "A learner"} connected and sent you a 1-on-1 swap proposal!`,
       link: "/requests"
     }).catch(e => console.warn("Notif error:", e.message));
 
     res.status(201).json({
       success: true,
-      message: "Swap request sent successfully!",
-      requestId: result.insertId,
-      request: { id: result.insertId },
+      message: "Connected! Swap proposal sent successfully. Your 1-on-1 session is now in your Chat and Sessions.",
+      requestId: newRequestId,
+      request: { id: newRequestId },
     });
   } catch (error) {
     console.error("CreateRequest Error:", error);
@@ -129,11 +147,11 @@ exports.updateRequestStatus = async (req, res) => {
 
     // Authorization check
     if (status === 'accepted' || status === 'rejected') {
-      if (request.receiver_id !== userId) {
+      if (Number(request.receiver_id) !== Number(userId)) {
         return res.status(403).json({ success: false, message: "Only the recipient can accept or reject requests" });
       }
     } else if (status === 'cancelled') {
-      if (request.requester_id !== userId) {
+      if (Number(request.requester_id) !== Number(userId)) {
         return res.status(403).json({ success: false, message: "Only the requester can cancel their request" });
       }
     }
@@ -144,7 +162,7 @@ exports.updateRequestStatus = async (req, res) => {
     if (status === 'accepted') {
       const [existingExchange] = await db.query("SELECT id FROM exchanges WHERE request_id = ?", [id]);
       if (existingExchange.length === 0) {
-        const defaultMeeting = "https://meet.google.com/skillswap-room";
+        const defaultMeeting = "https://meet.google.com/new";
         await db.query(
           `INSERT INTO exchanges (request_id, status, meeting_link, notes)
            VALUES (?, 'scheduled', ?, 'Initial skill exchange session created. Schedule your time & connect!')`,

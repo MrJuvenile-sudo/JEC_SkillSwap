@@ -1,14 +1,10 @@
 const db = require("../config/db");
 const { createNotification } = require("../utils/notificationService");
 
-// Google Meet URL Validator
+// Live Meeting URL Validator (Google Meet, Zoom, Teams, Jitsi, or any valid video call link)
 function isValidGoogleMeetUrl(url) {
   if (!url || typeof url !== "string") return false;
   const trimmed = url.trim();
-  // Standard formats:
-  // https://meet.google.com/xxx-yyyy-zzz
-  // https://meet.google.com/lookup/...
-  // meet.google.com/xxx-yyyy-zzz
   try {
     const withProtocol = trimmed.startsWith("http://") || trimmed.startsWith("https://")
       ? trimmed
@@ -16,14 +12,14 @@ function isValidGoogleMeetUrl(url) {
     const parsed = new URL(withProtocol);
     const hostname = parsed.hostname.toLowerCase();
     
-    // Strict domain check: meet.google.com
-    if (hostname !== "meet.google.com") return false;
-    
-    // Path must not be empty or root
-    const path = parsed.pathname.replace(/^\/+|\/+$/g, "");
-    if (!path || path.length < 3) return false;
+    // Accept Google Meet, Zoom, Teams, Jitsi, or any valid HTTP/HTTPS link
+    const isMeet = hostname.includes("meet.google.com");
+    const isZoom = hostname.includes("zoom.us");
+    const isTeams = hostname.includes("teams.microsoft.com") || hostname.includes("teams.live.com");
+    const isJitsi = hostname.includes("jit.si");
+    const isValidHttp = (parsed.protocol === "http:" || parsed.protocol === "https:") && hostname.includes(".");
 
-    return true;
+    return isMeet || isZoom || isTeams || isJitsi || isValidHttp;
   } catch (err) {
     return false;
   }
