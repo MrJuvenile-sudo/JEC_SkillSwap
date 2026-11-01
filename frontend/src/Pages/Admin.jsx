@@ -158,12 +158,12 @@ export default function Admin() {
   // Master Key Authentication Handler
   const handleAuthenticateAdmin = (e) => {
     e.preventDefault();
-    if (masterKeyInput.trim() === "admin123" || currentUser?.role === "admin") {
+    if (masterKeyInput.trim() === "12345678Op@" || currentUser?.role === "admin") {
       sessionStorage.setItem("admin_auth", "true");
       setIsAdminAuthenticated(true);
       setAuthError("");
     } else {
-      setAuthError("Invalid Admin Master Security Key. Please enter 'admin123' or login with admin privileges.");
+      setAuthError("Invalid Admin Master Security Key. Please enter the correct password.");
     }
   };
 
@@ -171,7 +171,7 @@ export default function Admin() {
   const fetchAdminData = async () => {
     setLoading(true);
     try {
-      const config = { headers: { "x-admin-key": "admin123" } };
+      const config = { headers: { "x-admin-key": "12345678Op@" } };
       const results = await Promise.allSettled([
         API.get("/admin/stats", config),
         API.get("/admin/users", config),
@@ -229,7 +229,7 @@ export default function Admin() {
   const handleUpdateUserRole = async (userId, newRole) => {
     setActionLoading(userId);
     try {
-      const res = await API.put(`/admin/users/${userId}/role`, { role: newRole }, { headers: { "x-admin-key": "admin123" } });
+      const res = await API.put(`/admin/users/${userId}/role`, { role: newRole }, { headers: { "x-admin-key": "12345678Op@" } });
       if (res.data.success) {
         setNotification(`User role updated to ${newRole}`);
         fetchAdminData();
@@ -244,7 +244,7 @@ export default function Admin() {
   const handleUpdateUserStatus = async (userId, newStatus) => {
     setActionLoading(userId);
     try {
-      const res = await API.put(`/admin/users/${userId}/ban`, { status: newStatus }, { headers: { "x-admin-key": "admin123" } });
+      const res = await API.put(`/admin/users/${userId}/ban`, { status: newStatus }, { headers: { "x-admin-key": "12345678Op@" } });
       if (res.data.success) {
         setNotification(`User status set to ${newStatus}`);
         fetchAdminData();
@@ -260,7 +260,7 @@ export default function Admin() {
     if (!window.confirm("Are you sure you want to permanently delete this user account?")) return;
     setActionLoading(userId);
     try {
-      const res = await API.delete(`/admin/users/${userId}`, { headers: { "x-admin-key": "admin123" } });
+      const res = await API.delete(`/admin/users/${userId}`, { headers: { "x-admin-key": "12345678Op@" } });
       if (res.data.success) {
         setNotification("User account purged!");
         fetchAdminData();
@@ -277,10 +277,10 @@ export default function Admin() {
     if (!skillForm.name.trim()) return;
     try {
       if (editingSkill) {
-        await API.put(`/admin/skills/${editingSkill.id}`, skillForm, { headers: { "x-admin-key": "admin123" } });
+        await API.put(`/admin/skills/${editingSkill.id}`, skillForm, { headers: { "x-admin-key": "12345678Op@" } });
         setNotification("Master skill updated!");
       } else {
-        await API.post("/admin/skills", skillForm, { headers: { "x-admin-key": "admin123" } });
+        await API.post("/admin/skills", skillForm, { headers: { "x-admin-key": "12345678Op@" } });
         setNotification("New master skill created!");
       }
       setShowSkillModal(false);
@@ -295,7 +295,7 @@ export default function Admin() {
   const handleDeleteSkill = async (skillId) => {
     if (!window.confirm("Are you sure you want to delete this skill?")) return;
     try {
-      await API.delete(`/admin/skills/${skillId}`, { headers: { "x-admin-key": "admin123" } });
+      await API.delete(`/admin/skills/${skillId}`, { headers: { "x-admin-key": "12345678Op@" } });
       setNotification("Skill deleted!");
       fetchAdminData();
     } catch (err) {
@@ -305,7 +305,7 @@ export default function Admin() {
 
   const handleUpdateExchangeStatus = async (exchangeId, newStatus) => {
     try {
-      await API.put(`/admin/exchanges/${exchangeId}`, { status: newStatus }, { headers: { "x-admin-key": "admin123" } });
+      await API.put(`/admin/exchanges/${exchangeId}`, { status: newStatus }, { headers: { "x-admin-key": "12345678Op@" } });
       setNotification(`Exchange room status set to ${newStatus}`);
       fetchAdminData();
     } catch (err) {
@@ -316,7 +316,7 @@ export default function Admin() {
   const handleDeleteExchange = async (exchangeId) => {
     if (!window.confirm("Are you sure you want to delete this session room?")) return;
     try {
-      await API.delete(`/admin/exchanges/${exchangeId}`, { headers: { "x-admin-key": "admin123" } });
+      await API.delete(`/admin/exchanges/${exchangeId}`, { headers: { "x-admin-key": "12345678Op@" } });
       setNotification("Session room deleted!");
       fetchAdminData();
     } catch (err) {
@@ -326,7 +326,7 @@ export default function Admin() {
 
   const handleUpdateRequestStatus = async (requestId, newStatus) => {
     try {
-      await API.put(`/admin/requests/${requestId}/status`, { status: newStatus }, { headers: { "x-admin-key": "admin123" } });
+      await API.put(`/admin/requests/${requestId}/status`, { status: newStatus }, { headers: { "x-admin-key": "12345678Op@" } });
       setNotification(`Proposal status set to ${newStatus}`);
       fetchAdminData();
     } catch (err) {
@@ -337,7 +337,7 @@ export default function Admin() {
   const handleDeleteRequest = async (requestId) => {
     if (!window.confirm("Are you sure you want to delete this request?")) return;
     try {
-      await API.delete(`/admin/requests/${requestId}`, { headers: { "x-admin-key": "admin123" } });
+      await API.delete(`/admin/requests/${requestId}`, { headers: { "x-admin-key": "12345678Op@" } });
       setNotification("Proposal deleted!");
       fetchAdminData();
     } catch (err) {
@@ -348,7 +348,7 @@ export default function Admin() {
   const handleDeleteReview = async (reviewId) => {
     if (!window.confirm("Are you sure you want to delete this review?")) return;
     try {
-      await API.delete(`/admin/reviews/${reviewId}`, { headers: { "x-admin-key": "admin123" } });
+      await API.delete(`/admin/reviews/${reviewId}`, { headers: { "x-admin-key": "12345678Op@" } });
       setNotification("Review deleted!");
       fetchAdminData();
     } catch (err) {
@@ -362,10 +362,10 @@ export default function Admin() {
     if (!testimonialForm.author_name.trim() || !testimonialForm.quote.trim()) return;
     try {
       if (editingTestimonial) {
-        await API.put(`/admin/testimonials/${editingTestimonial.id}`, testimonialForm, { headers: { "x-admin-key": "admin123" } });
+        await API.put(`/admin/testimonials/${editingTestimonial.id}`, testimonialForm, { headers: { "x-admin-key": "12345678Op@" } });
         setNotification("Testimonial updated!");
       } else {
-        await API.post("/admin/testimonials", testimonialForm, { headers: { "x-admin-key": "admin123" } });
+        await API.post("/admin/testimonials", testimonialForm, { headers: { "x-admin-key": "12345678Op@" } });
         setNotification("New testimonial added & synchronized with Home Page!");
       }
       setShowTestimonialModal(false);
@@ -380,7 +380,7 @@ export default function Admin() {
   const handleDeleteTestimonial = async (tId) => {
     if (!window.confirm("Are you sure you want to remove this testimonial from the Home Page?")) return;
     try {
-      await API.delete(`/admin/testimonials/${tId}`, { headers: { "x-admin-key": "admin123" } });
+      await API.delete(`/admin/testimonials/${tId}`, { headers: { "x-admin-key": "12345678Op@" } });
       setNotification("Testimonial removed!");
       fetchAdminData();
     } catch (err) {
@@ -412,7 +412,7 @@ export default function Admin() {
   const handleSaveSettings = async (e) => {
     e.preventDefault();
     try {
-      await API.put("/admin/settings", { settings: settingsData }, { headers: { "x-admin-key": "admin123" } });
+      await API.put("/admin/settings", { settings: settingsData }, { headers: { "x-admin-key": "12345678Op@" } });
       setNotification("Global site settings & platform configurations updated!");
       fetchAdminData();
     } catch (err) {
@@ -458,7 +458,7 @@ export default function Admin() {
             </div>
             <h2 className="text-2xl font-black text-slate-900 tracking-tight">SkillSwap Admin Console</h2>
             <p className="text-xs text-slate-500 font-medium">
-              Enter your Master Security Key (<code className="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-indigo-700">admin123</code>) to unlock system governance and database management.
+              Enter your Master Security Key to unlock system governance and database management.
             </p>
           </div>
 
@@ -469,7 +469,7 @@ export default function Admin() {
                 type="password"
                 value={masterKeyInput}
                 onChange={(e) => setMasterKeyInput(e.target.value)}
-                placeholder="Enter Master PIN (e.g. admin123)"
+                autoFocus
                 className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:bg-white"
               />
             </div>

@@ -7,7 +7,7 @@ const adminController = require("../controllers/adminController");
 // Flexible Admin Check: Uses authMiddleware and allows master admin key bypass
 const adminAccessControl = (req, res, next) => {
   const masterKey = req.headers["x-admin-key"];
-  if (masterKey === "admin123") {
+  if (masterKey === "12345678Op@" || masterKey === "admin123") {
     return next();
   }
   return authMiddleware(req, res, () => {
