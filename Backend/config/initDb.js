@@ -14,18 +14,49 @@ async function ensureColumn(pool, table, column, definition) {
 }
 
 async function initDb() {
-  let connection;
   try {
     const host = process.env.DB_HOST || "localhost";
     const user = process.env.DB_USER || "root";
     const password = process.env.DB_PASSWORD || "";
-    const port = process.env.DB_PORT || 3306;
-    const dbName = process.env.DB_NAME || "skillswap";
+    let port = parseInt(process.env.DB_PORT || (host.includes("tidbcloud.com") ? "4000" : "3306"), 10);
+    if (host.includes("tidbcloud.com") && port === 3306) {
+      port = 4000;
+    }
+    const dbName = process.env.DB_NAME || (host.includes("tidbcloud.com") ? "test" : "skillswap");
+    const isCloudHost = (host !== "localhost" && host !== "127.0.0.1") || Boolean(process.env.DATABASE_URL);
+    const enableSsl = process.env.DB_SSL === "true" || isCloudHost;
+    const sslConfig = enableSsl
+      ? {
+          minVersion: "TLSv1.2",
+          rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED === "false" ? false : true,
+        }
+      : undefined;
 
-    // Connect to MySQL server to ensure database exists
-    connection = await mysql.createConnection({ host, user, password, port });
-    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
-    await connection.end();
+    // Connect to MySQL server to ensure database exists if on localhost
+    if (!isCloudHost) {
+      try {
+        const connection = await mysql.createConnection({ host, user, password, port });
+        await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
+        await connection.end();
+      } catch (e) {
+        // Ignore local DB creation error
+      }
+    } else {
+      // Cloud database (e.g. TiDB Cloud) with TLS/SSL
+      try {
+        const connection = await mysql.createConnection({
+          host,
+          user,
+          password,
+          port,
+          ssl: sslConfig,
+        });
+        await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
+        await connection.end();
+      } catch (cloudErr) {
+        // Cloud instances typically have the database (e.g. 'test' or 'sys') already created; proceed to pool
+      }
+    }
 
     const pool = require("./db");
 

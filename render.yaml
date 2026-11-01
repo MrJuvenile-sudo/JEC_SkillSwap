@@ -19,6 +19,6 @@ services:
       - key: DB_NAME
         sync: false
       - key: DB_PORT
-        value: "3306"
+        sync: false
       - key: DB_SSL
         value: "true"
