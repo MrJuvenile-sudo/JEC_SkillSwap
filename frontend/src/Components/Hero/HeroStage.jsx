@@ -132,7 +132,7 @@ export default function HeroStage({ heroConfig = {} }) {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       role="img"
-      aria-label="Aarav Sharma teaching Tech skills and Ananya Iyer teaching UI/UX Design, bartering skills through SkillSwap."
+      aria-label="Aarav Sharma teaching Tech skills and Ananya Iyer teaching UI/UX Design, exchanging skills through SkillSwap."
       className="relative w-full max-w-6xl mx-auto px-2 sm:px-4 select-none flex flex-col items-center justify-center pt-2 pb-4"
     >
       

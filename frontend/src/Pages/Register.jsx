@@ -129,7 +129,7 @@ export default function Register() {
                 <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-md animate-pulse">
                   <Repeat className="w-4 h-4" />
                 </div>
-                <span className="text-[9px] uppercase font-black text-emerald-300 mt-1">Reciprocal</span>
+                <span className="text-[9px] uppercase font-black text-emerald-300 mt-1">1:1 Swap</span>
               </div>
 
               <div className="col-span-5 flex flex-col items-center text-center space-y-2">
@@ -152,7 +152,7 @@ export default function Register() {
             <div className="space-y-2.5 pt-2 text-xs">
               <div className="flex items-center gap-2.5 bg-white/5 p-2.5 rounded-xl border border-white/5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span className="text-slate-200 font-semibold">100% Free Peer Barter — Trade your skills instead of money</span>
+                <span className="text-slate-200 font-semibold">100% Free Skill Swap — Share your skills instead of paying money</span>
               </div>
               <div className="flex items-center gap-2.5 bg-white/5 p-2.5 rounded-xl border border-white/5">
                 <CheckCircle2 className="w-4 h-4 text-blue-400 shrink-0" />
@@ -218,7 +218,7 @@ export default function Register() {
             </div>
 
             <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-extrabold">
-              Free Barter
+              Free Swap
             </span>
           </div>
 
@@ -239,7 +239,7 @@ export default function Register() {
                     <span>Creative & Tech Tracks</span>
                     <Sparkles className="w-3 h-3 text-emerald-300" />
                   </h4>
-                  <p className="text-[10px] text-slate-300 font-medium">100% Free 1-on-1 Peer Barter</p>
+                  <p className="text-[10px] text-slate-300 font-medium">100% Free 1-on-1 Skill Swap</p>
                 </div>
               </div>
               <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 shrink-0">
@@ -278,7 +278,7 @@ export default function Register() {
               Create Your Account
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
-              Join thousands of developers, designers, and students in free 1-on-1 reciprocal skill exchanges.
+              Join thousands of students and learners in free 1-on-1 skill exchanges.
             </p>
           </div>
 

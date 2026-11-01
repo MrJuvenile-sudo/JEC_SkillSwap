@@ -10,35 +10,35 @@ export default function FAQ() {
   const faqs = [
     {
       q: "What is SkillSwap?",
-      a: "SkillSwap is a peer-to-peer reciprocal knowledge exchange platform. Instead of paying money or purchasing subscription courses, users trade expertise 1-on-1 (e.g. you teach React.js to a peer, and they teach you Spanish in return)."
+      a: "SkillSwap is a free 1-on-1 skill exchange community. Instead of paying money or buying expensive courses, you learn directly from others by sharing your own skills (for example, you help someone learn React, and they teach you Spanish in return)."
     },
     {
       q: "Is SkillSwap really 100% free?",
-      a: "Yes! Zero fees forever. There are no subscription tiers, hidden token fees, or credit card requirements. You invest your time and knowledge to learn from other practitioners."
+      a: "Yes! SkillSwap is completely free forever. There are no subscription fees, hidden charges, or credit card requirements. You simply share your time and skills to learn from others."
     },
     {
-      q: "How does the Bilateral Synergy Matcher work?",
-      a: "Our algorithm compares your listed offered skills (skills you can teach) and wanted skills (topics you want to learn) with thousands of active profiles. It prioritizes '2-Way Matches' where two users complementary complement each other's learning goals."
+      q: "How does mutual skill matching work?",
+      a: "We match what you want to teach with what someone else wants to learn, and vice versa. When two people match each other's learning goals, you get a 'Perfect 2-Way Match' so both of you can help each other."
     },
     {
-      q: "What happens after my swap proposal is accepted?",
-      a: "Once an exchange proposal is accepted, an Active Exchange Session Room is automatically generated. You can add a Google Meet or Zoom video link, set agenda notes, conduct your 1-on-1 session, and leave star reviews."
+      q: "What happens after a swap request is accepted?",
+      a: "Once your request is accepted, your private Session Room is ready! You can share a Google Meet or video link, plan your meeting notes, hold your 1-on-1 call, and leave a review afterward."
     },
     {
-      q: "How are sessions conducted?",
-      a: "Sessions take place via video call (Google Meet, Zoom, Jitsi). Typically, users split a 1-hour session into 30 minutes of teaching one skill and 30 minutes of learning the partner's skill."
+      q: "How do learning sessions work?",
+      a: "Sessions happen online over video call (like Google Meet). Most members split a 1-hour call into 30 minutes of teaching their skill, and 30 minutes of learning their partner's skill."
     },
     {
-      q: "What if a skill I want to learn is not listed in the catalog?",
-      a: "No problem! When editing your profile, click '+ Add a custom skill' to create a custom topic. It will instantly be added to your profile and the global master catalog."
+      q: "What if a skill I want is not in the list?",
+      a: "No problem! In your profile, click '+ Add a custom skill' to add any new skill you want. It is saved to your profile right away."
     },
     {
-      q: "How is user trust and quality maintained?",
-      a: "Every session ends with mutual 1-to-5 star rating reviews and feedback comments. High ratings increase your Karma score and feature your profile in top recommendation lists."
+      q: "How does the community stay safe and helpful?",
+      a: "After every session, both members give each other a 1 to 5 star rating and a helpful review. Good ratings build your Trust Score and help you find great partners faster."
     },
     {
-      q: "Can I decline a swap proposal if I'm busy?",
-      a: "Absolutely. You can accept, decline, or message any user before agreeing to schedule a video co-learning session."
+      q: "Can I say no to a request if I am busy?",
+      a: "Yes, of course! You can accept, decline, or chat with any user before deciding to schedule a session."
     }
   ];
 
@@ -54,19 +54,19 @@ export default function FAQ() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-4 relative z-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-xs font-extrabold">
             <HelpCircle className="w-3.5 h-3.5 text-amber-300" />
-            <span>Help Center & Knowledge Base</span>
+            <span>Help Center & Common Questions</span>
           </div>
           <h1 className="text-4xl sm:text-6xl font-serif font-black tracking-tight">
             Frequently Asked Questions
           </h1>
           <p className="text-base sm:text-lg text-indigo-200 max-w-2xl mx-auto leading-relaxed">
-            Everything you need to know about peer skill barter, matching algorithms, and session safety.
+            Everything you need to know about sharing skills, finding study partners, and staying safe.
           </p>
         </div>
       </section>
 
       {/* Accordion FAQ Container */}
-      <section className="py-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+      <section className="py-16 sm:py-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
         {faqs.map((faq, idx) => {
           const isOpen = openIndex === idx;
           return (
@@ -76,7 +76,7 @@ export default function FAQ() {
             >
               <button
                 onClick={() => toggleFAQ(idx)}
-                className="w-full text-left p-6 flex items-center justify-between gap-4 focus:outline-none"
+                className="w-full text-left p-6 flex items-center justify-between gap-4 focus:outline-none cursor-pointer"
               >
                 <span className="text-base sm:text-lg font-extrabold text-slate-900">
                   {faq.q}
@@ -100,7 +100,7 @@ export default function FAQ() {
       <section className="py-20 bg-blue-600 text-white text-center">
         <div className="max-w-3xl mx-auto px-4 space-y-6">
           <h2 className="text-3xl font-serif font-bold">Have More Questions?</h2>
-          <p className="text-blue-100 text-sm">Our community of swappers is ready to help you get started.</p>
+          <p className="text-blue-100 text-sm">Our friendly community of learners is ready to help you get started.</p>
           <Link
             to={isAuthenticated ? "/explore" : "/register"}
             className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-900 hover:bg-slate-100 rounded-full font-black text-xs shadow-xl transition-all hover:scale-105"

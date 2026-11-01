@@ -43,7 +43,7 @@ export default function EscrowKarmaCard({ user, karmaStats: propStats }) {
   const netCredit = stats?.netCredit !== undefined ? stats.netCredit : Number((hoursTaught - hoursLearned).toFixed(1));
   const karmaRating = stats?.karmaRating || user?.rating || "5.0";
   const totalSessions = stats?.totalSessions !== undefined ? stats.totalSessions : 0;
-  const levelTitle = stats?.levelTitle || (totalSessions > 0 ? "5-Star Verified Co-Mentor" : "Active Peer Learner");
+  const levelTitle = stats?.levelTitle || (totalSessions > 0 ? "5-Star Verified Partner" : "Active Peer Learner");
   
   const totalHours = hoursTaught + hoursLearned;
   const taughtPercent = totalHours > 0 ? Math.min(Math.max(Math.round((hoursTaught / totalHours) * 100), 15), 85) : 50;
@@ -59,8 +59,8 @@ export default function EscrowKarmaCard({ user, karmaStats: propStats }) {
             <Star className="w-5 h-5 text-amber-500 fill-amber-400" />
           </div>
           <div>
-            <h3 className="text-base font-black text-slate-900 tracking-tight">Peer Review & Trust Balance</h3>
-            <p className="text-xs text-slate-500 font-medium">1-on-1 hours taught vs. hours learned balance</p>
+            <h3 className="text-base font-black text-slate-900 tracking-tight">Trust & Learning Hours</h3>
+            <p className="text-xs text-slate-500 font-medium">1-on-1 hours taught vs. hours learned</p>
           </div>
         </div>
 
@@ -130,13 +130,13 @@ export default function EscrowKarmaCard({ user, karmaStats: propStats }) {
       {/* Trust & Reputation Badges */}
       <div className="pt-2 flex flex-wrap items-center gap-2 text-[11px] font-bold">
         <span className="px-3 py-1.5 rounded-xl bg-indigo-50 text-indigo-800 border border-indigo-200 flex items-center gap-1">
-          <Award className="w-3.5 h-3.5 text-indigo-600" /> {totalSessions >= 5 ? "Master Co-Mentor" : "Active Co-Mentor"}
+          <Award className="w-3.5 h-3.5 text-indigo-600" /> {totalSessions >= 5 ? "Master Mentor" : "Active Peer"}
         </span>
         <span className="px-3 py-1.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1">
           <Zap className="w-3.5 h-3.5 text-amber-500" /> Fast Responder
         </span>
         <span className="px-3 py-1.5 rounded-xl bg-blue-50 text-blue-800 border border-blue-200 flex items-center gap-1">
-          <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" /> JEC Scholar Verified
+          <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" /> Verified College Member
         </span>
       </div>
 

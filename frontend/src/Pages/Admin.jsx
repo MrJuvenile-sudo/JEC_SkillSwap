@@ -70,8 +70,8 @@ export default function Admin() {
   const [reviewsList, setReviewsList] = useState([]);
   const [testimonialsList, setTestimonialsList] = useState([]);
   const [settingsData, setSettingsData] = useState({
-    site_title: "SkillSwap P2P Barter Network",
-    site_tagline: "Zero-Cost 1-on-1 Co-Mentorship & Skill Barter",
+    site_title: "SkillSwap Peer Learning Network",
+    site_tagline: "Free 1-on-1 Learning & Skill Swap",
     support_email: "support@skillswap.com",
     support_phone: "+91 98765-43210",
     announcement_banner: "Welcome to SkillSwap - Swap Skills, Master Coding & Design for Free!",
@@ -85,15 +85,15 @@ export default function Admin() {
     hero_stat1_value: "14,200+",
     hero_stat1_label: "Swaps Completed",
     hero_stat2_value: "99.4%",
-    hero_stat2_label: "Synergy Match Accuracy",
+    hero_stat2_label: "Skill Match Accuracy",
     hero_stat3_value: "4.9 / 5",
     hero_stat3_label: "Average Rating",
-    hero_badge_pill1: "Verified Reciprocal Peer-to-Peer Learning Network",
+    hero_badge_pill1: "Verified 1-on-1 Peer Learning Network",
     hero_badge_pill2: "Live Mutual Skill Matching Active",
     hero_headline_static: "Teach what you know.",
     hero_headline_dynamic_prefix: "Master",
     hero_dynamic_phrases: "what you need next.\nData Structures & Algorithms.\nCloud Computing & AWS.\nSystem Design & DevOps.\nFigma & UI/UX Design.\nPython & Machine Learning.",
-    hero_subtitle: "Trade expertise 1-on-1 with verified practitioners. SkillSwap matches schedule, levels, and mutual topics so you co-learn faster for free.",
+    hero_subtitle: "Share and learn skills 1-on-1 with real people. SkillSwap matches your schedule, level, and topics so you learn faster for free.",
     hero_cta1_text: "Start Swapping",
     hero_cta1_link: "/register",
     hero_cta2_text: "Explore Skills",
@@ -528,7 +528,7 @@ export default function Admin() {
                 </span>
               </div>
               <span className="text-[11px] text-slate-500 font-medium block -mt-0.5">
-                Centralized Governance Console • Global Skill Barter Network
+                Admin Control Console • Global Skill Swap Community
               </span>
             </div>
           </div>
@@ -774,7 +774,7 @@ export default function Admin() {
                     <BookOpen className="w-5 h-5 text-amber-500" />
                   </div>
                   <h3 className="text-3xl font-black text-slate-900">{stats?.totalSkills || 0}</h3>
-                  <p className="text-[11px] text-slate-500 font-medium">Categorized Barter Courses</p>
+                  <p className="text-[11px] text-slate-500 font-medium">Skill Categories & Topics</p>
                 </div>
 
                 <div className="bg-white p-6 rounded-3xl border border-slate-200 space-y-2 shadow-xs relative overflow-hidden">
@@ -1003,7 +1003,7 @@ export default function Admin() {
                     <BookOpen className="w-5 h-5 text-amber-500" />
                     <span>Master Skills Directory Catalog ({filteredSkills.length})</span>
                   </h3>
-                  <p className="text-xs text-slate-500 font-medium">Manage course offerings available for barter across the platform.</p>
+                  <p className="text-xs text-slate-500 font-medium">Manage skills available to learn and teach across the platform.</p>
                 </div>
 
                 <button
@@ -1049,7 +1049,7 @@ export default function Admin() {
 
                       <h4 className="font-extrabold text-slate-900 text-base">{s.name}</h4>
                       <p className="text-xs text-slate-600 font-medium leading-relaxed bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                        {s.description || "Master barter skill track."}
+                        {s.description || "Master skill track."}
                       </p>
                     </div>
 
@@ -1229,7 +1229,7 @@ export default function Admin() {
                         </button>
                       </div>
                       <p className="text-xs text-slate-700 italic bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                        "{rev.comment || "Great reciprocal barter session!"}"
+                        "{rev.comment || "Great 1-on-1 learning session!"}"
                       </p>
                     </div>
                     <div className="text-[11px] text-slate-500 font-bold flex justify-between pt-2 border-t border-slate-100">
@@ -1399,7 +1399,7 @@ export default function Admin() {
                       type="text"
                       value={settingsData.announcement_banner || ""}
                       onChange={(e) => setSettingsData({ ...settingsData, announcement_banner: e.target.value })}
-                      placeholder="e.g. Welcome to SkillSwap P2P Barter Network!"
+                      placeholder="e.g. Welcome to SkillSwap Peer Learning Network!"
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-600 focus:bg-white"
                     />
                   </div>
@@ -1421,7 +1421,7 @@ export default function Admin() {
                           hero_stat1_value: stats?.totalExchanges ? `${stats.totalExchanges}+` : "14,200+",
                           hero_stat1_label: "Swaps Completed",
                           hero_stat2_value: "99.4%",
-                          hero_stat2_label: "Synergy Match Accuracy",
+                          hero_stat2_label: "Skill Match Accuracy",
                           hero_stat3_value: stats?.averageRating ? `${stats.averageRating} / 5` : "4.9 / 5",
                           hero_stat3_label: "Average Rating"
                         }));
@@ -1483,7 +1483,7 @@ export default function Admin() {
                           type="text"
                           value={settingsData.hero_stat2_label || ""}
                           onChange={(e) => setSettingsData({ ...settingsData, hero_stat2_label: e.target.value })}
-                          placeholder="e.g. Synergy Match Accuracy"
+                          placeholder="e.g. Skill Match Accuracy"
                           className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-emerald-600"
                         />
                       </div>
@@ -1525,7 +1525,7 @@ export default function Admin() {
                       </div>
                       <div>
                         <p className="text-base sm:text-lg font-black text-slate-900">{settingsData.hero_stat2_value || "99.4%"}</p>
-                        <p className="text-3xs text-slate-500 font-bold">{settingsData.hero_stat2_label || "Synergy Match Accuracy"}</p>
+                        <p className="text-3xs text-slate-500 font-bold">{settingsData.hero_stat2_label || "Skill Match Accuracy"}</p>
                       </div>
                       <div>
                         <p className="text-base sm:text-lg font-black text-slate-900 flex items-center justify-center gap-1">
@@ -1538,12 +1538,12 @@ export default function Admin() {
                   </div>
                 </div>
 
-                {/* Section 1.6: Hero Section & Live Barter Stage Customization */}
+                {/* Section 1.6: Hero Section & Live Skill Stage Customization */}
                 <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs space-y-6">
                   <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                     <div className="flex items-center gap-2 text-slate-900 font-extrabold text-sm">
                       <Sparkles className="w-4 h-4 text-indigo-600" />
-                      <span>Hero Section & Live Barter Stage Customization</span>
+                      <span>Hero Section & Live Skill Stage Customization</span>
                     </div>
                     <span className="text-3xs font-black uppercase tracking-wider bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-full border border-indigo-100">
                       Live Editable
@@ -1564,7 +1564,7 @@ export default function Admin() {
                           type="text"
                           value={settingsData.hero_badge_pill1 || ""}
                           onChange={(e) => setSettingsData({ ...settingsData, hero_badge_pill1: e.target.value })}
-                          placeholder="e.g. Verified Reciprocal Peer-to-Peer Learning Network"
+                          placeholder="e.g. Verified 1-on-1 Peer Learning Network"
                           className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-600 focus:bg-white"
                         />
                       </div>
@@ -1620,7 +1620,7 @@ export default function Admin() {
                         rows={2}
                         value={settingsData.hero_subtitle || ""}
                         onChange={(e) => setSettingsData({ ...settingsData, hero_subtitle: e.target.value })}
-                        placeholder="Trade expertise 1-on-1 with verified practitioners..."
+                        placeholder="Share and learn skills 1-on-1 with real people..."
                         className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-600 focus:bg-white"
                       />
                     </div>
@@ -1682,7 +1682,7 @@ export default function Admin() {
                     </div>
                   </div>
 
-                  {/* Sub-block B: Live Barter Stage Avatars (Boy & Girl) */}
+                  {/* Sub-block B: Live Stage Avatars (Boy & Girl) */}
                   <div className="pt-4 border-t border-slate-100 space-y-4">
                     <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-violet-500"></span>
@@ -1867,7 +1867,7 @@ export default function Admin() {
                     <div className="flex items-center justify-between">
                       <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                        Live Traveling Skill Badges (4 Barter Pairs)
+                        Live Moving Skill Badges (4 Skill Pairs)
                       </h4>
                       <span className="text-3xs text-slate-400 font-medium">Orbs fly left ↔ right across the central broker</span>
                     </div>
@@ -2213,7 +2213,7 @@ export default function Admin() {
               </div>
 
               <div>
-                <label className="block text-slate-600 mb-1">Skill Barter Traded</label>
+                <label className="block text-slate-600 mb-1">Skills Exchanged</label>
                 <input
                   type="text"
                   value={testimonialForm.skill_traded}

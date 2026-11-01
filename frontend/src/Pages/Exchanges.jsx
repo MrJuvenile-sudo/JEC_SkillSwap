@@ -132,7 +132,7 @@ const SKILL_RESOURCES_MAP = {
     cheatsheet: "SQL Joins (INNER, LEFT, RIGHT), Indexing, Normalization (1NF to 3NF), ACID",
     exercises: [
       "1. Write complex SQL Query joining 3 tables with GROUP BY & HAVING",
-      "2. Design relational schema for an e-commerce barter database",
+      "2. Design database tables for a skill swap app",
       "3. Analyze query performance using EXPLAIN and B-Tree indexes"
     ],
     prompts: "Discuss why foreign key constraints maintain data integrity!"
@@ -142,7 +142,7 @@ const SKILL_RESOURCES_MAP = {
     cheatsheet: "SQL Joins (INNER, LEFT, RIGHT), Indexing, Normalization (1NF to 3NF), ACID",
     exercises: [
       "1. Write complex SQL Query joining 3 tables with GROUP BY & HAVING",
-      "2. Design relational schema for an e-commerce barter database",
+      "2. Design database tables for a skill swap app",
       "3. Analyze query performance using EXPLAIN and B-Tree indexes"
     ],
     prompts: "Discuss why foreign key constraints maintain data integrity!"
@@ -269,7 +269,7 @@ export default function Exchanges() {
       setScheduleDateTime(localIso);
     }
     setScheduleDuration(ex.duration_min ? String(ex.duration_min) : "60");
-    setScheduleAgenda(ex.agenda || `1-on-1 reciprocal skill swap: ${ex.offered_skill_name} ⇄ ${ex.requested_skill_name}`);
+    setScheduleAgenda(ex.agenda || `1-on-1 skill swap: ${ex.offered_skill_name} ⇄ ${ex.requested_skill_name}`);
   };
 
   const handleConfirmSchedule = async (e) => {
@@ -979,7 +979,7 @@ ${ex.meeting_link || "N/A"}
                     <h4 className="font-extrabold text-slate-900 text-base">{skill.name}</h4>
                     
                     <p className="text-xs text-slate-600 leading-relaxed font-medium bg-slate-50 p-3 rounded-2xl border border-slate-150">
-                      {skill.description || "Master skill track for 1-on-1 reciprocal peer exchange."}
+                      {skill.description || "1-on-1 peer skill exchange."}
                     </p>
 
                     <div className="space-y-1 pt-1 text-xs">
@@ -1393,7 +1393,7 @@ ${ex.meeting_link || "N/A"}
                 <div className="space-y-3 bg-slate-50 p-5 rounded-3xl border border-slate-200">
                   <h4 className="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
                     <BookOpen className="w-4 h-4 text-emerald-600" />
-                    <span>Reciprocal Skill Curriculum Kit</span>
+                    <span>Lesson Plan & Study Notes</span>
                   </h4>
 
                   <div className="space-y-2 text-xs">
@@ -1931,7 +1931,7 @@ ${ex.meeting_link || "N/A"}
                   <span className="text-[10px] font-extrabold text-indigo-700 bg-white px-2 py-0.5 rounded-md border border-slate-200 block mb-0.5">
                     {mySkill} ⇄ {partnerSkill}
                   </span>
-                  <span className="text-[9px] text-slate-400 font-bold">1-on-1 Barter</span>
+                  <span className="text-[9px] text-slate-400 font-bold">1-on-1 Swap</span>
                 </div>
               </div>
 

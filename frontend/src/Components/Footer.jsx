@@ -36,7 +36,7 @@ export default function Footer() {
                 Ready to trade skills 1-on-1 for free?
               </h2>
               <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
-                Join thousands of practitioners and lifelong learners worldwide. Teach what you know, master what you need next.
+                Join thousands of students and learners worldwide. Share what you know, learn what you need next.
               </p>
             </div>
 
@@ -80,7 +80,7 @@ export default function Footer() {
               </Link>
 
               <p className="text-xs text-slate-600 leading-relaxed font-normal">
-                Empowering peer-to-peer 1-on-1 reciprocal knowledge exchange. Connect with verified mentors and practitioners to co-learn without financial cost.
+                Empowering 1-on-1 peer learning. Connect with verified mentors and study partners to learn together for free.
               </p>
 
               <div className="pt-2">
@@ -97,7 +97,7 @@ export default function Footer() {
               <ul className="space-y-2.5 text-xs font-bold text-slate-600">
                 <li><Link to="/" onClick={scrollToTop} className="hover:text-blue-600 transition-colors">Home Page</Link></li>
                 <li><Link to="/explore" onClick={scrollToTop} className="hover:text-blue-600 transition-colors">Explore Swappers</Link></li>
-                <li><Link to="/requests" onClick={scrollToTop} className="hover:text-blue-600 transition-colors">Swap Proposals</Link></li>
+                <li><Link to="/requests" onClick={scrollToTop} className="hover:text-blue-600 transition-colors">Swap Requests</Link></li>
                 <li><Link to="/features" onClick={scrollToTop} className="hover:text-blue-600 transition-colors">Platform Features</Link></li>
                 <li><Link to="/how-it-works" onClick={scrollToTop} className="hover:text-blue-600 transition-colors">How It Works</Link></li>
                 <li><Link to="/faq" onClick={scrollToTop} className="hover:text-blue-600 transition-colors">Frequently Asked Questions</Link></li>
@@ -123,12 +123,12 @@ export default function Footer() {
               <ul className="space-y-2.5 text-xs font-medium text-slate-600 mb-4">
                 <li>
                   <Link to="/features" onClick={scrollToTop} className="flex items-center gap-1.5 text-slate-800 font-bold hover:text-blue-600 transition-colors">
-                    <ShieldCheck className="w-4 h-4 text-blue-600" /> Verified Practitioner Badges
+                    <ShieldCheck className="w-4 h-4 text-blue-600" /> Verified Member Badges
                   </Link>
                 </li>
                 <li>
                   <Link to="/how-it-works" onClick={scrollToTop} className="flex items-center gap-1.5 text-slate-800 font-bold hover:text-blue-600 transition-colors">
-                    <Lock className="w-4 h-4 text-amber-500" /> Peer Review & Trust System
+                    <Lock className="w-4 h-4 text-amber-500" /> Peer Reviews & Trust Score
                   </Link>
                 </li>
                 <li>

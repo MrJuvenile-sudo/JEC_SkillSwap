@@ -59,7 +59,7 @@ export default function Home() {
   });
 
   const [heroConfig, setHeroConfig] = useState({
-    pill1_text: "Verified Reciprocal Peer-to-Peer Learning Network",
+    pill1_text: "Verified 1-on-1 Peer Learning Network",
     pill2_text: "Live Mutual Skill Matching Active",
     headline_static: "Teach what you know.",
     headline_dynamic_prefix: "Master",
@@ -71,7 +71,7 @@ export default function Home() {
       "Figma & UI/UX Design.",
       "Python & Machine Learning."
     ],
-    subtitle: "Trade expertise 1-on-1 with verified practitioners. SkillSwap matches schedule, levels, and mutual topics so you co-learn faster for free.",
+    subtitle: "Share and learn skills 1-on-1 with real people. SkillSwap matches your schedule, level, and topics so you learn faster for free.",
     cta1_text: "Start Swapping",
     cta1_link: "/register",
     cta2_text: "Explore Skills",
@@ -234,9 +234,9 @@ export default function Home() {
     },
     {
       icon: UserCheck,
-      title: "Real 1-on-1 Practitioner Mentorship",
+      title: "Real 1-on-1 Peer Mentoring",
       color: "from-blue-500 to-indigo-600",
-      desc: "Get direct, real-time feedback from active practitioners working in tech, design, and business."
+      desc: "Get direct, real-time guidance from experienced peers learning and working in tech, design, and business."
     },
     {
       icon: Target,
@@ -334,15 +334,15 @@ export default function Home() {
   const homeFaqs = [
     {
       q: "What is SkillSwap?",
-      a: "SkillSwap is a peer-to-peer reciprocal knowledge exchange platform. Instead of paying money or purchasing subscription courses, users trade expertise 1-on-1 (e.g. you teach React.js to a peer, and they teach you Spanish in return)."
+      a: "SkillSwap is a free 1-on-1 skill exchange community. Instead of paying money or buying expensive courses, you learn directly from others by sharing your own skills (for example, you help someone learn React, and they teach you Spanish in return)."
     },
     {
       q: "Is SkillSwap really 100% free?",
-      a: "Yes! Zero fees forever. There are no subscription tiers, hidden token fees, or credit card requirements. You invest your time and knowledge to learn from other practitioners."
+      a: "Yes! SkillSwap is completely free forever. There are no subscription fees, hidden charges, or credit card requirements. You simply share your time and skills to learn from others."
     },
     {
       q: "How does Mutual Skill Matching work?",
-      a: "Our algorithm compares your listed offered skills (skills you can teach) and wanted skills (topics you want to learn) with thousands of active profiles. It prioritizes '2-Way Matches' where two users complementary complement each other's learning goals."
+      a: "We match what you want to teach with what someone else wants to learn, and vice versa. When two people match each other's learning goals, you get a 'Perfect 2-Way Match' so both of you can help each other."
     }
   ];
 

@@ -88,7 +88,7 @@ export default function Dashboard() {
 
             return {
               ...ex,
-              partnerName: partnerName || "Barter Partner",
+              partnerName: partnerName || "Learning Partner",
               partnerPic,
               partnerRole,
               offeredSkill: offeredSkill || "General Skill",
@@ -311,7 +311,7 @@ export default function Dashboard() {
               <Sparkles className="w-5 h-5 text-indigo-600" />
               Recommended Swappers For You
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5 font-medium">Top reciprocal matches based on your skill profile</p>
+            <p className="text-xs text-slate-500 mt-0.5 font-medium">Top skill matches based on your profile</p>
           </div>
           <Link to="/explore" className="text-xs font-black text-indigo-600 hover:underline flex items-center gap-1">
             Browse Directory <ArrowRight className="w-3.5 h-3.5" />
@@ -340,7 +340,7 @@ export default function Dashboard() {
 
                 <div className="text-[11px] text-slate-600 space-y-1 bg-white p-3 rounded-xl border border-slate-100">
                   <p><strong className="text-emerald-700">Teaches:</strong> {m.offered_skills?.map(s => s.skill_name).join(", ") || "Technical Track"}</p>
-                  <p><strong className="text-indigo-700">Learns:</strong> {m.wanted_skills?.map(s => s.skill_name).join(", ") || "General Barter"}</p>
+                  <p><strong className="text-indigo-700">Learns:</strong> {m.wanted_skills?.map(s => s.skill_name).join(", ") || "General Skills"}</p>
                 </div>
 
                 <Link

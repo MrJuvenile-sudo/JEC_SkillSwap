@@ -70,7 +70,7 @@ export default function Login() {
 
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-emerald-300 border border-emerald-400/20 text-xs font-extrabold backdrop-blur-xs">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>100% Free Barter</span>
+            <span>100% Free Skill Swap</span>
           </span>
         </div>
 
@@ -120,7 +120,7 @@ export default function Login() {
                 <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 text-white flex items-center justify-center shadow-md animate-pulse">
                   <Repeat className="w-4 h-4" />
                 </div>
-                <span className="text-[9px] uppercase font-black text-amber-300 mt-1">1:1 Barter</span>
+                <span className="text-[9px] uppercase font-black text-amber-300 mt-1">1:1 Swap</span>
               </div>
 
               {/* Right Learner: Girl (Design) */}
@@ -150,7 +150,7 @@ export default function Login() {
             <div className="grid grid-cols-3 gap-2 pt-4 mt-3 border-t border-white/10 text-center text-[10px] font-bold">
               <div className="p-2 rounded-xl bg-white/5 border border-white/10">
                 <span className="block text-amber-300 font-black">Zero Fees</span>
-                <span className="text-slate-400">Pure Barter</span>
+                <span className="text-slate-400">Free Exchange</span>
               </div>
               <div className="p-2 rounded-xl bg-white/5 border border-white/10">
                 <span className="block text-emerald-300 font-black">HD Video</span>
@@ -218,7 +218,7 @@ export default function Login() {
             </div>
 
             <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-extrabold">
-              Free Barter
+              Free Swap
             </span>
           </div>
 
