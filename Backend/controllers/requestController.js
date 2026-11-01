@@ -44,6 +44,7 @@ exports.createRequest = async (req, res) => {
       success: true,
       message: "Swap request sent successfully!",
       requestId: result.insertId,
+      request: { id: result.insertId },
     });
   } catch (error) {
     console.error("CreateRequest Error:", error);

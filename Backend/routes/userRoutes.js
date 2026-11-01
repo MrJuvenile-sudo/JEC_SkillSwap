@@ -3,6 +3,10 @@ const router = express.Router();
 const userController = require("../controllers/userController");
 const authMiddleware = require("../middleware/authMiddleware");
 
+router.get("/profile", authMiddleware, (req, res, next) => {
+  req.params.id = req.user.id;
+  userController.getProfile(req, res, next);
+});
 router.get("/profile/:id", userController.getProfile);
 router.get("/karma-stats", authMiddleware, userController.getKarmaStats);
 router.put("/profile", authMiddleware, userController.updateProfile);

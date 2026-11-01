@@ -1,8 +1,13 @@
 import axios from "axios";
 
 const getBaseUrl = () => {
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
+  let envUrl = import.meta.env.VITE_API_URL;
+  if (envUrl && typeof envUrl === "string") {
+    envUrl = envUrl.trim().replace(/\/+$/, "");
+    if (!envUrl.endsWith("/api")) {
+      envUrl = `${envUrl}/api`;
+    }
+    return envUrl;
   }
   if (typeof window !== "undefined") {
     if (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
