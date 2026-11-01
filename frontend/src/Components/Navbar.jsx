@@ -223,13 +223,14 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* 2. NATIVE MOBILE BOTTOM NAVIGATION DOCK (Clean, Functional 5-Tab Bar) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-slate-200/90 shadow-2xl py-2 px-2 flex items-center justify-around text-[10px] font-extrabold text-slate-600">
+      {/* 2. NATIVE MOBILE BOTTOM NAVIGATION DOCK (Clean, Functional 5-Tab Bar - Standard Height 64px) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-slate-200/90 shadow-2xl h-16 px-1 flex items-center justify-around text-[10px] font-extrabold text-slate-600 pb-[env(safe-area-inset-bottom,0px)]">
         {!isAuthenticated ? (
           <>
             <Link 
               to="/" 
-              className={`flex flex-col items-center gap-1 transition-colors ${isActive('/') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              className={`flex-1 flex flex-col items-center justify-center h-full gap-0.5 transition-all active:scale-95 ${isActive('/') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              aria-current={isActive('/') ? 'page' : undefined}
             >
               <HomeIcon className="w-5 h-5" />
               <span>Home</span>
@@ -237,7 +238,8 @@ export default function Navbar() {
 
             <Link 
               to="/explore" 
-              className={`flex flex-col items-center gap-1 transition-colors ${isActive('/explore') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              className={`flex-1 flex flex-col items-center justify-center h-full gap-0.5 transition-all active:scale-95 ${isActive('/explore') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              aria-current={isActive('/explore') ? 'page' : undefined}
             >
               <Compass className="w-5 h-5" />
               <span>Explore</span>
@@ -245,7 +247,8 @@ export default function Navbar() {
 
             <Link 
               to="/how-it-works" 
-              className={`flex flex-col items-center gap-1 transition-colors ${isActive('/how-it-works') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              className={`flex-1 flex flex-col items-center justify-center h-full gap-0.5 transition-all active:scale-95 ${isActive('/how-it-works') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              aria-current={isActive('/how-it-works') ? 'page' : undefined}
             >
               <BookOpen className="w-5 h-5" />
               <span>How It Works</span>
@@ -253,7 +256,8 @@ export default function Navbar() {
 
             <Link 
               to="/features" 
-              className={`flex flex-col items-center gap-1 transition-colors ${isActive('/features') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              className={`flex-1 flex flex-col items-center justify-center h-full gap-0.5 transition-all active:scale-95 ${isActive('/features') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              aria-current={isActive('/features') ? 'page' : undefined}
             >
               <Zap className="w-5 h-5" />
               <span>Features</span>
@@ -261,7 +265,8 @@ export default function Navbar() {
 
             <Link 
               to="/login" 
-              className={`flex flex-col items-center gap-1 transition-colors ${isActive('/login') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              className={`flex-1 flex flex-col items-center justify-center h-full gap-0.5 transition-all active:scale-95 ${isActive('/login') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              aria-current={isActive('/login') ? 'page' : undefined}
             >
               <User className="w-5 h-5" />
               <span>Log In</span>
@@ -271,7 +276,8 @@ export default function Navbar() {
           <>
             <Link 
               to="/dashboard" 
-              className={`flex flex-col items-center gap-1 transition-colors ${isActive('/dashboard') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              className={`flex-1 flex flex-col items-center justify-center h-full gap-0.5 transition-all active:scale-95 ${isActive('/dashboard') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              aria-current={isActive('/dashboard') ? 'page' : undefined}
             >
               <LayoutDashboard className="w-5 h-5" />
               <span>Dashboard</span>
@@ -279,7 +285,8 @@ export default function Navbar() {
 
             <Link 
               to="/explore" 
-              className={`flex flex-col items-center gap-1 transition-colors ${isActive('/explore') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              className={`flex-1 flex flex-col items-center justify-center h-full gap-0.5 transition-all active:scale-95 ${isActive('/explore') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              aria-current={isActive('/explore') ? 'page' : undefined}
             >
               <Compass className="w-5 h-5" />
               <span>Explore</span>
@@ -287,7 +294,8 @@ export default function Navbar() {
 
             <Link 
               to="/requests" 
-              className={`flex flex-col items-center gap-1 transition-colors ${isActive('/requests') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              className={`flex-1 flex flex-col items-center justify-center h-full gap-0.5 transition-all active:scale-95 ${isActive('/requests') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              aria-current={isActive('/requests') ? 'page' : undefined}
             >
               <Repeat className="w-5 h-5" />
               <span>Swaps</span>
@@ -295,7 +303,8 @@ export default function Navbar() {
 
             <Link 
               to="/exchanges" 
-              className={`flex flex-col items-center gap-1 transition-colors ${isActive('/exchanges') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              className={`flex-1 flex flex-col items-center justify-center h-full gap-0.5 transition-all active:scale-95 ${isActive('/exchanges') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              aria-current={isActive('/exchanges') ? 'page' : undefined}
             >
               <Video className="w-5 h-5" />
               <span>Sessions</span>
@@ -303,7 +312,8 @@ export default function Navbar() {
 
             <Link 
               to="/profile" 
-              className={`flex flex-col items-center gap-1 transition-colors ${isActive('/profile') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              className={`flex-1 flex flex-col items-center justify-center h-full gap-0.5 transition-all active:scale-95 ${isActive('/profile') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
+              aria-current={isActive('/profile') ? 'page' : undefined}
             >
               {user?.profile_picture ? (
                 <img 
