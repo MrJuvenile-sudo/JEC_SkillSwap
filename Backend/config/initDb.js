@@ -281,6 +281,22 @@ async function initDb() {
       );
     `);
 
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS notifications (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        sender_id INT NULL,
+        type VARCHAR(50) NOT NULL DEFAULT 'message',
+        title VARCHAR(255) NOT NULL,
+        message TEXT NOT NULL,
+        link VARCHAR(255) NULL,
+        is_read BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_notif_user_read (user_id, is_read),
+        INDEX idx_notif_user_created (user_id, created_at)
+      );
+    `);
+
     // Seed default master skills (including Top IT & MCA Core Courses)
     const seedSkills = [
       ['React.js Frontend Development', 'Technology & Programming', 'Building modern single-page web applications with React'],

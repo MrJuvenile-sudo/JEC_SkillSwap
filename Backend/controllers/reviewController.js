@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const { createNotification } = require("../utils/notificationService");
 
 // Submit a review for an exchange
 exports.createReview = async (req, res) => {
@@ -63,6 +64,16 @@ exports.createReview = async (req, res) => {
        VALUES (?, ?, ?, ?, ?)`,
       [exchange_id, reviewerId, revieweeId, rating, comment || "Great skill exchange!"]
     );
+
+    // Notify reviewee
+    createNotification({
+      userId: revieweeId,
+      senderId: reviewerId,
+      type: "review",
+      title: "New Review Received ⭐",
+      message: `${req.user.name || "Your partner"} left you a ${rating}-star review: "${comment || "Great skill exchange!"}"`,
+      link: "/profile"
+    }).catch(e => console.warn("Notif error:", e.message));
 
     res.status(201).json({
       success: true,

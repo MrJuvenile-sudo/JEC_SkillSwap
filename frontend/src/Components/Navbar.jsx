@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import NotificationDropdown from "./NotificationDropdown";
 import { 
   Repeat, 
   Search, 
@@ -166,6 +167,9 @@ export default function Navbar() {
 
             {/* Right Auth Action Group & Mobile Menu Button */}
             <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+              {isAuthenticated && (
+                <NotificationDropdown />
+              )}
               {isAuthenticated ? (
                 <div className="flex items-center gap-2">
                   <Link 

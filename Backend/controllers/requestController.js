@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const { createNotification } = require("../utils/notificationService");
 
 // Create swap request
 exports.createRequest = async (req, res) => {
@@ -39,6 +40,16 @@ exports.createRequest = async (req, res) => {
        VALUES (?, ?, ?, ?, ?)`,
       [requester_id, receiver_id, offered_skill_id, requested_skill_id, message || "Hi! I would love to exchange skills with you."]
     );
+
+    // Notify receiver
+    createNotification({
+      userId: receiver_id,
+      senderId: requester_id,
+      type: "swap_request",
+      title: "New Swap Request",
+      message: `${req.user.name || "A learner"} sent you a 1-on-1 swap request!`,
+      link: "/requests"
+    }).catch(e => console.warn("Notif error:", e.message));
 
     res.status(201).json({
       success: true,
@@ -140,6 +151,27 @@ exports.updateRequestStatus = async (req, res) => {
           [id, defaultMeeting]
         );
       }
+    }
+
+    // Notify the other party about acceptance or rejection
+    if (status === 'accepted') {
+      createNotification({
+        userId: request.requester_id,
+        senderId: userId,
+        type: "swap_accepted",
+        title: "Swap Request Accepted! 🎉",
+        message: `${req.user.name || "Your partner"} accepted your swap request! Your 1-on-1 session is ready.`,
+        link: "/exchanges"
+      }).catch(e => console.warn("Notif error:", e.message));
+    } else if (status === 'rejected') {
+      createNotification({
+        userId: request.requester_id,
+        senderId: userId,
+        type: "swap_declined",
+        title: "Swap Request Declined",
+        message: `${req.user.name || "Your partner"} was unable to accept your swap request at this time.`,
+        link: "/requests"
+      }).catch(e => console.warn("Notif error:", e.message));
     }
 
     res.json({

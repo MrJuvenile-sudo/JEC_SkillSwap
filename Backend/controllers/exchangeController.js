@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const { createNotification } = require("../utils/notificationService");
 
 // Get all exchanges for current user
 exports.getExchanges = async (req, res) => {
@@ -108,6 +109,41 @@ exports.updateExchange = async (req, res) => {
        WHERE id = ?`,
       [meeting_link, formattedScheduledAt, notes, status, chat_history, shared_resources, duration_min, agenda, id]
     );
+
+    // Trigger Notification for Recipient
+    const recipientId = (ex.requester_id === userId) ? ex.receiver_id : ex.requester_id;
+    const senderName = req.user.name || "Your partner";
+
+    if (chat_history) {
+      try {
+        const chatArray = typeof chat_history === "string" ? JSON.parse(chat_history) : chat_history;
+        if (Array.isArray(chatArray) && chatArray.length > 0) {
+          const latestMsg = chatArray[chatArray.length - 1];
+          if (latestMsg && (latestMsg.senderId === userId || latestMsg.isReceived === false)) {
+            const preview = latestMsg.text || (latestMsg.sticker ? `${latestMsg.sticker.emoji} Sticker` : "Sent a message");
+            createNotification({
+              userId: recipientId,
+              senderId: userId,
+              type: "message",
+              title: `Message from ${senderName}`,
+              message: preview,
+              link: "/exchanges"
+            }).catch(e => console.warn("Notif error:", e.message));
+          }
+        }
+      } catch (parseErr) {}
+    }
+
+    if (meeting_link && meeting_link !== ex.meeting_link) {
+      createNotification({
+        userId: recipientId,
+        senderId: userId,
+        type: "session_scheduled",
+        title: "Session Meeting Link Updated",
+        message: `${senderName} added a video call meeting link for your 1-on-1 session.`,
+        link: "/exchanges"
+      }).catch(e => console.warn("Notif error:", e.message));
+    }
 
     res.json({
       success: true,

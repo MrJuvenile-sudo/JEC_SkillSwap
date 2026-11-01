@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { NotificationProvider } from "./context/NotificationContext";
+import NotificationToast from "./Components/NotificationToast";
 
 import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
@@ -165,8 +167,11 @@ export default function App() {
     <Router>
       <ScrollToTop />
       <AuthProvider>
-        {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
-        <AppRoutes />
+        <NotificationProvider>
+          {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
+          <NotificationToast />
+          <AppRoutes />
+        </NotificationProvider>
       </AuthProvider>
     </Router>
   );

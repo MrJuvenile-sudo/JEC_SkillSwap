@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const { createNotification } = require("../utils/notificationService");
 
 // Google Meet URL Validator
 function isValidGoogleMeetUrl(url) {
@@ -467,6 +468,16 @@ exports.registerForSeat = async (req, res) => {
         [sessionId, userId]
       );
     }
+
+    // Notify host
+    createNotification({
+      userId: session.host_id,
+      senderId: userId,
+      type: "live_class",
+      title: "New Live Class Registration 🎓",
+      message: `${req.user.name || "A learner"} registered for your live class: "${session.title}"`,
+      link: "/live"
+    }).catch(e => console.warn("Notif error:", e.message));
 
     return res.json({
       success: true,

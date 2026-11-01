@@ -16,6 +16,7 @@ const reviewRoutes = require("./routes/reviewRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
 const liveSessionRoutes = require("./routes/liveSessionRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 const liveSessionController = require("./controllers/liveSessionController");
 const authMiddleware = require("./middleware/authMiddleware");
 
@@ -62,6 +63,7 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/live-sessions", liveSessionRoutes);
+app.use("/api/notifications", notificationRoutes);
 app.get("/api/my/live-sessions", authMiddleware, liveSessionController.getMySessions);
 
 // Global Error Handler Middleware
