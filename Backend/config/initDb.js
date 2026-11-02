@@ -202,6 +202,8 @@ async function initDb() {
 
     await ensureColumn(pool, "exchanges", "chat_history", "LONGTEXT");
     await ensureColumn(pool, "exchanges", "shared_resources", "LONGTEXT");
+    await ensureColumn(pool, "exchanges", "created_at", "TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+    await ensureColumn(pool, "exchanges", "updated_at", "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
 
     // Auto-create missing exchange session rooms for all swap requests
     try {
