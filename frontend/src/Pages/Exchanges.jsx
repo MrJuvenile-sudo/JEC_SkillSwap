@@ -48,11 +48,14 @@ import {
   X,
   Grid,
   ListFilter,
-  Compass
+  Compass,
+  CheckCheck,
+  ArrowLeft
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { get3DAvatarUrl } from "../utils/avatarUtils";
 import { Link, useLocation } from "react-router-dom";
+import { notifyWithSoundAndVibration } from "../utils/soundUtils";
 
 // SkillSwap Learning Stickers
 const STICKERS_LIST = [
@@ -241,7 +244,10 @@ export default function Exchanges({ initialTab = "active_grid", openChatInitiall
   const [editingExchange, setEditingExchange] = useState(null);
   const [selectedRoomModal, setSelectedRoomModal] = useState(null); // Full classroom modal view
   const [activeChatExchange, setActiveChatExchange] = useState(null);
-  const [isChatFullScreen, setIsChatFullScreen] = useState(false); // Full screen SkillSwap Chat view
+  const [isChatFullScreen, setIsChatFullScreen] = useState(false);
+  const [isMobileConversationsOpen, setIsMobileConversationsOpen] = useState(false);
+  const hasAutoOpenedRef = useRef(false);
+  const chatBottomRef = useRef(null); // Full screen SkillSwap Chat view
 
   const [editMeetingLink, setEditMeetingLink] = useState("");
   const [editNotes, setEditNotes] = useState("");
@@ -386,7 +392,12 @@ export default function Exchanges({ initialTab = "active_grid", openChatInitiall
 
       if (exRes.data && exRes.data.success) {
         const fetchedExchanges = exRes.data.exchanges || [];
-        setExchanges(fetchedExchanges);
+        setExchanges((prev) => {
+          if (prev.length === fetchedExchanges.length && JSON.stringify(prev) === JSON.stringify(fetchedExchanges)) {
+            return prev;
+          }
+          return fetchedExchanges;
+        });
 
         // Derive Real Connected Swappers from user's active exchanges & swap requests
         const swapperMap = new Map();
@@ -412,13 +423,23 @@ export default function Exchanges({ initialTab = "active_grid", openChatInitiall
             });
           }
         });
-        setConnectedSwappers(Array.from(swapperMap.values()));
+        const newSwappers = Array.from(swapperMap.values());
+        setConnectedSwappers((prev) => {
+          if (prev.length === newSwappers.length && JSON.stringify(prev) === JSON.stringify(newSwappers)) {
+            return prev;
+          }
+          return newSwappers;
+        });
 
-        // Update chat history from database
+        // Update chat history from database safely
         const chatsObj = {};
         fetchedExchanges.forEach(ex => {
           try {
-            const parsedChat = ex.chat_history ? JSON.parse(ex.chat_history) : [];
+            const parsedChat = Array.isArray(ex.chat_history)
+              ? ex.chat_history
+              : (typeof ex.chat_history === "string" && ex.chat_history.trim()
+                  ? JSON.parse(ex.chat_history)
+                  : []);
             chatsObj[ex.id] = parsedChat.length > 0 ? parsedChat : [
               {
                 id: 1,
@@ -433,7 +454,19 @@ export default function Exchanges({ initialTab = "active_grid", openChatInitiall
             chatsObj[ex.id] = [];
           }
         });
-        setChatMessages(prev => ({ ...prev, ...chatsObj }));
+
+        setChatMessages((prev) => {
+          let hasChanged = false;
+          const next = { ...prev };
+          for (const [key, msgs] of Object.entries(chatsObj)) {
+            const existing = prev[key] || [];
+            if (existing.length !== msgs.length || JSON.stringify(existing) !== JSON.stringify(msgs)) {
+              next[key] = msgs;
+              hasChanged = true;
+            }
+          }
+          return hasChanged ? next : prev;
+        });
       }
     } catch (err) {
       console.error("Error fetching exchanges data:", err);
@@ -462,8 +495,9 @@ export default function Exchanges({ initialTab = "active_grid", openChatInitiall
     return () => clearInterval(pollInterval);
   }, []);
 
-  // Auto-open SkillSwap Chat if navigated with openChat or openChatId
+  // Auto-open SkillSwap Chat if navigated with openChat or openChatId (Runs ONCE on navigation)
   useEffect(() => {
+    if (hasAutoOpenedRef.current) return;
     if (exchanges.length > 0 && (location.state?.openChat || location.state?.openChatId || location.state?.requestId || openChatInitially)) {
       const targetId = location.state?.openChatId || location.state?.requestId;
       let targetEx = null;
@@ -481,13 +515,29 @@ export default function Exchanges({ initialTab = "active_grid", openChatInitiall
                    exchanges[0];
       }
       if (targetEx) {
+        hasAutoOpenedRef.current = true;
         setActiveChatExchange(targetEx);
         setActiveTab("active_grid");
       }
     }
   }, [location.state, exchanges, openChatInitially]);
 
-    // Message polling every 2.5 seconds for active chat exchange
+  const prevChatExIdRef = useRef(null);
+  const prevChatLenRef = useRef(0);
+  const activeChatLength = (chatMessages[activeChatExchange?.id] || []).length;
+
+  // Auto-scroll to bottom smoothly ONLY on room change or new message arrival
+  useEffect(() => {
+    if (activeChatExchange) {
+      if (activeChatExchange.id !== prevChatExIdRef.current || activeChatLength !== prevChatLenRef.current) {
+        prevChatExIdRef.current = activeChatExchange.id;
+        prevChatLenRef.current = activeChatLength;
+        chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [activeChatExchange?.id, activeChatLength]);
+
+  // Message polling every 2.5 seconds for active chat exchange with audio chime
   useEffect(() => {
     if (!activeChatExchange) return;
     const pollId = activeChatExchange.id;
@@ -495,10 +545,16 @@ export default function Exchanges({ initialTab = "active_grid", openChatInitiall
       try {
         const res = await API.get(`/exchanges/${pollId}/messages`);
         if (res.data?.success && Array.isArray(res.data.messages)) {
+          const incoming = res.data.messages;
           setChatMessages((prev) => {
             const existing = prev[pollId] || [];
-            const incoming = res.data.messages;
             if (incoming.length !== existing.length || JSON.stringify(incoming) !== JSON.stringify(existing)) {
+              if (incoming.length > existing.length) {
+                const latest = incoming[incoming.length - 1];
+                if (latest && Number(latest.senderId || latest.sender_id) !== Number(currentUser?.id)) {
+                  notifyWithSoundAndVibration();
+                }
+              }
               return { ...prev, [pollId]: incoming };
             }
             return prev;
@@ -507,7 +563,7 @@ export default function Exchanges({ initialTab = "active_grid", openChatInitiall
       } catch (e) {}
     }, 2500);
     return () => clearInterval(pollTimer);
-  }, [activeChatExchange]);
+  }, [activeChatExchange, currentUser?.id]);
 
   // Timer Countdown Effect
   useEffect(() => {
@@ -1613,7 +1669,7 @@ ${ex.meeting_link || "N/A"}
             <div className={`bg-[#111b21] flex shadow-2xl border border-slate-800 overflow-hidden text-white font-sans ${isChatFullScreen ? "w-full h-full rounded-none" : "rounded-3xl max-w-6xl w-full h-[92vh]"}`}>
               
               {/* Left Column: Sidebar (Active Swapper Conversations) */}
-              <div className="w-80 sm:w-96 bg-[#111b21] border-r border-slate-800 flex flex-col shrink-0 hidden md:flex">
+              <div className={`w-full md:w-80 lg:w-96 bg-[#111b21] border-r border-slate-800 flex flex-col shrink-0 ${isMobileConversationsOpen ? "flex" : "hidden md:flex"}`}>
                 {/* Sidebar Header */}
                 <div className="p-4 bg-[#202c33] flex items-center justify-between border-b border-slate-800">
                   <div className="flex items-center gap-3">
@@ -1629,9 +1685,18 @@ ${ex.meeting_link || "N/A"}
                       </span>
                     </div>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full text-[10px] bg-emerald-500/20 text-emerald-300 font-extrabold border border-emerald-500/30">
-                    SkillSwap Chat
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-1 rounded-full text-[10px] bg-emerald-500/20 text-emerald-300 font-extrabold border border-emerald-500/30">
+                      SkillSwap Chat
+                    </span>
+                    <button
+                      onClick={() => setIsMobileConversationsOpen(false)}
+                      className="p-1.5 text-slate-400 hover:text-white md:hidden cursor-pointer"
+                      title="Back to conversation"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Sidebar Search Bar */}
@@ -1660,7 +1725,10 @@ ${ex.meeting_link || "N/A"}
                     return (
                       <div
                         key={ex.id}
-                        onClick={() => setActiveChatExchange(ex)}
+                        onClick={() => {
+                          setActiveChatExchange(ex);
+                          setIsMobileConversationsOpen(false);
+                        }}
                         className={`p-3.5 flex items-center gap-3 cursor-pointer transition-colors ${
                           isSelected ? "bg-[#2a3942]" : "hover:bg-[#202c33]"
                         }`}
@@ -1691,28 +1759,37 @@ ${ex.meeting_link || "N/A"}
               </div>
 
               {/* Right Column: Main Chat Window */}
-              <div className="flex-1 flex flex-col bg-[#0b141a] min-w-0">
+              <div className={`flex-1 flex flex-col bg-[#0b141a] min-w-0 ${isMobileConversationsOpen ? "hidden md:flex" : "flex"}`}>
                 
                 {/* Top Header Bar */}
-                <div className="bg-[#202c33] px-4 sm:px-6 py-3.5 border-b border-slate-800 flex items-center justify-between shrink-0">
-                  <div className="flex items-center gap-3.5 min-w-0">
+                <div className="bg-[#202c33] px-3 sm:px-6 py-3 border-b border-slate-800 flex items-center justify-between shrink-0">
+                  <div className="flex items-center gap-2 sm:gap-3.5 min-w-0">
+                    <button
+                      onClick={() => setIsMobileConversationsOpen(true)}
+                      className="p-1.5 px-2.5 rounded-xl bg-[#2a3942] hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1 md:hidden shrink-0 cursor-pointer shadow-2xs"
+                      title="View all swappers"
+                    >
+                      <ArrowLeft className="w-4 h-4 text-emerald-400" />
+                      <span className="text-[11px]">Chats</span>
+                    </button>
+
                     <div className="relative shrink-0">
                       <img
                         src={partnerPic || get3DAvatarUrl("other", partnerName)}
                         alt={partnerName}
-                        className="w-11 h-11 rounded-2xl object-cover ring-2 ring-emerald-500/40"
+                        className="w-9 h-9 sm:w-11 sm:h-11 rounded-2xl object-cover ring-2 ring-emerald-500/40"
                       />
-                      <span className="w-3 h-3 bg-emerald-500 rounded-full absolute -bottom-0.5 -right-0.5 ring-2 ring-[#202c33]"></span>
+                      <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-emerald-500 rounded-full absolute -bottom-0.5 -right-0.5 ring-2 ring-[#202c33]"></span>
                     </div>
 
                     <div className="min-w-0">
-                      <h3 className="text-sm sm:text-base font-extrabold text-white flex items-center gap-2 truncate">
+                      <h3 className="text-xs sm:text-base font-extrabold text-white flex items-center gap-1.5 truncate">
                         <span className="truncate">{partnerName}</span>
-                        <span className="px-2 py-0.5 rounded-full text-[9px] bg-emerald-500/20 text-emerald-400 font-extrabold border border-emerald-500/30 shrink-0">
+                        <span className="px-1.5 py-0.2 rounded-full text-[8px] sm:text-[9px] bg-emerald-500/20 text-emerald-400 font-extrabold border border-emerald-500/30 shrink-0">
                           Online
                         </span>
                       </h3>
-                      <p className="text-[11px] text-slate-300 font-medium truncate">
+                      <p className="text-[10px] sm:text-[11px] text-slate-300 font-medium truncate">
                         Teaching: <strong className="text-emerald-400">{mySkill}</strong> • Learning: <strong className="text-indigo-400">{partnerSkill}</strong>
                       </p>
                     </div>
@@ -1771,8 +1848,9 @@ ${ex.meeting_link || "N/A"}
                 {/* Messages Stream Canvas */}
                 <div className="flex-1 bg-[#0b141a] p-4 sm:p-6 overflow-y-auto space-y-4 font-sans">
                   {currentChat.length > 0 ? (
-                    currentChat.map((msg) => {
-                      const isMe = msg.senderId === currentUser?.id || msg.sender === currentUser?.name;
+                    <>
+                      {currentChat.map((msg) => {
+                      const isMe = Number(msg.senderId || msg.sender_id) === Number(currentUser?.id) || msg.sender === currentUser?.name || msg.sender === "You" || msg.isReceived === false;
                       return (
                         <div key={msg.id} className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
                           <div className={`max-w-[85%] sm:max-w-[70%] rounded-2xl px-4 py-2.5 text-xs sm:text-sm space-y-1.5 shadow-md ${
@@ -1791,12 +1869,23 @@ ${ex.meeting_link || "N/A"}
                             )}
 
                             {msg.text && <p className="leading-relaxed font-normal whitespace-pre-wrap">{renderMessageText(msg.text)}</p>}
-                            <span className="text-[10px] opacity-60 text-right block pt-1">{msg.time}</span>
+                            <div className="flex items-center justify-end gap-1 pt-1 text-[10px] opacity-75">
+                              <span>{msg.time}</span>
+                              {isMe && (
+                                msg.status === "sending" ? (
+                                  <Clock className="w-3 h-3 text-slate-300 inline animate-spin" />
+                                ) : (
+                                  <CheckCheck className="w-3.5 h-3.5 text-emerald-300 inline" title="Delivered & Read" />
+                                )
+                              )}
+                            </div>
                           </div>
                         </div>
                       );
-                    })
-                  ) : (
+                    })}
+                    <div ref={chatBottomRef} />
+                  </>
+                ) : (
                     <div className="h-full flex flex-col items-center justify-center text-slate-500 space-y-3">
                       <MessageSquare className="w-12 h-12 text-slate-700" />
                       <p className="text-xs font-bold text-slate-400">Welcome to SkillSwap Chat!</p>
@@ -1833,24 +1922,34 @@ ${ex.meeting_link || "N/A"}
                     <Smile className="w-6 h-6" />
                   </button>
 
-                  <input
-                    type="text"
-                    value={inputMsg}
-                    onChange={(e) => setInputMsg(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleSendMessage(activeChatExchange.id, inputMsg);
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleSendMessage(activeChatExchange.id, inputMsg);
                     }}
-                    placeholder={`Type a message to ${partnerName}...`}
-                    className="flex-1 bg-[#111b21] border border-slate-700 rounded-2xl px-5 py-3 text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
-                  />
-
-                  <button
-                    onClick={() => handleSendMessage(activeChatExchange.id, inputMsg)}
-                    className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black text-xs sm:text-sm rounded-2xl transition-all flex items-center gap-2 shadow-lg shadow-emerald-600/25 shrink-0 hover:scale-105"
+                    className="flex-1 flex items-center gap-2 sm:gap-3"
                   >
-                    <span>Send</span>
-                    <Send className="w-4 h-4" />
-                  </button>
+                    <input
+                      type="text"
+                      value={inputMsg}
+                      onChange={(e) => setInputMsg(e.target.value)}
+                      placeholder={`Type a message to ${partnerName}...`}
+                      className="flex-1 bg-[#111b21] border border-slate-700 rounded-2xl px-4 sm:px-5 py-2.5 sm:py-3 text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium shadow-2xs"
+                    />
+
+                    <button
+                      type="submit"
+                      disabled={!inputMsg.trim()}
+                      className={`px-4 sm:px-6 py-2.5 sm:py-3 font-black text-xs sm:text-sm rounded-2xl transition-all flex items-center gap-2 shadow-lg shrink-0 ${
+                        inputMsg.trim()
+                          ? "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-emerald-600/25 cursor-pointer hover:scale-105"
+                          : "bg-slate-800 text-slate-500 cursor-not-allowed"
+                      }`}
+                    >
+                      <span className="hidden sm:inline">Send</span>
+                      <Send className="w-4 h-4" />
+                    </button>
+                  </form>
                 </div>
 
               </div>

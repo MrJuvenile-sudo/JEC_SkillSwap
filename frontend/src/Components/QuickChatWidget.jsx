@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import API from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { get3DAvatarUrl } from "../utils/avatarUtils";
+import { notifyWithSoundAndVibration } from "../utils/soundUtils";
 
 // Helper to render clickable URLs in message text
 function renderMessageText(text) {
@@ -110,6 +111,12 @@ export default function QuickChatWidget() {
             }
 
             if (merged.length !== currentList.length || JSON.stringify(merged) !== JSON.stringify(currentList)) {
+              if (merged.length > currentList.length) {
+                const latest = merged[merged.length - 1];
+                if (latest && Number(latest.senderId || latest.sender_id) !== Number(currentUser?.id)) {
+                  notifyWithSoundAndVibration();
+                }
+              }
               return { ...prev, [activeChatId]: merged };
             }
             return prev;
@@ -123,14 +130,22 @@ export default function QuickChatWidget() {
     pollMessages();
     const messageInterval = setInterval(pollMessages, 2500);
     return () => clearInterval(messageInterval);
-  }, [activeChatId]);
+  }, [activeChatId, currentUser?.id]);
 
-  // Auto-scroll to bottom smoothly on message change or room switch
+  const prevChatIdRef = useRef(null);
+  const prevMsgLenRef = useRef(0);
+
+  // Auto-scroll to bottom smoothly on message count change or room switch
   useEffect(() => {
     if (activeChatId) {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      const currentList = messages[activeChatId] || [];
+      if (activeChatId !== prevChatIdRef.current || currentList.length !== prevMsgLenRef.current) {
+        prevChatIdRef.current = activeChatId;
+        prevMsgLenRef.current = currentList.length;
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }
     }
-  }, [activeChatId, messages]);
+  }, [activeChatId, (messages[activeChatId] || []).length]);
 
   const fetchConversations = async (isInitial = true) => {
     if (isInitial) setLoading(true);
@@ -200,8 +215,32 @@ export default function QuickChatWidget() {
           };
         });
 
-        setConversations(formatted);
-        setMessages((prev) => ({ ...initialMessages, ...prev }));
+        setConversations((prev) => {
+          if (
+            prev.length === formatted.length &&
+            JSON.stringify(prev.map(p => ({ id: p.id, lastMsg: p.lastMsg }))) ===
+            JSON.stringify(formatted.map(p => ({ id: p.id, lastMsg: p.lastMsg })))
+          ) {
+            return prev;
+          }
+          return formatted;
+        });
+        setMessages((prev) => {
+          let hasChanged = false;
+          const next = { ...prev };
+          for (const [key, list] of Object.entries(initialMessages)) {
+            const existing = prev[key];
+            if (!existing) {
+              next[key] = list;
+              hasChanged = true;
+            } else if (existing.length !== list.length || JSON.stringify(existing) !== JSON.stringify(list)) {
+              const sendingItems = existing.filter((m) => m.status === "sending");
+              next[key] = sendingItems.length > 0 ? [...list, ...sendingItems] : list;
+              hasChanged = true;
+            }
+          }
+          return hasChanged ? next : prev;
+        });
       }
     } catch (err) {
       console.error("Error fetching conversations in QuickChatWidget:", err);
@@ -350,7 +389,7 @@ export default function QuickChatWidget() {
     <div
       className={`bg-[#FAF7EE] border border-slate-200/90 shadow-sm font-sans flex flex-col overflow-hidden relative transition-all duration-300 ${
         isFullScreen
-          ? "w-full max-w-6xl h-[94vh] rounded-3xl shadow-2xl border border-slate-300"
+          ? "w-full max-w-6xl h-full sm:h-[94vh] rounded-none sm:rounded-3xl shadow-2xl border-0 sm:border border-slate-300"
           : "h-[520px] rounded-3xl"
       }`}
     >
@@ -721,7 +760,7 @@ export default function QuickChatWidget() {
   // Return either Full Screen Overlay or inline Widget
   if (isFullScreen) {
     return (
-      <div className="fixed inset-0 z-50 p-2 sm:p-4 lg:p-6 bg-slate-950/85 backdrop-blur-md flex items-center justify-center animate-in fade-in">
+      <div className="fixed inset-0 z-50 p-0 sm:p-4 lg:p-6 bg-slate-950/85 backdrop-blur-md flex items-center justify-center animate-in fade-in">
         {widgetContent}
       </div>
     );

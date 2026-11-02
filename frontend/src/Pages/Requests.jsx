@@ -181,7 +181,7 @@ export default function Requests() {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex items-center gap-2.5 self-end md:self-center shrink-0">
+                  <div className="w-full md:w-auto flex flex-wrap items-center justify-end gap-2.5 shrink-0">
                     {req.status === "pending" ? (
                       <>
                         <button
@@ -268,7 +268,7 @@ export default function Requests() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2.5 self-end md:self-center shrink-0">
+                  <div className="w-full md:w-auto flex flex-wrap items-center justify-end gap-2.5 shrink-0">
                     {req.status === "pending" && (
                       <button
                         onClick={() => handleUpdateStatus(req.id, "cancelled")}
