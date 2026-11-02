@@ -10,12 +10,41 @@ import {
   ExternalLink,
   Users,
   Sparkles,
-  ChevronRight
+  Maximize2,
+  Minimize2,
+  X,
+  ArrowUpRight,
+  Clock,
+  Check
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import API from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { get3DAvatarUrl } from "../utils/avatarUtils";
+
+// Helper to render clickable URLs in message text
+function renderMessageText(text) {
+  if (!text) return null;
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+  return parts.map((part, i) => {
+    if (part.match(urlRegex)) {
+      return (
+        <a
+          key={i}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-emerald-700 underline font-bold hover:text-emerald-950 break-all inline-flex items-center gap-0.5"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <span>{part}</span>
+        </a>
+      );
+    }
+    return part;
+  });
+}
 
 export default function QuickChatWidget() {
   const { user: currentUser } = useAuth();
@@ -28,65 +57,128 @@ export default function QuickChatWidget() {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false); // WhatsApp Web Fullscreen mode
 
   const messagesEndRef = useRef(null);
 
   // Quick reaction chips
   const quickChips = ["👋 Hi!", "🤝 Let's swap skills!", "📅 Meeting time?", "🚀 Ready!", "👍 Sounds great!"];
 
+  // Fetch initial conversations list
   useEffect(() => {
     fetchConversations();
+    // Poll conversations list every 5 seconds to catch newly accepted proposals
+    const convInterval = setInterval(() => {
+      fetchConversations(false);
+    }, 5000);
+    return () => clearInterval(convInterval);
   }, [currentUser]);
 
+  // Real-time message polling every 2.5 seconds for active chat room
+  useEffect(() => {
+    if (!activeChatId) return;
+
+    const pollMessages = async () => {
+      try {
+        const res = await API.get(`/exchanges/${activeChatId}/messages`);
+        if (res.data?.success && Array.isArray(res.data.messages)) {
+          const incoming = res.data.messages;
+          setMessages((prev) => {
+            const currentList = prev[activeChatId] || [];
+            // Merge & deduplicate by message id or timestamp+senderId
+            const seen = new Set();
+            const merged = [];
+
+            // Add incoming
+            for (const m of incoming) {
+              const key = m.id || `${m.timestamp}_${m.senderId || m.sender_id}_${m.text}`;
+              if (!seen.has(key)) {
+                seen.add(key);
+                merged.push(m);
+              }
+            }
+
+            // Preserve local optimistic sending messages
+            for (const m of currentList) {
+              if (m.status === "sending") {
+                const key = m.id || `${m.timestamp}_${m.senderId || m.sender_id}_${m.text}`;
+                if (!seen.has(key)) {
+                  seen.add(key);
+                  merged.push(m);
+                }
+              }
+            }
+
+            if (merged.length !== currentList.length || JSON.stringify(merged) !== JSON.stringify(currentList)) {
+              return { ...prev, [activeChatId]: merged };
+            }
+            return prev;
+          });
+        }
+      } catch (err) {
+        // Fallback: poll general /exchanges if messages sub-route has an issue
+      }
+    };
+
+    pollMessages();
+    const messageInterval = setInterval(pollMessages, 2500);
+    return () => clearInterval(messageInterval);
+  }, [activeChatId]);
+
+  // Auto-scroll to bottom smoothly on message change or room switch
   useEffect(() => {
     if (activeChatId) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [activeChatId, messages]);
 
-  const fetchConversations = async () => {
+  const fetchConversations = async (isInitial = true) => {
+    if (isInitial) setLoading(true);
     try {
       const res = await API.get("/exchanges");
       if (res.data.success && res.data.exchanges) {
-        const activeList = res.data.exchanges.filter(ex => ex.status !== "completed" && ex.request_status !== "rejected" && ex.request_status !== "cancelled");
-        
+        const activeList = res.data.exchanges.filter(
+          (ex) =>
+            ex.status !== "completed" &&
+            ex.request_status !== "rejected" &&
+            ex.request_status !== "cancelled"
+        );
+
         const initialMessages = {};
         const formatted = activeList.map((ex) => {
           const isRequester = Number(currentUser?.id) === Number(ex.requester_id);
           const partnerName = isRequester ? ex.receiver_name : ex.requester_name;
           const partnerPic = isRequester ? ex.receiver_picture : ex.requester_picture;
-          const partnerRole = isRequester 
-            ? (ex.receiver_profession || ex.receiver_degree || "Co-Learner") 
+          const partnerRole = isRequester
+            ? (ex.receiver_profession || ex.receiver_degree || "Co-Learner")
             : (ex.requester_profession || ex.requester_degree || "Co-Learner");
-          
-          let chatList = [];
+
+          let chatList = Array.isArray(ex.chat_history)
+            ? ex.chat_history
+            : typeof ex.chat_history === "string"
+            ? JSON.parse(ex.chat_history || "[]")
+            : [];
+
           let lastMsg = "Start a direct conversation...";
           let time = "Now";
 
-          if (ex.chat_history) {
-            try {
-              chatList = JSON.parse(ex.chat_history);
-              if (Array.isArray(chatList) && chatList.length > 0) {
-                const lastItem = chatList[chatList.length - 1];
-                lastMsg = lastItem.text || (lastItem.sticker ? `${lastItem.sticker.emoji} ${lastItem.sticker.label}` : "Message");
-                time = lastItem.time || "Recently";
-              }
-            } catch (e) {
-              chatList = [];
-            }
-          }
-
-          // If no messages yet, provide a welcoming barter prompt
-          if (chatList.length === 0) {
+          if (chatList.length > 0) {
+            const lastItem = chatList[chatList.length - 1];
+            lastMsg = lastItem.text || (lastItem.sticker ? `${lastItem.sticker.emoji} ${lastItem.sticker.label}` : "Message");
+            time = lastItem.time || "Recently";
+          } else {
+            // Default welcoming barter prompt
             chatList = [
               {
                 id: 1,
                 sender: partnerName || "Exchange Partner",
                 senderId: isRequester ? ex.receiver_id : ex.requester_id,
+                sender_id: isRequester ? ex.receiver_id : ex.requester_id,
                 text: `Hi ${currentUser?.name || "there"}! Excited for our skill swap: ${ex.offered_skill_name || "Skill"} ⇄ ${ex.requested_skill_name || "Skill"}. When are you free to connect?`,
                 time: "10:30 AM",
-                isReceived: true
-              }
+                isReceived: true,
+                status: "sent"
+              },
             ];
             lastMsg = chatList[0].text;
           }
@@ -104,75 +196,118 @@ export default function QuickChatWidget() {
             offeredSkill: isRequester ? ex.offered_skill_name : ex.requested_skill_name,
             requestedSkill: isRequester ? ex.requested_skill_name : ex.offered_skill_name,
             meetingLink: ex.meeting_link || "https://meet.google.com/new",
-            rawExchange: ex
+            rawExchange: ex,
           };
         });
 
         setConversations(formatted);
-        setMessages(initialMessages);
-        // Notice: activeChatId is NOT auto-selected, so user tabs/list is shown initially
+        setMessages((prev) => ({ ...initialMessages, ...prev }));
       }
     } catch (err) {
       console.error("Error fetching conversations in QuickChatWidget:", err);
     } finally {
-      setLoading(false);
+      if (isInitial) setLoading(false);
     }
   };
 
-  const handleSendMessage = async (customText = null) => {
-    const textToSend = customText || inputMsg;
-    if (!textToSend.trim() || !activeChatId) return;
+  // WhatsApp-style optimistic send message
+  const handleSendMessage = async (customText = null, customSticker = null) => {
+    const textToSend = customText !== null ? customText : inputMsg;
+    if (!textToSend.trim() && !customSticker) return;
+    if (sending || !activeChatId) return;
 
     setSending(true);
     const timeNow = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const tempId = Date.now();
 
     const newMsgObj = {
-      id: Date.now(),
+      id: tempId,
       sender: currentUser?.name || "You",
-      senderId: currentUser?.id,
+      senderId: Number(currentUser?.id),
+      sender_id: Number(currentUser?.id),
       text: textToSend.trim(),
+      sticker: customSticker || null,
       time: timeNow,
+      timestamp: tempId,
       isReceived: false,
-      delivered: true,
-      read: true
+      status: "sending",
     };
 
     const currentChatList = messages[activeChatId] || [];
     const updatedChatList = [...currentChatList, newMsgObj];
 
-    // Optimistic UI Update
-    setMessages(prev => ({
+    // 1. Instant Optimistic UI Update
+    setMessages((prev) => ({
       ...prev,
-      [activeChatId]: updatedChatList
+      [activeChatId]: updatedChatList,
     }));
 
-    setConversations(prev => prev.map(c => 
-      c.id === activeChatId ? { ...c, lastMsg: textToSend.trim(), time: timeNow } : c
-    ));
+    setConversations((prev) =>
+      prev.map((c) =>
+        c.id === activeChatId
+          ? { ...c, lastMsg: textToSend.trim() || "Sticker", time: timeNow }
+          : c
+      )
+    );
 
     setInputMsg("");
 
+    // 2. Persist to Backend
     try {
-      await API.put(`/exchanges/${activeChatId}`, {
-        chat_history: JSON.stringify(updatedChatList)
+      const res = await API.post(`/exchanges/${activeChatId}/messages`, {
+        text: textToSend.trim(),
+        sticker: customSticker || null,
       });
+
+      if (res.data?.success && res.data.chat_history) {
+        setMessages((prev) => ({
+          ...prev,
+          [activeChatId]: res.data.chat_history,
+        }));
+      } else {
+        // Mark as sent
+        setMessages((prev) => ({
+          ...prev,
+          [activeChatId]: (prev[activeChatId] || []).map((m) =>
+            m.id === tempId ? { ...m, status: "sent" } : m
+          ),
+        }));
+      }
     } catch (err) {
-      console.error("Error persisting direct message:", err);
+      // Fallback: update via PUT /api/exchanges/:id
+      try {
+        await API.put(`/exchanges/${activeChatId}`, {
+          chat_history: JSON.stringify(
+            updatedChatList.map((m) => ({ ...m, status: "sent" }))
+          ),
+        });
+        setMessages((prev) => ({
+          ...prev,
+          [activeChatId]: (prev[activeChatId] || []).map((m) =>
+            m.id === tempId ? { ...m, status: "sent" } : m
+          ),
+        }));
+      } catch (fallbackErr) {
+        console.error("Error saving message:", fallbackErr);
+      }
     } finally {
       setSending(false);
     }
   };
 
   const handleLaunchGoogleMeet = async (chat) => {
-    const meetUrl = (chat?.meetingLink && chat.meetingLink.startsWith("http") && !chat.meetingLink.includes("skillswap-room")) 
-      ? chat.meetingLink 
-      : "https://meet.google.com/new";
+    const meetUrl =
+      chat?.meetingLink &&
+      chat.meetingLink.startsWith("http") &&
+      !chat.meetingLink.includes("skillswap-room")
+        ? chat.meetingLink
+        : "https://meet.google.com/new";
     window.open(meetUrl, "_blank", "noopener,noreferrer");
     if (chat?.exchangeId) {
       try {
         await API.put(`/exchanges/${chat.exchangeId}`, {
           meeting_link: meetUrl,
-          status: "in_progress"
+          status: "in_progress",
         });
       } catch (e) {
         console.error("Error updating meet link:", e);
@@ -180,23 +315,25 @@ export default function QuickChatWidget() {
     }
   };
 
+  // Dedicated Top-Right Arrow Action: opens full session classroom on /exchanges
   const handleOpenFullChat = (exchangeId = null) => {
-    navigate("/exchanges", { 
-      state: { 
-        openChat: true, 
-        openChatId: exchangeId || activeChatId || (conversations[0]?.exchangeId || null) 
-      } 
+    navigate("/exchanges", {
+      state: {
+        openChat: true,
+        openChatId: exchangeId || activeChatId || (conversations[0]?.exchangeId || null),
+      },
     });
   };
 
-  const activeChat = activeChatId ? conversations.find(c => c.id === activeChatId) : null;
-  const activeChatMessages = (activeChatId && messages[activeChatId]) ? messages[activeChatId] : [];
+  const activeChat = activeChatId ? conversations.find((c) => c.id === activeChatId) : null;
+  const activeChatMessages = activeChatId && messages[activeChatId] ? messages[activeChatId] : [];
 
-  const filteredConversations = conversations.filter(c => 
-    c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.offeredSkill?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.requestedSkill?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.lastMsg.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredConversations = conversations.filter(
+    (c) =>
+      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.offeredSkill?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.requestedSkill?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.lastMsg.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) {
@@ -208,9 +345,15 @@ export default function QuickChatWidget() {
     );
   }
 
-  return (
-    <div className="bg-[#FAF7EE] rounded-3xl border border-slate-200/90 shadow-sm font-sans flex flex-col h-[520px] overflow-hidden relative">
-      
+  // Content Container: handles both normal widget mode and WhatsApp Web full-screen overlay mode
+  const widgetContent = (
+    <div
+      className={`bg-[#FAF7EE] border border-slate-200/90 shadow-sm font-sans flex flex-col overflow-hidden relative transition-all duration-300 ${
+        isFullScreen
+          ? "w-full max-w-6xl h-[94vh] rounded-3xl shadow-2xl border border-slate-300"
+          : "h-[520px] rounded-3xl"
+      }`}
+    >
       {/* ------------------------------------------------------------- */}
       {/* 1. TOP HEADER (Active User Chat View OR User Tabs View) */}
       {/* ------------------------------------------------------------- */}
@@ -262,38 +405,48 @@ export default function QuickChatWidget() {
           )}
         </div>
 
-        {/* Action Controls */}
+        {/* Action Controls in Top Right: FullScreen Toggle, Top-Right Arrow to Sessions, and Google Meet */}
         <div className="flex items-center gap-1.5 shrink-0">
-          {activeChat ? (
-            <>
-              <button
-                onClick={() => handleLaunchGoogleMeet(activeChat)}
-                className="p-2 rounded-xl text-emerald-700 hover:bg-emerald-100 transition-colors cursor-pointer"
-                title="Launch Google Meet automatically in a new tab"
-              >
-                <Video className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => handleOpenFullChat(activeChat.exchangeId)}
-                className="p-2 rounded-xl text-slate-600 hover:bg-black/5 transition-colors cursor-pointer"
-                title="Expand Full Exchanges Screen"
-              >
-                <ExternalLink className="w-3.5 h-3.5" />
-              </button>
-            </>
-          ) : (
-            <>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white text-emerald-800 border border-slate-200 shadow-2xs">
-                {conversations.length} Swappers
-              </span>
-              <button
-                onClick={() => handleOpenFullChat()}
-                className="p-2 rounded-xl text-slate-600 hover:bg-black/5 transition-colors cursor-pointer"
-                title="Open Full Exchanges Screen"
-              >
-                <ExternalLink className="w-3.5 h-3.5" />
-              </button>
-            </>
+          {activeChat && (
+            <button
+              onClick={() => handleLaunchGoogleMeet(activeChat)}
+              className="p-2 rounded-xl text-emerald-700 hover:bg-emerald-100 transition-colors cursor-pointer"
+              title="Launch Google Meet video call in a new tab"
+            >
+              <Video className="w-4 h-4" />
+            </button>
+          )}
+
+          {/* Full Screen Mode Toggle Button */}
+          <button
+            onClick={() => setIsFullScreen(!isFullScreen)}
+            className="p-2 rounded-xl text-slate-700 hover:bg-white hover:text-emerald-700 border border-transparent hover:border-slate-200 transition-all cursor-pointer shadow-2xs"
+            title={isFullScreen ? "Exit Fullscreen Mode" : "Expand to Fullscreen WhatsApp Mode"}
+          >
+            {isFullScreen ? (
+              <Minimize2 className="w-4 h-4 text-emerald-800" />
+            ) : (
+              <Maximize2 className="w-4 h-4 text-slate-700" />
+            )}
+          </button>
+
+          {/* Dedicated Top-Right Arrow: navigates directly to /exchanges classroom */}
+          <button
+            onClick={() => handleOpenFullChat(activeChat?.exchangeId)}
+            className="p-2 rounded-xl bg-white/90 hover:bg-emerald-600 hover:text-white text-slate-700 border border-slate-200 transition-all cursor-pointer shadow-2xs group"
+            title="Open Full Session Room in Sessions (Arrow)"
+          >
+            <ArrowUpRight className="w-4 h-4 group-hover:scale-110 transition-transform" />
+          </button>
+
+          {isFullScreen && (
+            <button
+              onClick={() => setIsFullScreen(false)}
+              className="p-2 rounded-xl text-slate-400 hover:text-slate-800 hover:bg-slate-200 transition-colors cursor-pointer"
+              title="Close Full Screen"
+            >
+              <X className="w-4 h-4" />
+            </button>
           )}
         </div>
       </div>
@@ -306,44 +459,64 @@ export default function QuickChatWidget() {
         /* MODE A: ACTIVE USER CHAT VIEW                               */
         /* =========================================================== */
         <div className="flex-1 flex flex-col justify-between overflow-hidden bg-[#FAF7EE] relative">
-          
-          {/* Messages Scroll View (Cream Paper Wallpaper) */}
+          {/* Messages Scroll View (WhatsApp Cream Paper Wallpaper) */}
           <div className="flex-1 overflow-y-auto p-3.5 space-y-3">
-            
             {/* Direct Chat Date Stamp */}
-            <div className="flex justify-center">
-              <span className="px-3 py-0.5 rounded-full bg-white/90 border border-slate-200/60 text-[9px] font-extrabold text-slate-500 uppercase tracking-wider shadow-2xs">
-                TODAY • 1-ON-1 SKILL EXCHANGE
+            <div className="flex justify-center my-1">
+              <span className="px-3.5 py-1 rounded-full bg-white/95 border border-slate-200/80 text-[10px] font-extrabold text-slate-600 uppercase tracking-wider shadow-2xs flex items-center gap-1.5">
+                <Clock className="w-3 h-3 text-emerald-600" />
+                <span>TODAY • 1-ON-1 SKILL EXCHANGE</span>
               </span>
             </div>
 
             {activeChatMessages.map((msg, idx) => {
-              const isMine = msg.senderId === currentUser?.id || (!msg.isReceived && (msg.sender === (currentUser?.name || "You") || msg.sender === "You"));
+              const isMine =
+                Number(msg.senderId || msg.sender_id) === Number(currentUser?.id) ||
+                msg.sender === (currentUser?.name || "You") ||
+                msg.sender === "You" ||
+                msg.isReceived === false;
 
               return (
-                <div 
-                  key={msg.id || idx} 
-                  className={`flex ${isMine ? "justify-end" : "justify-start"}`}
+                <div
+                  key={msg.id || idx}
+                  className={`flex ${isMine ? "justify-end" : "justify-start"} animate-in fade-in duration-200`}
                 >
-                  <div 
-                    className={`max-w-[85%] rounded-2xl px-3.5 py-2 text-xs relative shadow-2xs ${
-                      isMine 
-                        ? "bg-[#D9FDD3] text-slate-900 border border-[#bbf7b1] rounded-tr-none" 
+                  <div
+                    className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-3.5 py-2 text-xs relative shadow-2xs ${
+                      isMine
+                        ? "bg-[#D9FDD3] text-slate-900 border border-[#bbf7b1] rounded-tr-none"
                         : "bg-white text-slate-900 border border-slate-200/80 rounded-tl-none"
                     }`}
                   >
                     {!isMine && (
-                      <span className="text-[10px] font-extrabold text-emerald-700 block mb-0.5">
+                      <span className="text-[10px] font-black text-emerald-700 block mb-0.5">
                         {activeChat.name}
                       </span>
                     )}
-                    <p className="font-medium text-xs leading-relaxed break-words whitespace-pre-wrap">
-                      {msg.text}
-                    </p>
+
+                    {msg.sticker && (
+                      <div className="bg-black/10 p-2 rounded-xl text-center space-y-0.5 my-1 border border-black/5">
+                        <span className="text-2xl block">{msg.sticker.emoji}</span>
+                        <span className="text-[10px] font-bold text-slate-700 block">
+                          {msg.sticker.label}
+                        </span>
+                      </div>
+                    )}
+
+                    {msg.text && (
+                      <p className="font-medium text-xs leading-relaxed break-words whitespace-pre-wrap">
+                        {renderMessageText(msg.text)}
+                      </p>
+                    )}
+
                     <div className="flex items-center justify-end gap-1 mt-1 text-[9px] text-slate-500 font-bold">
                       <span>{msg.time || "Now"}</span>
                       {isMine && (
-                        <CheckCheck className="w-3.5 h-3.5 text-sky-500 inline" />
+                        msg.status === "sending" ? (
+                          <Clock className="w-3 h-3 text-slate-400 inline animate-spin" />
+                        ) : (
+                          <CheckCheck className="w-3.5 h-3.5 text-sky-500 inline" title="Delivered & Read" />
+                        )
                       )}
                     </div>
                   </div>
@@ -372,9 +545,9 @@ export default function QuickChatWidget() {
               type="button"
               onClick={() => handleSendMessage("👋")}
               className="p-1.5 rounded-full hover:bg-black/5 text-slate-600 transition-colors cursor-pointer"
-              title="Send Wave"
+              title="Send Wave Sticker"
             >
-              <Smile className="w-4 h-4 text-amber-500" />
+              <Smile className="w-5 h-5 text-amber-500 hover:scale-110 transition-transform" />
             </button>
 
             <form
@@ -388,32 +561,36 @@ export default function QuickChatWidget() {
                 type="text"
                 value={inputMsg}
                 onChange={(e) => setInputMsg(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                  }
+                }}
                 placeholder={`Type a direct message to ${activeChat.name}...`}
-                className="flex-1 px-3.5 py-2 bg-white rounded-full text-xs font-medium text-slate-900 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#25D366] placeholder-slate-400"
+                className="flex-1 px-4 py-2.5 bg-white rounded-full text-xs font-medium text-slate-900 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#25D366] placeholder-slate-400 shadow-2xs"
               />
 
               <button
                 type="submit"
                 disabled={!inputMsg.trim() || sending}
-                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all shadow-md shrink-0 ${
-                  inputMsg.trim() 
-                    ? "bg-[#25D366] hover:bg-[#1faa4a] text-white hover:scale-105 cursor-pointer" 
+                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-md shrink-0 ${
+                  inputMsg.trim()
+                    ? "bg-[#25D366] hover:bg-[#1faa4a] text-white hover:scale-105 cursor-pointer"
                     : "bg-slate-300 text-slate-500 cursor-not-allowed"
                 }`}
-                title="Send Message"
+                title="Send Message (Enter)"
               >
                 <Send className="w-4 h-4" />
               </button>
             </form>
           </div>
-
         </div>
       ) : (
         /* =========================================================== */
         /* MODE B: USERS TABS & CONVERSATIONS LIST VIEW (INITIAL)     */
         /* =========================================================== */
         <div className="flex-1 flex flex-col justify-between overflow-hidden bg-[#FAF7EE]">
-          
           {/* 1. Horizontal User Name Tabs Strip */}
           {conversations.length > 0 && (
             <div className="px-3 py-2 bg-[#f6efe1] border-b border-slate-200/80 flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0">
@@ -448,109 +625,107 @@ export default function QuickChatWidget() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search swappers by name or skill..."
-                className="w-full pl-8 pr-3 py-1.5 bg-[#FAF7EE] rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#25D366]"
+                placeholder="Search swappers or skills..."
+                className="w-full pl-9 pr-3 py-1.5 bg-slate-50 rounded-xl text-xs font-medium text-slate-900 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 placeholder-slate-400"
               />
             </div>
           </div>
 
-          {/* 3. Vertical User Cards / Tabs List */}
-          <div className="flex-1 overflow-y-auto p-3 space-y-2.5">
+          {/* 3. Conversations Vertical List */}
+          <div className="flex-1 overflow-y-auto divide-y divide-slate-100 bg-white">
             {filteredConversations.length > 0 ? (
-              filteredConversations.map((chat) => (
+              filteredConversations.map((c) => (
                 <div
-                  key={chat.id}
-                  onClick={() => setActiveChatId(chat.id)}
-                  className="p-3 bg-white hover:bg-[#FAF7EE] rounded-2xl border border-slate-200/90 hover:border-emerald-400 transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group shadow-2xs hover:shadow-md hover:-translate-y-0.5"
+                  key={c.id}
+                  onClick={() => setActiveChatId(c.id)}
+                  className="p-3 hover:bg-emerald-50/50 cursor-pointer transition-colors flex items-center justify-between gap-3 group"
                 >
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="flex items-center gap-3 min-w-0">
                     <div className="relative shrink-0">
                       <img
-                        src={chat.avatar}
-                        alt={chat.name}
-                        className="w-11 h-11 rounded-2xl object-cover ring-2 ring-emerald-500/30 bg-white"
+                        src={c.avatar}
+                        alt={c.name}
+                        className="w-11 h-11 rounded-full object-cover ring-2 ring-emerald-500/20 group-hover:ring-emerald-500 transition-all bg-slate-100"
                       />
-                      <span className="w-3 h-3 rounded-full bg-[#25D366] border-2 border-white absolute -bottom-0.5 -right-0.5"></span>
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#25D366] border-2 border-white absolute bottom-0 right-0"></span>
                     </div>
 
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-1">
+                    <div className="min-w-0 space-y-0.5">
+                      <div className="flex items-center gap-1.5">
                         <h4 className="font-extrabold text-xs text-slate-900 group-hover:text-emerald-700 transition-colors truncate">
-                          {chat.name}
+                          {c.name}
                         </h4>
-                        <span className="text-[10px] text-slate-400 font-semibold shrink-0">
-                          {chat.time}
+                        <span className="text-[10px] text-slate-400 font-medium">({c.role})</span>
+                      </div>
+
+                      <div className="flex items-center gap-1 text-[10px] font-bold text-slate-500 truncate">
+                        <span className="text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200 shrink-0">
+                          {c.offeredSkill}
+                        </span>
+                        <span>⇄</span>
+                        <span className="text-indigo-700 bg-indigo-50 px-1.5 py-0.2 rounded border border-indigo-200 shrink-0">
+                          {c.requestedSkill}
                         </span>
                       </div>
 
-                      {/* Reciprocal Barter Pill */}
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 truncate">
-                          {chat.offeredSkill}
-                        </span>
-                        <span className="text-[9px] text-slate-400">⇄</span>
-                        <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-800 border border-indigo-200 truncate">
-                          {chat.requestedSkill}
-                        </span>
-                      </div>
-
-                      <p className="text-[11px] text-slate-500 truncate font-normal mt-1 flex items-center gap-1">
-                        <CheckCheck className="w-3 h-3 text-sky-500 shrink-0 inline" />
-                        <span className="truncate">{chat.lastMsg}</span>
+                      <p className="text-[11px] text-slate-500 font-medium truncate pt-0.5">
+                        {c.lastMsg}
                       </p>
                     </div>
                   </div>
 
-                  {/* Open Chat Action Tab */}
-                  <div className="shrink-0 flex items-center">
-                    <span className="px-2.5 py-1 rounded-xl text-[10px] font-black bg-[#E2F7CB] text-emerald-800 border border-emerald-300/80 group-hover:bg-[#25D366] group-hover:text-white transition-all flex items-center gap-1 shadow-2xs">
+                  <div className="flex flex-col items-end gap-1 shrink-0">
+                    <span className="text-[10px] text-slate-400 font-bold">{c.time}</span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveChatId(c.id);
+                      }}
+                      className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-black shadow-2xs transition-all flex items-center gap-1 group-hover:scale-105"
+                    >
                       <span>Chat</span>
-                      <ChevronRight className="w-3 h-3" />
-                    </span>
+                    </button>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-center py-12 px-4 text-xs text-slate-500 space-y-3">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto font-bold shadow-xs">
-                  <MessageSquare className="w-6 h-6" />
-                </div>
-                <div>
-                  <p className="font-bold text-slate-800 text-sm">No active swapper chats</p>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    {searchQuery ? "No swappers matched your search query." : "Accept swap requests or browse directory to start chatting!"}
-                  </p>
-                </div>
-                {!searchQuery && (
-                  <button
-                    onClick={() => navigate("/explore")}
-                    className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors cursor-pointer"
-                  >
-                    Browse Swappers
-                  </button>
-                )}
+              <div className="p-8 text-center space-y-2">
+                <Users className="w-10 h-10 text-slate-300 mx-auto" />
+                <h4 className="text-xs font-bold text-slate-700">No active swapper chats yet</h4>
+                <p className="text-[11px] text-slate-400 max-w-xs mx-auto">
+                  Accept incoming swap proposals or connect on Explore to start messaging here!
+                </p>
               </div>
             )}
           </div>
 
-          {/* 4. Footer Bar */}
-          <div className="p-3 bg-[#f2ecdf] border-t border-slate-200/80 flex items-center justify-between text-xs font-bold text-slate-600 shrink-0">
-            <span className="text-[11px] text-emerald-800 flex items-center gap-1.5 font-bold">
+          {/* 4. Bottom Footer Info Bar */}
+          <div className="p-2.5 bg-[#f6efe1] border-t border-slate-200/80 flex items-center justify-between text-[11px] text-slate-600 font-bold shrink-0">
+            <span className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[#25D366] animate-pulse"></span>
-              Encrypted P2P Coordination
+              <span>SkillSwap WhatsApp Sync Active</span>
             </span>
             <button
               onClick={() => handleOpenFullChat()}
-              className="text-emerald-700 hover:text-emerald-800 hover:underline text-xs font-black flex items-center gap-1 cursor-pointer"
+              className="text-emerald-700 hover:text-emerald-900 font-extrabold flex items-center gap-1 hover:underline cursor-pointer"
             >
-              <span>Full Screen</span>
-              <ExternalLink className="w-3 h-3" />
+              <span>View Sessions Grid</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
           </div>
-
         </div>
       )}
-
     </div>
   );
+
+  // Return either Full Screen Overlay or inline Widget
+  if (isFullScreen) {
+    return (
+      <div className="fixed inset-0 z-50 p-2 sm:p-4 lg:p-6 bg-slate-950/85 backdrop-blur-md flex items-center justify-center animate-in fade-in">
+        {widgetContent}
+      </div>
+    );
+  }
+
+  return widgetContent;
 }

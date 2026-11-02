@@ -206,8 +206,8 @@ async function initDb() {
     // Auto-create missing exchange session rooms for all swap requests
     try {
       await pool.query(`
-        INSERT INTO exchanges (request_id, status, meeting_link, notes)
-        SELECT sr.id, 'scheduled', 'https://meet.google.com/skillswap-room', 'Welcome to your 1-on-1 skill exchange virtual classroom! Connect via video call, share meeting links, and use study guides.'
+        INSERT INTO exchanges (request_id, status, meeting_link, notes, chat_history, shared_resources)
+        SELECT sr.id, 'scheduled', 'https://meet.google.com/skillswap-room', 'Welcome to your 1-on-1 skill exchange virtual classroom! Connect via video call, share meeting links, and use study guides.', '[]', '[]'
         FROM swap_requests sr
         WHERE NOT EXISTS (SELECT 1 FROM exchanges e WHERE e.request_id = sr.id)
       `);

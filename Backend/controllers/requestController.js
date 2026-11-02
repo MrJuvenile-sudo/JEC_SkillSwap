@@ -51,8 +51,9 @@ exports.createRequest = async (req, res) => {
     const defaultMeeting = "https://meet.google.com/new";
     try {
       await db.query(
-        `INSERT INTO exchanges (request_id, status, meeting_link, notes)
-         VALUES (?, 'scheduled', ?, 'Welcome to your 1-on-1 skill exchange session! Share meeting links, study guides, and session agenda.')`,
+        `INSERT INTO exchanges (request_id, status, meeting_link, notes, chat_history, shared_resources)
+         VALUES (?, 'scheduled', ?, 'Welcome to your 1-on-1 skill exchange session! Share meeting links, study guides, and session agenda.', '[]', '[]')
+         ON DUPLICATE KEY UPDATE status = VALUES(status)`,
         [newRequestId, defaultMeeting]
       );
     } catch (exErr) {
@@ -165,8 +166,8 @@ exports.updateRequestStatus = async (req, res) => {
         const [existingExchange] = await db.query("SELECT id FROM exchanges WHERE request_id = ?", [id]);
         if (existingExchange.length === 0) {
           await db.query(
-            `INSERT INTO exchanges (request_id, status, meeting_link, notes)
-             VALUES (?, 'scheduled', ?, 'Initial skill exchange session created. Schedule your time & connect!')
+            `INSERT INTO exchanges (request_id, status, meeting_link, notes, chat_history, shared_resources)
+             VALUES (?, 'scheduled', ?, 'Initial skill exchange session created. Schedule your time & connect!', '[]', '[]')
              ON DUPLICATE KEY UPDATE status = 'scheduled'`,
             [id, defaultMeeting]
           );

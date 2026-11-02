@@ -201,6 +201,30 @@ const getResourceForSkill = (skillName) => {
   return SKILL_RESOURCES_MAP.default;
 };
 
+// Helper to render clickable URLs in message text
+function renderMessageText(text) {
+  if (!text) return null;
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+  return parts.map((part, i) => {
+    if (part.match(urlRegex)) {
+      return (
+        <a
+          key={i}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-emerald-400 underline font-bold hover:text-emerald-300 break-all inline-flex items-center gap-0.5"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <span>{part}</span>
+        </a>
+      );
+    }
+    return part;
+  });
+}
+
 export default function Exchanges({ initialTab = "active_grid", openChatInitially = false }) {
   const { user: currentUser } = useAuth();
   const location = useLocation();
@@ -216,7 +240,8 @@ export default function Exchanges({ initialTab = "active_grid", openChatInitiall
   const [selectedExchangeForReview, setSelectedExchangeForReview] = useState(null);
   const [editingExchange, setEditingExchange] = useState(null);
   const [selectedRoomModal, setSelectedRoomModal] = useState(null); // Full classroom modal view
-  const [activeChatExchange, setActiveChatExchange] = useState(null); // Full screen SkillSwap Chat view
+  const [activeChatExchange, setActiveChatExchange] = useState(null);
+  const [isChatFullScreen, setIsChatFullScreen] = useState(false); // Full screen SkillSwap Chat view
 
   const [editMeetingLink, setEditMeetingLink] = useState("");
   const [editNotes, setEditNotes] = useState("");
@@ -462,6 +487,28 @@ export default function Exchanges({ initialTab = "active_grid", openChatInitiall
     }
   }, [location.state, exchanges, openChatInitially]);
 
+    // Message polling every 2.5 seconds for active chat exchange
+  useEffect(() => {
+    if (!activeChatExchange) return;
+    const pollId = activeChatExchange.id;
+    const pollTimer = setInterval(async () => {
+      try {
+        const res = await API.get(`/exchanges/${pollId}/messages`);
+        if (res.data?.success && Array.isArray(res.data.messages)) {
+          setChatMessages((prev) => {
+            const existing = prev[pollId] || [];
+            const incoming = res.data.messages;
+            if (incoming.length !== existing.length || JSON.stringify(incoming) !== JSON.stringify(existing)) {
+              return { ...prev, [pollId]: incoming };
+            }
+            return prev;
+          });
+        }
+      } catch (e) {}
+    }, 2500);
+    return () => clearInterval(pollTimer);
+  }, [activeChatExchange]);
+
   // Timer Countdown Effect
   useEffect(() => {
     let interval = null;
@@ -529,31 +576,50 @@ export default function Exchanges({ initialTab = "active_grid", openChatInitiall
   const handleSendMessage = async (exchangeId, textMessage = "", stickerObj = null) => {
     if (!textMessage.trim() && !stickerObj) return;
 
+    const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const tempId = Date.now();
+
     const newMsg = {
-      id: Date.now(),
+      id: tempId,
       sender: currentUser?.name || "You",
-      senderId: currentUser?.id,
+      senderId: Number(currentUser?.id),
+      sender_id: Number(currentUser?.id),
       text: textMessage.trim(),
       sticker: stickerObj,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      time: timeNow,
+      timestamp: tempId,
+      status: "sending"
     };
 
     const currentChatList = chatMessages[exchangeId] || [];
     const updatedChatList = [...currentChatList, newMsg];
 
-    setChatMessages({
-      ...chatMessages,
+    setChatMessages((prev) => ({
+      ...prev,
       [exchangeId]: updatedChatList
-    });
+    }));
     setInputMsg("");
     setShowStickerPicker(false);
 
     try {
-      await API.put(`/exchanges/${exchangeId}`, {
-        chat_history: JSON.stringify(updatedChatList)
+      const res = await API.post(`/exchanges/${exchangeId}/messages`, {
+        text: textMessage.trim(),
+        sticker: stickerObj
       });
+      if (res.data?.success && res.data.chat_history) {
+        setChatMessages((prev) => ({
+          ...prev,
+          [exchangeId]: res.data.chat_history
+        }));
+      }
     } catch (err) {
-      console.error("Error saving chat history to DB:", err);
+      try {
+        await API.put(`/exchanges/${exchangeId}`, {
+          chat_history: JSON.stringify(updatedChatList)
+        });
+      } catch (e) {
+        console.error("Error saving chat history to DB:", e);
+      }
     }
   };
 
@@ -1356,7 +1422,7 @@ ${ex.meeting_link || "N/A"}
                 <div className="bg-slate-950 p-4 rounded-2xl h-52 overflow-y-auto space-y-3 border border-slate-800/80">
                   {currentChat.length > 0 ? (
                     currentChat.map((msg) => {
-                      const isMe = msg.senderId === currentUser?.id || msg.sender === currentUser?.name;
+                      const isMe = Number(msg.senderId || msg.sender_id) === Number(currentUser?.id) || msg.sender === currentUser?.name || msg.sender === "You" || msg.isReceived === false;
                       return (
                         <div key={msg.id} className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
                           <div className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-xs space-y-1 ${
@@ -1543,8 +1609,8 @@ ${ex.meeting_link || "N/A"}
         const currentChat = chatMessages[activeChatExchange.id] || [];
 
         return (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 lg:p-6 bg-slate-950/85 backdrop-blur-md animate-in fade-in">
-            <div className="bg-[#111b21] rounded-3xl max-w-6xl w-full h-[92vh] flex shadow-2xl border border-slate-800 overflow-hidden text-white font-sans">
+          <div className={`fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-md animate-in fade-in ${isChatFullScreen ? "p-0" : "p-2 sm:p-4 lg:p-6"}`}>
+            <div className={`bg-[#111b21] flex shadow-2xl border border-slate-800 overflow-hidden text-white font-sans ${isChatFullScreen ? "w-full h-full rounded-none" : "rounded-3xl max-w-6xl w-full h-[92vh]"}`}>
               
               {/* Left Column: Sidebar (Active Swapper Conversations) */}
               <div className="w-80 sm:w-96 bg-[#111b21] border-r border-slate-800 flex flex-col shrink-0 hidden md:flex">
@@ -1686,6 +1752,13 @@ ${ex.meeting_link || "N/A"}
                     </button>
 
                     <button
+                      onClick={() => setIsChatFullScreen(!isChatFullScreen)}
+                      className="p-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
+                      title={isChatFullScreen ? "Exit Fullscreen" : "Full Screen WhatsApp Mode"}
+                    >
+                      {isChatFullScreen ? <Minimize2 className="w-5 h-5 text-emerald-400" /> : <Maximize2 className="w-5 h-5" />}
+                    </button>
+                    <button
                       onClick={() => setActiveChatExchange(null)}
                       className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-colors"
                       title="Close Chat"
@@ -1717,7 +1790,7 @@ ${ex.meeting_link || "N/A"}
                               </div>
                             )}
 
-                            {msg.text && <p className="leading-relaxed font-normal whitespace-pre-wrap">{msg.text}</p>}
+                            {msg.text && <p className="leading-relaxed font-normal whitespace-pre-wrap">{renderMessageText(msg.text)}</p>}
                             <span className="text-[10px] opacity-60 text-right block pt-1">{msg.time}</span>
                           </div>
                         </div>
