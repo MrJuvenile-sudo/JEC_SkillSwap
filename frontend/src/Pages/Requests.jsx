@@ -205,7 +205,8 @@ export default function Requests() {
                     ) : req.status === "accepted" ? (
                       <Link
                         to="/exchanges"
-                        className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black shadow-md flex items-center gap-1.5"
+                        state={{ openChatId: req.id, openChat: true, requestId: req.id }}
+                        className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black shadow-md flex items-center gap-1.5 transition-all hover:scale-105"
                       >
                         <span>Open Session Room</span>
                         <ArrowRight className="w-4 h-4" />
@@ -280,7 +281,8 @@ export default function Requests() {
                     {req.status === "accepted" && (
                       <Link
                         to="/exchanges"
-                        className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black shadow-md flex items-center gap-1.5"
+                        state={{ openChatId: req.id, openChat: true, requestId: req.id }}
+                        className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black shadow-md flex items-center gap-1.5 transition-all hover:scale-105"
                       >
                         <span>Open Session Room</span>
                         <ArrowRight className="w-4 h-4" />

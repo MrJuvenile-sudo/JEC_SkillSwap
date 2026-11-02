@@ -156,6 +156,30 @@ function AppRoutes() {
             }
           />
           <Route
+            path="/chat"
+            element={
+              <ProtectedRoute>
+                <Exchanges openChatInitially={true} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/messages"
+            element={
+              <ProtectedRoute>
+                <Navigate to="/chat" replace />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/sessions"
+            element={
+              <ProtectedRoute>
+                <Navigate to="/exchanges" replace />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/profile"
             element={
               <ProtectedRoute>

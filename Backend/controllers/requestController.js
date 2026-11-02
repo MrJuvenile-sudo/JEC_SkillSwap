@@ -158,16 +158,35 @@ exports.updateRequestStatus = async (req, res) => {
 
     await db.query("UPDATE swap_requests SET status = ? WHERE id = ?", [status, id]);
 
-    // If accepted, automatically create an exchange record if it doesn't exist
+    // If accepted, automatically ensure an exchange record exists and is active
     if (status === 'accepted') {
-      const [existingExchange] = await db.query("SELECT id FROM exchanges WHERE request_id = ?", [id]);
-      if (existingExchange.length === 0) {
-        const defaultMeeting = "https://meet.google.com/new";
-        await db.query(
-          `INSERT INTO exchanges (request_id, status, meeting_link, notes)
-           VALUES (?, 'scheduled', ?, 'Initial skill exchange session created. Schedule your time & connect!')`,
-          [id, defaultMeeting]
-        );
+      const defaultMeeting = "https://meet.google.com/new";
+      try {
+        const [existingExchange] = await db.query("SELECT id FROM exchanges WHERE request_id = ?", [id]);
+        if (existingExchange.length === 0) {
+          await db.query(
+            `INSERT INTO exchanges (request_id, status, meeting_link, notes)
+             VALUES (?, 'scheduled', ?, 'Initial skill exchange session created. Schedule your time & connect!')
+             ON DUPLICATE KEY UPDATE status = 'scheduled'`,
+            [id, defaultMeeting]
+          );
+        } else {
+          await db.query("UPDATE exchanges SET status = 'scheduled' WHERE request_id = ? AND status != 'completed'", [id]);
+        }
+      } catch (exErr) {
+        console.warn("Auto-create exchange on accept warning:", exErr.message);
+      }
+    } else if (status === 'rejected' || status === 'cancelled') {
+      try {
+        await db.query("UPDATE exchanges SET status = ? WHERE request_id = ? AND status != 'completed'", [status, id]);
+      } catch (exErr) {
+        console.warn("Update exchange on decline warning:", exErr.message);
+      }
+    } else if (status === 'completed') {
+      try {
+        await db.query("UPDATE exchanges SET status = 'completed' WHERE request_id = ?", [id]);
+      } catch (exErr) {
+        console.warn("Update exchange on complete warning:", exErr.message);
       }
     }
 

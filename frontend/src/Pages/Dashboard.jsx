@@ -74,7 +74,7 @@ export default function Dashboard() {
         const activeList = (exRes.data.exchanges || [])
           .filter(e => e.status === "scheduled" || e.status === "in_progress")
           .map(ex => {
-            const isRequester = user?.id === ex.requester_id;
+            const isRequester = Number(user?.id) === Number(ex.requester_id);
             const partnerName = isRequester ? ex.receiver_name : ex.requester_name;
             const partnerPic = isRequester ? ex.receiver_picture : ex.requester_picture;
             const partnerRole = isRequester 

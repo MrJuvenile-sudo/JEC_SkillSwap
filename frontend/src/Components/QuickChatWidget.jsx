@@ -48,7 +48,7 @@ export default function QuickChatWidget() {
     try {
       const res = await API.get("/exchanges");
       if (res.data.success && res.data.exchanges) {
-        const activeList = res.data.exchanges.filter(ex => ex.status !== "completed");
+        const activeList = res.data.exchanges.filter(ex => ex.status !== "completed" && ex.request_status !== "rejected" && ex.request_status !== "cancelled");
         
         const initialMessages = {};
         const formatted = activeList.map((ex) => {

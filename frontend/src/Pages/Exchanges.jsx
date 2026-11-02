@@ -201,7 +201,7 @@ const getResourceForSkill = (skillName) => {
   return SKILL_RESOURCES_MAP.default;
 };
 
-export default function Exchanges() {
+export default function Exchanges({ initialTab = "active_grid", openChatInitially = false }) {
   const { user: currentUser } = useAuth();
   const location = useLocation();
   
@@ -223,7 +223,7 @@ export default function Exchanges() {
   const [notification, setNotification] = useState("");
 
   // Main Navigation Tab State: 'active_grid' | 'completed' | 'resources' | 'swappers'
-  const [activeTab, setActiveTab] = useState("active_grid");
+  const [activeTab, setActiveTab] = useState(initialTab);
 
   // Filters for Study Kits Tab
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -357,19 +357,16 @@ export default function Exchanges() {
   const fetchAllRealData = async (isInitial = false) => {
     if (isInitial) setLoading(true);
     try {
-      const [exRes, skillsRes, usersRes] = await Promise.all([
-        API.get("/exchanges"),
-        API.get("/skills"),
-        API.get("/discovery/search")
-      ]);
+      const exRes = await API.get("/exchanges");
 
-      if (exRes.data.success) {
+      if (exRes.data && exRes.data.success) {
         const fetchedExchanges = exRes.data.exchanges || [];
         setExchanges(fetchedExchanges);
 
         // Derive Real Connected Swappers from user's active exchanges & swap requests
         const swapperMap = new Map();
         fetchedExchanges.forEach(ex => {
+          if (ex.request_status === "rejected" || ex.request_status === "cancelled") return;
           const isReq = Number(currentUser?.id) === Number(ex.requester_id);
           const partnerId = isReq ? ex.receiver_id : ex.requester_id;
           if (partnerId && !swapperMap.has(partnerId)) {
@@ -385,13 +382,14 @@ export default function Exchanges() {
               meeting_link: ex.meeting_link,
               scheduled_at: ex.scheduled_at,
               status: ex.status,
+              request_status: ex.request_status,
               rawExchange: ex
             });
           }
         });
         setConnectedSwappers(Array.from(swapperMap.values()));
 
-        // Initialize chat history from database
+        // Update chat history from database
         const chatsObj = {};
         fetchedExchanges.forEach(ex => {
           try {
@@ -410,19 +408,26 @@ export default function Exchanges() {
             chatsObj[ex.id] = [];
           }
         });
-        setChatMessages(chatsObj);
-      }
-
-      if (skillsRes.data.success) {
-        setMasterSkills(skillsRes.data.skills || []);
-        setSkillCategories(skillsRes.data.categories || []);
+        setChatMessages(prev => ({ ...prev, ...chatsObj }));
       }
     } catch (err) {
-      console.error("Error fetching real session data:", err);
+      console.error("Error fetching exchanges data:", err);
     } finally {
       if (isInitial) setLoading(false);
     }
   };
+
+  // Fetch Master Skills once on mount
+  useEffect(() => {
+    API.get("/skills")
+      .then(skillsRes => {
+        if (skillsRes.data && skillsRes.data.success) {
+          setMasterSkills(skillsRes.data.skills || []);
+          setSkillCategories(skillsRes.data.categories || []);
+        }
+      })
+      .catch(err => console.warn("Error fetching master skills:", err));
+  }, []);
 
   useEffect(() => {
     fetchAllRealData(true);
@@ -434,20 +439,28 @@ export default function Exchanges() {
 
   // Auto-open SkillSwap Chat if navigated with openChat or openChatId
   useEffect(() => {
-    if (exchanges.length > 0 && (location.state?.openChat || location.state?.openChatId)) {
-      const targetId = location.state?.openChatId;
+    if (exchanges.length > 0 && (location.state?.openChat || location.state?.openChatId || location.state?.requestId || openChatInitially)) {
+      const targetId = location.state?.openChatId || location.state?.requestId;
       let targetEx = null;
       if (targetId) {
-        targetEx = exchanges.find(e => e.id === Number(targetId) || e.id === targetId);
+        targetEx = exchanges.find(e => 
+          Number(e.id) === Number(targetId) || 
+          Number(e.request_id) === Number(targetId) ||
+          e.id === targetId ||
+          e.request_id === targetId
+        );
       }
       if (!targetEx) {
-        targetEx = exchanges.find(e => e.status !== "completed") || exchanges[0];
+        targetEx = exchanges.find(e => e.status !== "completed" && e.request_status === "accepted") ||
+                   exchanges.find(e => e.status !== "completed") || 
+                   exchanges[0];
       }
       if (targetEx) {
         setActiveChatExchange(targetEx);
+        setActiveTab("active_grid");
       }
     }
-  }, [location.state, exchanges]);
+  }, [location.state, exchanges, openChatInitially]);
 
   // Timer Countdown Effect
   useEffect(() => {
@@ -573,7 +586,7 @@ ${ex.meeting_link || "N/A"}
   };
 
   // Filter Active vs Completed Exchanges
-  const activeExchangesList = exchanges.filter(ex => ex.status !== "completed");
+  const activeExchangesList = exchanges.filter(ex => ex.status !== "completed" && ex.request_status !== "rejected" && ex.request_status !== "cancelled");
   const completedExchangesList = exchanges.filter(ex => ex.status === "completed");
 
   // Filter Master Skills for Study Kits Tab
