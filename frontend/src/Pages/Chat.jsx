@@ -241,7 +241,7 @@ export default function Chat() {
               setActiveConv(target);
               setMobileView("chat");
             }
-          } else if (!activeConv && valid.length > 0 && isInit) {
+          } else if (!activeConv && valid.length > 0) {
             // Auto-select first active swap on desktop
             const firstActive =
               valid.find((e) => e.request_status === "accepted") || valid[0];

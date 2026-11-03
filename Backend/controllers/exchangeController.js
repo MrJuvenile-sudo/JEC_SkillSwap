@@ -19,17 +19,76 @@ const safeParse = (val) => {
   return [];
 };
 
-// Cached users table columns to prevent "Unknown column" on varying TiDB/MySQL schemas
+// Cached table schemas for TiDB Cloud / MySQL multi-version compatibility
 let cachedUserCols = null;
 async function getUserColumns() {
   if (cachedUserCols) return cachedUserCols;
   try {
     const [cols] = await db.query("SHOW COLUMNS FROM users");
-    cachedUserCols = new Set(cols.map((c) => c.Field.toLowerCase()));
+    const set = new Set();
+    for (const c of cols) {
+      const name = c.Field || c.field || c.COLUMN_NAME || Object.values(c)[0];
+      if (name) set.add(String(name).toLowerCase());
+    }
+    cachedUserCols = set;
     return cachedUserCols;
   } catch (err) {
     console.warn("Could not inspect users columns:", err.message);
     return new Set(["id", "name", "email", "profile_picture", "bio", "location"]);
+  }
+}
+
+let cachedSkillCols = null;
+async function getSkillColumns() {
+  if (cachedSkillCols) return cachedSkillCols;
+  try {
+    const [cols] = await db.query("SHOW COLUMNS FROM skills");
+    const set = new Set();
+    for (const c of cols) {
+      const name = c.Field || c.field || c.COLUMN_NAME || Object.values(c)[0];
+      if (name) set.add(String(name).toLowerCase());
+    }
+    cachedSkillCols = set;
+    return cachedSkillCols;
+  } catch (err) {
+    console.warn("Could not inspect skills columns:", err.message);
+    return new Set(["id", "name", "category", "description"]);
+  }
+}
+
+let cachedRequestCols = null;
+async function getRequestColumns() {
+  if (cachedRequestCols) return cachedRequestCols;
+  try {
+    const [cols] = await db.query("SHOW COLUMNS FROM swap_requests");
+    const set = new Set();
+    for (const c of cols) {
+      const name = c.Field || c.field || c.COLUMN_NAME || Object.values(c)[0];
+      if (name) set.add(String(name).toLowerCase());
+    }
+    cachedRequestCols = set;
+    return cachedRequestCols;
+  } catch (err) {
+    console.warn("Could not inspect swap_requests columns:", err.message);
+    return new Set(["id", "requester_id", "receiver_id", "offered_skill_id", "requested_skill_id", "message", "status", "created_at"]);
+  }
+}
+
+let cachedExchangeCols = null;
+async function getExchangeColumns() {
+  if (cachedExchangeCols) return cachedExchangeCols;
+  try {
+    const [cols] = await db.query("SHOW COLUMNS FROM exchanges");
+    const set = new Set();
+    for (const c of cols) {
+      const name = c.Field || c.field || c.COLUMN_NAME || Object.values(c)[0];
+      if (name) set.add(String(name).toLowerCase());
+    }
+    cachedExchangeCols = set;
+    return cachedExchangeCols;
+  } catch (err) {
+    console.warn("Could not inspect exchanges columns:", err.message);
+    return new Set(["id", "request_id", "status", "meeting_link", "scheduled_at", "notes", "chat_history", "shared_resources", "created_at", "updated_at"]);
   }
 }
 
@@ -66,8 +125,11 @@ exports.getExchanges = async (req, res) => {
       console.warn("Unlinked check warning:", unlinkedErr.message);
     }
 
-    // 2. Dynamically determine which user profile columns are supported
+    // 2. Dynamically determine which columns are supported across tables
     const userCols = await getUserColumns();
+    const skillCols = await getSkillColumns();
+    const reqCols = await getRequestColumns();
+    const exCols = await getExchangeColumns();
 
     const hasCity = userCols.has("city");
     const hasLoc = userCols.has("location");
@@ -100,16 +162,31 @@ exports.getExchanges = async (req, res) => {
     const selectInstitute1 = userCols.has("education_institute") ? "COALESCE(u1.education_institute, '')" : "''";
     const selectInstitute2 = userCols.has("education_institute") ? "COALESCE(u2.education_institute, '')" : "''";
 
+    // Dynamic skills category selection
+    const hasSkillCat = skillCols.has("category");
+    const selectOfferedCat = hasSkillCat ? "COALESCE(os.category, 'Technology & Programming')" : "'Technology & Programming'";
+    const selectRequestedCat = hasSkillCat ? "COALESCE(rs.category, 'Technology & Programming')" : "'Technology & Programming'";
+
+    // Dynamic swap_requests requester_id / sender_id column
+    const reqColName = reqCols.has("requester_id") ? "requester_id" : (reqCols.has("sender_id") ? "sender_id" : "requester_id");
+
+    // Dynamic exchanges columns
+    const selectChatHistory = exCols.has("chat_history") ? "e.chat_history" : "'[]' as chat_history";
+    const selectSharedResources = exCols.has("shared_resources") ? "e.shared_resources" : "'[]' as shared_resources";
+    const selectMeetingLink = exCols.has("meeting_link") ? "COALESCE(e.meeting_link, 'https://meet.google.com/new') as meeting_link" : "'https://meet.google.com/new' as meeting_link";
+    const selectNotes = exCols.has("notes") ? "e.notes" : "'' as notes";
+    const selectScheduledAt = exCols.has("scheduled_at") ? "e.scheduled_at" : "NULL as scheduled_at";
+
     // 3. Main Query: strictly adhering to TiDB exchanges schema:
     // (id, request_id, status, meeting_link, scheduled_at, notes, created_at, updated_at, chat_history, shared_resources)
     // No unaggregated columns in GROUP BY (query uses LEFT JOIN with WHERE filter)
     const sql = `
       SELECT COALESCE(e.id, sr.id) as id,
-             COALESCE(e.meeting_link, 'https://meet.google.com/new') as meeting_link,
-             e.scheduled_at,
-             e.notes,
-             e.chat_history,
-             e.shared_resources,
+             ${selectMeetingLink},
+             ${selectScheduledAt},
+             ${selectNotes},
+             ${selectChatHistory},
+             ${selectSharedResources},
              60 as duration_min,
              '' as agenda,
              CASE
@@ -120,7 +197,7 @@ exports.getExchanges = async (req, res) => {
                ELSE COALESCE(e.status, 'scheduled')
              END as status,
              sr.id as request_id,
-             sr.requester_id,
+             sr.${reqColName} as requester_id,
              sr.receiver_id,
              sr.offered_skill_id,
              sr.requested_skill_id,
@@ -146,16 +223,16 @@ exports.getExchanges = async (req, res) => {
              ${selectDegree2} as receiver_degree,
              ${selectInstitute2} as receiver_institute,
              COALESCE(os.name, 'General Skill Barter') as offered_skill_name,
-             os.category as offered_skill_category,
+             ${selectOfferedCat} as offered_skill_category,
              COALESCE(rs.name, 'General Skill Learning') as requested_skill_name,
-             rs.category as requested_skill_category
+             ${selectRequestedCat} as requested_skill_category
       FROM swap_requests sr
       LEFT JOIN exchanges e ON e.request_id = sr.id
-      LEFT JOIN users u1 ON sr.requester_id = u1.id
+      LEFT JOIN users u1 ON sr.${reqColName} = u1.id
       LEFT JOIN users u2 ON sr.receiver_id = u2.id
       LEFT JOIN skills os ON sr.offered_skill_id = os.id
       LEFT JOIN skills rs ON sr.requested_skill_id = rs.id
-      WHERE sr.requester_id = ? OR sr.receiver_id = ?
+      WHERE sr.${reqColName} = ? OR sr.receiver_id = ?
       ORDER BY sr.created_at DESC
     `;
 
@@ -206,13 +283,42 @@ exports.getExchangeMessages = async (req, res) => {
     const userId = req.user.id;
     const { id } = req.params;
 
-    const [rows] = await db.query(
-      `SELECT e.id, e.request_id, e.chat_history, sr.requester_id, sr.receiver_id
+    const reqCols = await getRequestColumns();
+    const reqColName = reqCols.has("requester_id") ? "requester_id" : (reqCols.has("sender_id") ? "sender_id" : "requester_id");
+
+    let [rows] = await db.query(
+      `SELECT e.id, e.request_id, e.chat_history, sr.${reqColName} as requester_id, sr.receiver_id
        FROM exchanges e
        JOIN swap_requests sr ON e.request_id = sr.id
        WHERE e.id = ? OR e.request_id = ?`,
       [id, id]
     );
+
+    // If exchange record does not exist yet, check swap_requests and auto-create
+    if (rows.length === 0) {
+      const [reqRows] = await db.query(
+        `SELECT * FROM swap_requests WHERE id = ? AND (${reqColName} = ? OR receiver_id = ?)`,
+        [id, userId, userId]
+      );
+      if (reqRows.length > 0) {
+        try {
+          await db.query(
+            `INSERT IGNORE INTO exchanges (request_id, status, meeting_link, notes, chat_history, shared_resources)
+             VALUES (?, 'scheduled', 'https://meet.google.com/new', 'Welcome to your 1-on-1 skill exchange session!', '[]', '[]')`,
+            [id]
+          );
+          [rows] = await db.query(
+            `SELECT e.id, e.request_id, e.chat_history, sr.${reqColName} as requester_id, sr.receiver_id
+             FROM exchanges e
+             JOIN swap_requests sr ON e.request_id = sr.id
+             WHERE e.request_id = ?`,
+            [id]
+          );
+        } catch (insErr) {
+          console.warn("Auto-create exchange in getMessages warning:", insErr.message);
+        }
+      }
+    }
 
     if (rows.length === 0) {
       return res.status(404).json({ success: false, message: "Exchange not found", messages: [] });
@@ -252,8 +358,11 @@ exports.sendExchangeMessage = async (req, res) => {
       return res.status(400).json({ success: false, message: "Message text or sticker is required" });
     }
 
+    const reqCols = await getRequestColumns();
+    const reqColName = reqCols.has("requester_id") ? "requester_id" : (reqCols.has("sender_id") ? "sender_id" : "requester_id");
+
     let [rows] = await db.query(
-      `SELECT e.id, e.request_id, e.chat_history, sr.requester_id, sr.receiver_id
+      `SELECT e.id, e.request_id, e.chat_history, sr.${reqColName} as requester_id, sr.receiver_id
        FROM exchanges e
        JOIN swap_requests sr ON e.request_id = sr.id
        WHERE e.id = ? OR e.request_id = ?`,
@@ -263,23 +372,26 @@ exports.sendExchangeMessage = async (req, res) => {
     if (rows.length === 0) {
       // Auto create exchange if row does not exist yet
       const [reqRow] = await db.query(
-        "SELECT * FROM swap_requests WHERE id = ? AND (requester_id = ? OR receiver_id = ?)",
+        `SELECT * FROM swap_requests WHERE id = ? AND (${reqColName} = ? OR receiver_id = ?)`,
         [id, userId, userId]
       );
       if (reqRow.length > 0) {
-        await db.query(
-          `INSERT INTO exchanges (request_id, status, meeting_link, notes, chat_history, shared_resources)
-           VALUES (?, 'scheduled', 'https://meet.google.com/new', 'Skill exchange session.', '[]', '[]')
-           ON DUPLICATE KEY UPDATE status = 'scheduled'`,
-          [id]
-        );
-        [rows] = await db.query(
-          `SELECT e.id, e.request_id, e.chat_history, sr.requester_id, sr.receiver_id
-           FROM exchanges e
-           JOIN swap_requests sr ON e.request_id = sr.id
-           WHERE e.request_id = ?`,
-          [id]
-        );
+        try {
+          await db.query(
+            `INSERT IGNORE INTO exchanges (request_id, status, meeting_link, notes, chat_history, shared_resources)
+             VALUES (?, 'scheduled', 'https://meet.google.com/new', 'Skill exchange session.', '[]', '[]')`,
+            [id]
+          );
+          [rows] = await db.query(
+            `SELECT e.id, e.request_id, e.chat_history, sr.${reqColName} as requester_id, sr.receiver_id
+             FROM exchanges e
+             JOIN swap_requests sr ON e.request_id = sr.id
+             WHERE e.request_id = ?`,
+            [id]
+          );
+        } catch (insErr) {
+          console.warn("Auto-create exchange on send warning:", insErr.message);
+        }
       }
     }
 
@@ -351,9 +463,12 @@ exports.updateExchange = async (req, res) => {
     const { id } = req.params;
     const { meeting_link, scheduled_at, notes, status, chat_history, shared_resources } = req.body;
 
+    const reqCols = await getRequestColumns();
+    const reqColName = reqCols.has("requester_id") ? "requester_id" : (reqCols.has("sender_id") ? "sender_id" : "requester_id");
+
     // Search by exchange id OR request_id
     let [exchanges] = await db.query(
-      `SELECT e.*, sr.requester_id, sr.receiver_id
+      `SELECT e.*, sr.${reqColName} as requester_id, sr.receiver_id
        FROM exchanges e
        JOIN swap_requests sr ON e.request_id = sr.id
        WHERE e.id = ? OR e.request_id = ?`,
@@ -363,23 +478,22 @@ exports.updateExchange = async (req, res) => {
     // If exchange record does not exist yet for this request, create it automatically
     if (exchanges.length === 0) {
       const [reqRow] = await db.query(
-        "SELECT * FROM swap_requests WHERE id = ? AND (requester_id = ? OR receiver_id = ?)",
+        `SELECT * FROM swap_requests WHERE id = ? AND (${reqColName} = ? OR receiver_id = ?)`,
         [id, userId, userId]
       );
       if (reqRow.length > 0) {
         const defaultMeeting = meeting_link || "https://meet.google.com/new";
         try {
           await db.query(
-            `INSERT INTO exchanges (request_id, status, meeting_link, notes, chat_history, shared_resources)
-             VALUES (?, 'scheduled', ?, ?, '[]', '[]')
-             ON DUPLICATE KEY UPDATE status = 'scheduled'`,
+            `INSERT IGNORE INTO exchanges (request_id, status, meeting_link, notes, chat_history, shared_resources)
+             VALUES (?, 'scheduled', ?, ?, '[]', '[]')`,
             [id, defaultMeeting, notes || "Skill exchange session created."]
           );
         } catch (insErr) {
           console.warn("Auto-insert exchange warning:", insErr.message);
         }
         [exchanges] = await db.query(
-          `SELECT e.*, sr.requester_id, sr.receiver_id
+          `SELECT e.*, sr.${reqColName} as requester_id, sr.receiver_id
            FROM exchanges e
            JOIN swap_requests sr ON e.request_id = sr.id
            WHERE e.request_id = ?`,
@@ -491,8 +605,11 @@ exports.completeExchange = async (req, res) => {
     const userId = req.user.id;
     const { id } = req.params;
 
+    const reqCols = await getRequestColumns();
+    const reqColName = reqCols.has("requester_id") ? "requester_id" : (reqCols.has("sender_id") ? "sender_id" : "requester_id");
+
     const [exchanges] = await db.query(
-      `SELECT e.*, sr.id as request_id, sr.requester_id, sr.receiver_id
+      `SELECT e.*, sr.id as request_id, sr.${reqColName} as requester_id, sr.receiver_id
        FROM exchanges e
        JOIN swap_requests sr ON e.request_id = sr.id
        WHERE e.id = ? OR e.request_id = ?`,
@@ -501,7 +618,7 @@ exports.completeExchange = async (req, res) => {
 
     if (exchanges.length === 0) {
       const [reqRow] = await db.query(
-        "SELECT * FROM swap_requests WHERE id = ? AND (requester_id = ? OR receiver_id = ?)",
+        `SELECT * FROM swap_requests WHERE id = ? AND (${reqColName} = ? OR receiver_id = ?)`,
         [id, userId, userId]
       );
       if (reqRow.length > 0) {

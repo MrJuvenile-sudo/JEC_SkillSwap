@@ -168,11 +168,17 @@ export default function QuickChatWidget() {
             ? (ex.receiver_profession || ex.receiver_degree || "Co-Learner")
             : (ex.requester_profession || ex.requester_degree || "Co-Learner");
 
-          let chatList = Array.isArray(ex.chat_history)
-            ? ex.chat_history
-            : typeof ex.chat_history === "string"
-            ? JSON.parse(ex.chat_history || "[]")
-            : [];
+          let chatList = [];
+          if (Array.isArray(ex.chat_history)) {
+            chatList = ex.chat_history;
+          } else if (typeof ex.chat_history === "string" && ex.chat_history.trim()) {
+            try {
+              const parsed = JSON.parse(ex.chat_history.trim());
+              chatList = Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+              chatList = [];
+            }
+          }
 
           let lastMsg = "Start a direct conversation...";
           let time = "Now";

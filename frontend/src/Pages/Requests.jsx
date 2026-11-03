@@ -203,14 +203,23 @@ export default function Requests() {
                         </button>
                       </>
                     ) : req.status === "accepted" ? (
-                      <Link
-                        to="/exchanges"
-                        state={{ openChatId: req.id, openChat: true, requestId: req.id }}
-                        className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black shadow-md flex items-center gap-1.5 transition-all hover:scale-105"
-                      >
-                        <span>Open Session Room</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </Link>
+                      <div className="flex items-center gap-2">
+                        <Link
+                          to={`/chat?c=${req.id}`}
+                          className="px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl text-xs font-black shadow-md flex items-center gap-1.5 transition-all hover:scale-105"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          <span>Chat</span>
+                        </Link>
+                        <Link
+                          to="/exchanges"
+                          state={{ openChatId: req.id, openChat: true, requestId: req.id }}
+                          className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black shadow-md flex items-center gap-1.5 transition-all hover:scale-105"
+                        >
+                          <span>Session Room</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
                     ) : null}
                   </div>
 
@@ -279,14 +288,23 @@ export default function Requests() {
                       </button>
                     )}
                     {req.status === "accepted" && (
-                      <Link
-                        to="/exchanges"
-                        state={{ openChatId: req.id, openChat: true, requestId: req.id }}
-                        className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black shadow-md flex items-center gap-1.5 transition-all hover:scale-105"
-                      >
-                        <span>Open Session Room</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </Link>
+                      <div className="flex items-center gap-2">
+                        <Link
+                          to={`/chat?c=${req.id}`}
+                          className="px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl text-xs font-black shadow-md flex items-center gap-1.5 transition-all hover:scale-105"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          <span>Chat</span>
+                        </Link>
+                        <Link
+                          to="/exchanges"
+                          state={{ openChatId: req.id, openChat: true, requestId: req.id }}
+                          className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black shadow-md flex items-center gap-1.5 transition-all hover:scale-105"
+                        >
+                          <span>Session Room</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
                     )}
                   </div>
 

@@ -53,7 +53,7 @@ exports.createRequest = async (req, res) => {
       await db.query(
         `INSERT INTO exchanges (request_id, status, meeting_link, notes, chat_history, shared_resources)
          VALUES (?, 'scheduled', ?, 'Welcome to your 1-on-1 skill exchange session! Share meeting links, study guides, and session agenda.', '[]', '[]')
-         ON DUPLICATE KEY UPDATE status = VALUES(status)`,
+         ON DUPLICATE KEY UPDATE status = 'scheduled'`,
         [newRequestId, defaultMeeting]
       );
     } catch (exErr) {

@@ -179,6 +179,15 @@ async function initDb() {
       );
     `);
 
+    await ensureColumn(pool, "swap_requests", "requester_id", "INT");
+    await ensureColumn(pool, "swap_requests", "receiver_id", "INT");
+    await ensureColumn(pool, "swap_requests", "offered_skill_id", "INT DEFAULT 1");
+    await ensureColumn(pool, "swap_requests", "requested_skill_id", "INT DEFAULT 4");
+    await ensureColumn(pool, "swap_requests", "message", "TEXT");
+    await ensureColumn(pool, "swap_requests", "status", "VARCHAR(20) DEFAULT 'pending'");
+    await ensureColumn(pool, "swap_requests", "created_at", "TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+    await ensureColumn(pool, "swap_requests", "updated_at", "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+
     try {
       await pool.query(`ALTER TABLE swap_requests MODIFY COLUMN status VARCHAR(20) DEFAULT 'pending'`);
     } catch (e) {}
@@ -202,13 +211,16 @@ async function initDb() {
 
     await ensureColumn(pool, "exchanges", "chat_history", "LONGTEXT");
     await ensureColumn(pool, "exchanges", "shared_resources", "LONGTEXT");
+    await ensureColumn(pool, "exchanges", "meeting_link", "VARCHAR(500) DEFAULT 'https://meet.google.com/new'");
+    await ensureColumn(pool, "exchanges", "notes", "TEXT");
+    await ensureColumn(pool, "exchanges", "scheduled_at", "DATETIME");
     await ensureColumn(pool, "exchanges", "created_at", "TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
     await ensureColumn(pool, "exchanges", "updated_at", "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
 
     // Auto-create missing exchange session rooms for all swap requests
     try {
       await pool.query(`
-        INSERT INTO exchanges (request_id, status, meeting_link, notes, chat_history, shared_resources)
+        INSERT IGNORE INTO exchanges (request_id, status, meeting_link, notes, chat_history, shared_resources)
         SELECT sr.id, 'scheduled', 'https://meet.google.com/skillswap-room', 'Welcome to your 1-on-1 skill exchange virtual classroom! Connect via video call, share meeting links, and use study guides.', '[]', '[]'
         FROM swap_requests sr
         WHERE NOT EXISTS (SELECT 1 FROM exchanges e WHERE e.request_id = sr.id)
