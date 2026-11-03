@@ -1057,9 +1057,21 @@ export default function Chat() {
   // ── Full Layout ────────────────────────────────────────────────────────────
   return (
     <div
-      className="fixed inset-0 bg-[#0d0d1a] flex overflow-hidden"
-      style={{ top: "56px" }} // Below Navbar (h-14 = 56px)
+      className="chat-page-root fixed inset-x-0 bottom-0 bg-[#0d0d1a] flex overflow-hidden"
+      style={{ top: "56px" }}
+      // On md+ (desktop): navbar is h-20 = 80px. We use inline style for mobile (56px)
+      // and a pseudo-responsive trick via the class below
     >
+      {/* Patch desktop top offset via a hidden div trick — use CSS override */}
+      <style>{`
+        @media (min-width: 768px) {
+          .chat-page-root { top: 80px !important; }
+        }
+        /* Also account for mobile bottom nav (h-16 = 64px) */
+        @media (max-width: 767px) {
+          .chat-page-root { bottom: 64px !important; }
+        }
+      `}</style>
       <Sidebar />
       <ChatWindow />
       <InfoPanel />
