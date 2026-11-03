@@ -456,17 +456,23 @@ export default function QuickChatWidget() {
             </button>
           )}
 
-          {/* Full Screen Mode Toggle Button */}
+          {/* Full Screen Mode Toggle Button - navigates to /chat page */}
           <button
-            onClick={() => setIsFullScreen(!isFullScreen)}
-            className="p-2 rounded-xl text-slate-700 hover:bg-white hover:text-emerald-700 border border-transparent hover:border-slate-200 transition-all cursor-pointer shadow-2xs"
-            title={isFullScreen ? "Exit Fullscreen Mode" : "Expand to Fullscreen WhatsApp Mode"}
+            onClick={() => {
+              // Save draft before navigating
+              if (activeChatId && inputMsg.trim()) {
+                sessionStorage.setItem(`chat_draft_${activeChatId}`, inputMsg);
+              }
+              if (activeChatId) {
+                navigate(`/chat?c=${activeChatId}`);
+              } else {
+                navigate('/chat');
+              }
+            }}
+            className="p-2 rounded-xl text-slate-700 hover:bg-white hover:text-indigo-700 border border-transparent hover:border-slate-200 transition-all cursor-pointer shadow-2xs"
+            title="Open Full Chat Page"
           >
-            {isFullScreen ? (
-              <Minimize2 className="w-4 h-4 text-emerald-800" />
-            ) : (
-              <Maximize2 className="w-4 h-4 text-slate-700" />
-            )}
+            <Maximize2 className="w-4 h-4 text-slate-700" />
           </button>
 
           {/* Dedicated Top-Right Arrow: navigates directly to /exchanges classroom */}

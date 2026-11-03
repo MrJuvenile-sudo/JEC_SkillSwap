@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import NotificationDropdown from "./NotificationDropdown";
+import API from "../services/api";
 import { 
   Repeat, 
   Search, 
@@ -17,7 +18,8 @@ import {
   Zap,
   Home as HomeIcon,
   HelpCircle,
-  BookOpen
+  BookOpen,
+  MessageSquare
 } from "lucide-react";
 
 export default function Navbar() {
@@ -25,6 +27,37 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [chatUnread, setChatUnread] = useState(0);
+
+  // Poll for unread messages count (every 10s)
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const fetchUnread = async () => {
+      try {
+        const res = await API.get("/exchanges");
+        if (res.data?.success) {
+          const exs = res.data.exchanges || [];
+          let count = 0;
+          exs.forEach((ex) => {
+            if (ex.request_status === "rejected" || ex.request_status === "cancelled") return;
+            const chat = Array.isArray(ex.chat_history)
+              ? ex.chat_history
+              : (() => { try { return JSON.parse(ex.chat_history || "[]"); } catch { return []; } })();
+            const myId = user?.id;
+            // Count messages from partner not yet "read" — simple heuristic: any chat with messages
+            const partnerMsgs = chat.filter(
+              (m) => Number(m.senderId || m.sender_id) !== Number(myId)
+            );
+            if (partnerMsgs.length > 0) count++;
+          });
+          setChatUnread(count);
+        }
+      } catch (e) {}
+    };
+    fetchUnread();
+    const t = setInterval(fetchUnread, 10000);
+    return () => clearInterval(t);
+  }, [isAuthenticated, user?.id]);
 
   const handleLogout = () => {
     logout();
@@ -150,6 +183,21 @@ export default function Navbar() {
                     }`}
                   >
                     Sessions
+                  </Link>
+
+                  <Link
+                    to="/chat"
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 relative ${
+                      isActive("/chat") ? "bg-indigo-600 text-white shadow-xs" : "text-slate-700 hover:text-indigo-600 hover:bg-slate-200/60"
+                    }`}
+                  >
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    Chat
+                    {chatUnread > 0 && !isActive("/chat") && (
+                      <span className="absolute -top-0.5 -right-0.5 min-w-[14px] h-3.5 px-0.5 bg-rose-500 text-white text-[9px] font-extrabold rounded-full flex items-center justify-center">
+                        {chatUnread > 9 ? "9+" : chatUnread}
+                      </span>
+                    )}
                   </Link>
                 </>
               )}
@@ -296,12 +344,19 @@ export default function Navbar() {
             </Link>
 
             <Link 
-              to="/exchanges" 
-              className={`flex-1 flex flex-col items-center justify-center h-full gap-0.5 transition-all active:scale-95 ${isActive('/exchanges') ? 'text-blue-600 font-black' : 'hover:text-blue-600'}`}
-              aria-current={isActive('/exchanges') ? 'page' : undefined}
+              to="/chat" 
+              className={`flex-1 flex flex-col items-center justify-center h-full gap-0.5 transition-all active:scale-95 relative ${isActive('/chat') ? 'text-indigo-600 font-black' : 'hover:text-indigo-600'}`}
+              aria-current={isActive('/chat') ? 'page' : undefined}
             >
-              <Video className="w-5 h-5" />
-              <span>Sessions</span>
+              <div className="relative">
+                <MessageSquare className="w-5 h-5" />
+                {chatUnread > 0 && !isActive('/chat') && (
+                  <span className="absolute -top-1 -right-1 min-w-[14px] h-3.5 px-0.5 bg-rose-500 text-white text-[9px] font-extrabold rounded-full flex items-center justify-center">
+                    {chatUnread > 9 ? "9+" : chatUnread}
+                  </span>
+                )}
+              </div>
+              <span>Chat</span>
             </Link>
 
             <Link 
@@ -423,6 +478,12 @@ export default function Navbar() {
                 </Link>
                 <Link to="/exchanges" onClick={() => setMobileMenuOpen(false)} className="block py-2.5 px-4 bg-slate-50 text-slate-800 rounded-xl">
                   Video Sessions
+                </Link>
+                <Link to="/chat" onClick={() => setMobileMenuOpen(false)} className="block py-2.5 px-4 bg-indigo-50 text-indigo-700 rounded-xl">
+                  <span className="flex items-center justify-between">
+                    <span className="flex items-center gap-2"><MessageSquare className="w-4 h-4" /> Messages &amp; Chat</span>
+                    {chatUnread > 0 && <span className="bg-rose-500 text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-full">{chatUnread}</span>}
+                  </span>
                 </Link>
                 <button 
                   onClick={handleLogout} 

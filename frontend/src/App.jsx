@@ -18,6 +18,7 @@ import Explore from "./Pages/Explore";
 import LiveSessions from "./Pages/LiveSessions";
 import Requests from "./Pages/Requests";
 import Exchanges from "./Pages/Exchanges";
+import Chat from "./Pages/Chat";
 import Profile from "./Pages/Profile";
 import UserProfileView from "./Pages/UserProfileView";
 import Dashboard from "./Pages/Dashboard";
@@ -159,7 +160,7 @@ function AppRoutes() {
             path="/chat"
             element={
               <ProtectedRoute>
-                <Exchanges openChatInitially={true} />
+                <Chat />
               </ProtectedRoute>
             }
           />
