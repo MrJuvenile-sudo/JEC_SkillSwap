@@ -54,9 +54,8 @@ exports.getExchanges = async (req, res) => {
         const defaultMeeting = "https://meet.google.com/new";
         try {
           await db.query(
-            `INSERT INTO exchanges (request_id, status, meeting_link, notes, chat_history, shared_resources)
-             VALUES (?, 'scheduled', ?, 'Welcome to your 1-on-1 skill exchange session! Share meeting links, study guides, and session agenda.', '[]', '[]')
-             ON DUPLICATE KEY UPDATE status = VALUES(status)`,
+            `INSERT IGNORE INTO exchanges (request_id, status, meeting_link, notes, chat_history, shared_resources)
+             VALUES (?, 'scheduled', ?, 'Welcome to your 1-on-1 skill exchange session! Share meeting links, study guides, and session agenda.', '[]', '[]')`,
             [reqRow.id, defaultMeeting]
           );
         } catch (insertErr) {
@@ -70,8 +69,24 @@ exports.getExchanges = async (req, res) => {
     // 2. Dynamically determine which user profile columns are supported
     const userCols = await getUserColumns();
 
-    const selectCity1 = userCols.has("city") ? "COALESCE(u1.city, u1.location, '')" : "COALESCE(u1.location, '')";
-    const selectCity2 = userCols.has("city") ? "COALESCE(u2.city, u2.location, '')" : "COALESCE(u2.location, '')";
+    const hasCity = userCols.has("city");
+    const hasLoc = userCols.has("location");
+    const selectCity1 = hasCity 
+      ? (hasLoc ? "COALESCE(u1.city, u1.location, '')" : "COALESCE(u1.city, '')")
+      : (hasLoc ? "COALESCE(u1.location, '')" : "''");
+    const selectCity2 = hasCity 
+      ? (hasLoc ? "COALESCE(u2.city, u2.location, '')" : "COALESCE(u2.city, '')")
+      : (hasLoc ? "COALESCE(u2.location, '')" : "''");
+
+    const selectLoc1 = hasLoc ? "COALESCE(u1.location, '')" : "''";
+    const selectLoc2 = hasLoc ? "COALESCE(u2.location, '')" : "''";
+
+    const selectPic1 = userCols.has("profile_picture") 
+      ? "COALESCE(u1.profile_picture, '')" 
+      : (userCols.has("profile_image") ? "COALESCE(u1.profile_image, '')" : "''");
+    const selectPic2 = userCols.has("profile_picture") 
+      ? "COALESCE(u2.profile_picture, '')" 
+      : (userCols.has("profile_image") ? "COALESCE(u2.profile_image, '')" : "''");
 
     const selectGender1 = userCols.has("gender") ? "COALESCE(u1.gender, 'other')" : "'other'";
     const selectGender2 = userCols.has("gender") ? "COALESCE(u2.gender, 'other')" : "'other'";
@@ -114,20 +129,20 @@ exports.getExchanges = async (req, res) => {
              sr.created_at,
              COALESCE(u1.name, 'Swapper') as requester_name,
              u1.email as requester_email,
-             u1.profile_picture as requester_picture,
+             ${selectPic1} as requester_picture,
              ${selectGender1} as requester_gender,
              ${selectProf1} as requester_profession,
              ${selectCity1} as requester_city,
-             u1.location as requester_location,
+             ${selectLoc1} as requester_location,
              ${selectDegree1} as requester_degree,
              ${selectInstitute1} as requester_institute,
              COALESCE(u2.name, 'Swapper') as receiver_name,
              u2.email as receiver_email,
-             u2.profile_picture as receiver_picture,
+             ${selectPic2} as receiver_picture,
              ${selectGender2} as receiver_gender,
              ${selectProf2} as receiver_profession,
              ${selectCity2} as receiver_city,
-             u2.location as receiver_location,
+             ${selectLoc2} as receiver_location,
              ${selectDegree2} as receiver_degree,
              ${selectInstitute2} as receiver_institute,
              COALESCE(os.name, 'General Skill Barter') as offered_skill_name,

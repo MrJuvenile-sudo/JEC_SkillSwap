@@ -457,7 +457,7 @@ export default function Chat() {
               <img
                 src={
                   user?.profile_picture ||
-                  get3DAvatarUrl(user?.name, user?.gender)
+                  get3DAvatarUrl(user?.gender, user?.name)
                 }
                 alt={user?.name}
                 className="w-9 h-9 rounded-full object-cover ring-2 ring-indigo-500/40"
@@ -572,7 +572,7 @@ export default function Chat() {
                   <img
                     src={
                       p?.picture ||
-                      get3DAvatarUrl(p?.name, null)
+                      get3DAvatarUrl("other", p?.name)
                     }
                     alt={p?.name}
                     className="w-11 h-11 rounded-full object-cover ring-2 ring-white/10"
@@ -679,7 +679,7 @@ export default function Chat() {
             {/* Partner Avatar */}
             <div className="relative shrink-0">
               <img
-                src={partner?.picture || get3DAvatarUrl(partner?.name, null)}
+                src={partner?.picture || get3DAvatarUrl("other", partner?.name)}
                 alt={partner?.name}
                 className="w-9 h-9 rounded-full object-cover ring-2 ring-indigo-500/30"
               />
@@ -848,7 +848,7 @@ export default function Chat() {
                     <img
                       src={
                         partner?.picture ||
-                        get3DAvatarUrl(partner?.name, null)
+                        get3DAvatarUrl("other", partner?.name)
                       }
                       alt=""
                       className="w-6 h-6 rounded-full object-cover mr-2 self-end shrink-0"
@@ -975,7 +975,7 @@ export default function Chat() {
         <div className="p-5 text-center border-b border-white/5">
           <div className="relative inline-block mb-3">
             <img
-              src={partner.picture || get3DAvatarUrl(partner.name, null)}
+              src={partner.picture || get3DAvatarUrl("other", partner.name)}
               alt={partner.name}
               className="w-16 h-16 rounded-full object-cover ring-2 ring-indigo-500/30 mx-auto"
             />

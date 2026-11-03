@@ -194,7 +194,7 @@ const SKILL_RESOURCES_MAP = {
 };
 
 const getResourceForSkill = (skillName) => {
-  if (!skillName) return SKILL_RESOURCES_MAP.default;
+  if (!skillName || typeof skillName !== "string") return SKILL_RESOURCES_MAP.default;
   const nameLower = skillName.toLowerCase();
   for (const key in SKILL_RESOURCES_MAP) {
     if (nameLower.includes(key)) {
@@ -202,6 +202,24 @@ const getResourceForSkill = (skillName) => {
     }
   }
   return SKILL_RESOURCES_MAP.default;
+};
+
+// Cross-browser safe datetime formatter (handles ISO, MySQL 'YYYY-MM-DD HH:MM:SS', Safari compatibility)
+const safeFormatDateTime = (val, fallback = "") => {
+  if (!val) return fallback;
+  try {
+    const str = typeof val === "string" ? val.replace(" ", "T") : val;
+    const d = new Date(str);
+    if (isNaN(d.getTime())) return fallback;
+    return d.toLocaleDateString([], {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch (e) {
+    return fallback;
+  }
 };
 
 // Helper to render clickable URLs in message text
@@ -470,6 +488,9 @@ export default function Exchanges({ initialTab = "active_grid", openChatInitiall
       }
     } catch (err) {
       console.error("Error fetching exchanges data:", err);
+      if (isInitial) {
+        setNotification("Unable to load latest exchange sessions. Retrying in background...");
+      }
     } finally {
       if (isInitial) setLoading(false);
     }
@@ -493,7 +514,7 @@ export default function Exchanges({ initialTab = "active_grid", openChatInitiall
       fetchAllRealData(false);
     }, 4000);
     return () => clearInterval(pollInterval);
-  }, []);
+  }, [currentUser?.id]);
 
   // Auto-open SkillSwap Chat if navigated with openChat or openChatId (Runs ONCE on navigation)
   useEffect(() => {
@@ -905,12 +926,7 @@ ${ex.meeting_link || "N/A"}
                               <div className="flex items-center gap-1.5 text-xs font-black text-amber-950 truncate mt-0.5">
                                 <Calendar className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                                 <span className="truncate">
-                                  {new Date(ex.scheduled_at).toLocaleDateString([], {
-                                    month: "short",
-                                    day: "numeric",
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                  })}
+                                  {safeFormatDateTime(ex.scheduled_at, "Scheduled")}
                                 </span>
                               </div>
                             </div>
@@ -1369,7 +1385,7 @@ ${ex.meeting_link || "N/A"}
                     <h4 className="text-xs font-extrabold text-amber-950">Mutual Availability & Scheduled Slot</h4>
                     <p className="text-[11px] text-amber-800 font-medium">
                       {selectedRoomModal.scheduled_at 
-                        ? `Confirmed Slot: ${new Date(selectedRoomModal.scheduled_at).toLocaleDateString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })} (${selectedRoomModal.duration_min || 60} mins)` 
+                        ? `Confirmed Slot: ${safeFormatDateTime(selectedRoomModal.scheduled_at, "Scheduled")} (${selectedRoomModal.duration_min || 60} mins)` 
                         : "No mutual slot scheduled yet. Coordinate when both of you are free to meet."}
                     </p>
                   </div>
